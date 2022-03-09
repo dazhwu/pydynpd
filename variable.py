@@ -1,25 +1,20 @@
-from dataclasses import dataclass
 
-@dataclass
-class dep_var:
-    name: str
 
-@dataclass
-class indep_var:
-    name: str
-    lag_start: int
-    lag_end: int
 
-@dataclass
-class gmm_var:
-    name: str
-    min_lag: int
-    max_lag: int
-    diff_level: int
+class variable:
+    def __init__(self, name, lag):
+        self.name=name
+        self.lag=lag
 
-@dataclass
-class iv_var:
-    name: str
-    lag_start: int
-    lag_end: int
-    diff_level: int
+
+class gmm_var(variable):
+    def __init__(self, name, min_lag, max_lag, lag):
+        super().__init__(name, lag)
+        self.min_lag=min_lag
+        self.max_lag=max_lag
+        
+# class indep_var(rhs_var):
+#     pass
+#
+# class iv_var (rhs_var):
+#     pass
