@@ -12,10 +12,7 @@ import re
 
 
 def parse_command(command_str):
-    cdef:
-        list dep_indep_list, gmm_list, iv_list, parts
-        str part_1, part_2, part_3
-        dict variables={}
+
     variables = {}
     parts = command_str.split('|')
     if len(parts) <= 1:
@@ -46,7 +43,7 @@ def parse_command(command_str):
 def parse_spaced_vars(list_vars, indep_iv):
     # for independent variables (indep_iv=0) and iv variables (indep_iv=1)
     # list_vars is a list of variables
-    cdef list tbr = []
+    tbr = []
     prog_1 = re.compile('^L\(([0-9]{1,})\/([0-9]{1,})\)[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
     prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
 
@@ -71,7 +68,7 @@ def parse_spaced_vars(list_vars, indep_iv):
 
     return (tbr)
 
-def parse_dep_indep(str part_1):
+def parse_dep_indep(part_1):
     list_vars = part_1.split()
 
     list_dep_indep = parse_spaced_vars(list_vars, 0)
@@ -106,10 +103,8 @@ def parse_gmm_iv(part_2):
 
     return ([list_gmm, list_iv])
 
-def gen_list_rhs(str name, int start_lag, int end_lag):
-    cdef:
-        list tbr
-        unsigned int i
+def gen_list_rhs(name, start_lag, end_lag):
+
 
     tbr=[]
     for i in range(start_lag, (end_lag+1)):
