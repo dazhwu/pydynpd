@@ -11,7 +11,7 @@ import time
 # https://itecnote.com/tecnote/python-efficiently-applying-a-function-to-a-grouped-pandas-dataframe-in-parallel/
 
 
-def new_panel_data(df: DataFrame, identifiers, p_variables, p_level):
+def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm):
     if len(identifiers) == 2:
         _individual = identifiers[0]
         _time = identifiers[1]
@@ -21,14 +21,14 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, p_level):
     variables = p_variables
 
     level = p_level
-
+    timedumm=p_timedumm
     method = 'fd'
-    timedummy=True
+
 
 
     df_information = get_info(df, variables, method, _individual, _time)
 
-    if timedummy:
+    if timedumm:
         add_time_dummy(df, variables, _time, df_information.first_index, df_information.last_index)
 
     gmm_tables = get_gmm_table_list(df, variables, df_information, level)
@@ -198,7 +198,11 @@ def build_z_level(variables: dict, info: df_info, gmm_tables: dict):
         for var_id in range(len(iv_vars)):
             var = iv_vars[var_id]
             z[start_pos + var_id, start_col:z_list[0].shape[1]] = array_iv[lev_first_index:(lev_last_index + 1), var_id]
-
+    
+        z[np.isnan(z)] = 0
+        
+    z_information.num_gmm_instr+=len(gmm_vars)
+    z_information.num_instr+=z_information.level_height
     return ((z_information, z_list))
 
 
@@ -213,14 +217,17 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
 
     diff_width = info.last_index - info.first_index + 1
     level_width = diff_width + 1
-    level_height = len(gmm_vars) * level_width + len(iv_vars)
+    level_height = len(gmm_vars) * level_width  + 1 #+ len(iv_vars)
 
     num_gmm_instr, gmm_diff_info = prepare_Z_gmm_diff(variables, diff_width, info)
     iv_diff_info = prepare_Z_iv_diff(variables, diff_width, info)
 
     diff_height = (num_gmm_instr + iv_diff_info.shape[0])
+
     z_information = z_info(diff_height=diff_height, diff_width=diff_width, level_width=level_width,
-                           level_height=level_height, num_gmm_instr=num_gmm_instr)
+                           level_height=level_height, num_gmm_instr=num_gmm_instr, num_instr=diff_height)
+    
+                           
 
     if level:
         height = diff_height + level_height
@@ -245,7 +252,11 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
                 end = gmm_diff_info[var_id * 3 + 1, j]
 
                 z[row_pos:(row_pos + end - start + 1), j] = array_gmm[start:(end + 1), var_id]
+                #print(array_gmm[range(end,(start - 1),-1), var_id].shape)
+                #print(z[row_pos:(row_pos + end - start + 1), j].shape )
 
+                # for k in range(end-start +1):
+                #     z[row_pos+k, j] = array_gmm[end-k, var_id]
             var_id += 1
 
         row_pos = num_gmm_instr

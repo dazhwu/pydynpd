@@ -23,6 +23,7 @@ class z_info:
     level_width: int
     level_height: int
     num_gmm_instr: int
+    num_instr: int
     # int num_vars
     # int num_gmm_instr
 
@@ -36,7 +37,12 @@ class hansen_test_info:
 @dataclass
 class AR_test_info:
     lag: int
-    pass
+
+@dataclass
+class options_info:
+    twosteps: bool=True
+    level: bool=True
+    timedumm: bool=False
 
 
 # @dataclass

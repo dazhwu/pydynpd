@@ -15,27 +15,30 @@ from common_functions import sum_product, Windmeijer
 class pydynpd:
 
     def __init__(self, command_str, df: DataFrame, identifier: list):
-        self.XZ_W2 = None
-        self.SS1 = None
-        self._residual1_t = None
-        self.residual1 = None
-        self.beta1 = None
-        self.M1 = None
-        self.XZ_W1 = None
-        self.Zy = None
-        self.XZ = None
-        self.W1 = None
+        # self.XZ_W2 = None
+        # self.SS1 = None
+        # self._residual1_t = None
+        # self.residual1 = None
+        # self.beta1 = None
+        # self.M1 = None
+        # self.XZ_W1 = None
+        # self.Zy = None
+        # self.XZ = None
+        # self.W1 = None
 
-        self.variables = parse_command(command_str)
-        self.twosteps = True
-        self.level = False
+        self.variables, options = parse_command(command_str)
+        self.twosteps = options.twosteps
+        self.level = options.level
+        self.timedumm=options.timedumm
 
+        self.identifier=identifier
         robust = True
 
         self.z_list, self.z_information, df_inf, final_xy_tables \
-            = new_panel_data(df, ['id', 'year'], self.variables, self.level)
+            = new_panel_data(df, ['id', 'year'], self.variables, self.level, self.timedumm)
 
         self._z_t_list = [z.transpose() for z in self.z_list]
+        self.num_instru=self.z_information.num_instr
 
         self.N = df_inf.N
 
@@ -45,11 +48,11 @@ class pydynpd:
         self.num_obs = self.prepare_reg()
         self.H1 = self.get_H1()
 
-        if self.twosteps:
-            self.step_1()
-            self.step_2()
-        else:
-            self.step_1()
+        # if self.twosteps:
+        self.step_1()
+        self.step_2()
+        # else:
+        #     self.step_1()
 
         self.generate_summary()
 
@@ -61,7 +64,7 @@ class pydynpd:
         Cx_list = self.Cx_list
         Cy_list = self.Cy_list
         H1 = self.H1
-        beta1 = self.beta1
+
 
         W1 = (1.0 / N) * sum_product([z_list, H1, _z_t_list], N)
         XZ = sum_product([z_list, Cx_list], N).transpose()
@@ -128,7 +131,7 @@ class pydynpd:
         zs2 = sum_product([z_list, residual2], N)
 
 
-        self.H2 = sum_product([residual1, _residual1_t], N)
+        self.H2 = [np.matmul(r, r.transpose()) for r in self.residual1]
         self.XZ_W2 = XZ_W2
         self.M2 = M2
 
@@ -197,7 +200,10 @@ class pydynpd:
 
         N = self.N
         na_list = []
-        num_NA = 0
+        num_NA=0
+        #num_NA_diff = 0
+        #num_NA_level=0
+
 
         # max_observations_per_group = int((np.size(Cy_list[0]) + 1) / 2)
 
@@ -209,6 +215,9 @@ class pydynpd:
             # num_NA+=np.count_nonzero(row_if_nan[range(0,int((np.size(y)+1)/2))])
             # num_NA2 += np.count_nonzero(row_if_nan[range(max_observations_per_group,??? )])
             num_NA += np.count_nonzero(row_if_nan)
+            if self.level:
+                num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
+
             na_list.append(row_if_nan)
             for j in range(0, len(row_if_nan)):
                 if row_if_nan[j] == True:
@@ -217,30 +226,44 @@ class pydynpd:
                     z[:, j] = 0
                     # n_obs = n_obs - 1
         # return(Cx_list, Cy_list, z_list)
-        num_observations = np.size(y) * N - num_NA
+        if self.level:
+            return (self.z_information.level_width * N - num_NA)
+        else:
+            return (self.z_information.diff_width*N-num_NA)
 
-        return (num_observations)
 
     def generate_summary(self):
 
+        self.hansen = tests.hansen_overid(self.N, self.W2, self.zs2, self.num_instru,
+                                          self.Cx_list[0].shape[1])
         if self.twosteps:
-            self.hansen = tests.hansen_overid(self.N, self.W2, self.zs2, self.z_list[0].shape[0],
-                                              self.Cx_list[0].shape[1])
-            self.AR_list = tests.AR_test(self.N, self.H2, self.M2, self.z_list, self.XZ_W2, self.vcov_step2, self.residual2,
-                                    self._residual2_t, self.Cx_list, 2)
-        else:
-            self.hansen = tests.hansen_overid(self.N, self.W1, self.zs1, self.z_list[0].shape[0],
-                                              self.Cx_list[0].shape[1])
-            self.AR_list = tests.AR_test(self.N, self.H1, self.M1, self.z_list, self.XZ_W1, self.vcov_step1, self.residual1,
-                                    self._residual1_t, self.Cx_list, 2)
 
+            self.AR_list = tests.AR_test(self, 2)
+        else:
+
+            self.AR_list = tests.AR_test(self, 2)
+
+        print(self.basic_information())
         print(self.regression_table())
         print(self.test_results())
+
+
+    def basic_information(self):
+        basic_table = PrettyTable()
+
+        basic_table.border=False
+        basic_table.header=False
+        basic_table.align = 'l'
+        basic_table.add_row(['Group variable: ' + self.identifier[0], ' ' , 'Number of obs = ' + str(self.num_obs) ])
+        basic_table.add_row(['Time variable: ' + self.identifier[1], ' ', 'Number of groups = ' + str(self.N)])
+        basic_table.add_row(['Number of instruments = ' + str(self.num_instru), ' ', ''])
+
+        return(basic_table.get_string())
 
     def test_results(self):
 
 
-        str_toprint='Hansen test of overid. restrictions: chi(' +str(self.hansen.df) + ') = ' + '{:.3f}'.format(self.hansen.critical_value)
+        str_toprint='Hansen test of overid. restrictions: chi(' +str(self.hansen.df) + ') = ' + '{:.3f}'.format(self.hansen.test_value)
         str_toprint=str_toprint + ' Prob > Chi2 = ' + '{:.3f}'.format(self.hansen.p_value) +'\n'
 
 
@@ -248,7 +271,7 @@ class pydynpd:
 
             AR=self.AR_list[i]
             P=st.norm.sf(abs(AR)) * 2
-            str_toprint=str_toprint + 'Arellano-Bond test for AR(' + str(i) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(P) + '\n'
+            str_toprint=str_toprint + 'Arellano-Bond test for AR(' + str(i+1) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(P) + '\n'
         return (str_toprint)
 
     def regression_table(self):
@@ -260,30 +283,31 @@ class pydynpd:
             std_err = self.std_err1
 
         dep_name=self.variables['dep_indep'][0].name
-        num_indept=self.Cx_list[0].shape[1]
+        var_names=[]
+        for i in range(1, len(self.variables['dep_indep'])):
+            var_name = self.variables['dep_indep'][i].name
+            var_lag = self.variables['dep_indep'][i].lag
+            if (var_lag) >= 1:
+                var_name = 'L' + str(var_lag) + '.' + var_name
+            var_names.append(var_name)
+
+        if self.level:
+            var_names.append('_con')
+
+        num_indep=len(var_names)
         r_table = PrettyTable()
 
         r_table.field_names=[dep_name, "coef.", "Corrected Std. Err.", "z", "P>|z|"]
 
         r_table.float_format = '.7'
         #, "z", "P>|z|", "[95% Conf. Interval]" ]
-        for i in range(1, num_indept+1):
-            var_name=self.variables['dep_indep'][i].name
-            var_lag=self.variables['dep_indep'][i].lag
-            if(var_lag)>=1:
-                var_name='L' + str(var_lag) + '.' + var_name
-
-            coeff=beta[i-1,0]
-            stderr=std_err[i-1]
+        for i in range(num_indep):
+            var_name=var_names[i]
+            coeff=beta[i,0]
+            stderr=std_err[i]
             z=coeff/stderr
             p=st.norm.sf(abs(z))*2
             r_table.add_row([var_name, coeff, stderr, z, p])
 
-        if self.level==True:
-            coeff = beta[i, 0]
-            stderr = std_err[i]
-            z = coeff / stderr
-            p = st.norm.sf(abs(z)) * 2
-            r_table.add_row(['.con', coeff, stderr, z, p])
 
         return r_table.get_string()

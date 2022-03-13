@@ -1,5 +1,6 @@
 import variable
 from variable import gmm_var, regular_variable
+from info import  options_info
 import re
 
 '''  n L(1\2).n L(0\1).w k| gmm(n, 2:4) gmm(w, 1:3) iv(ys L(0\1).k)| twostep nolevel robust'
@@ -29,12 +30,15 @@ def parse_command(command_str):
 
         if len(parts) == 3:
             part_3 = parts[2]
+            options=parse_options(part_3)
+        else:
+            options=options_info()
 
     variables['dep_indep'] = dep_indep_list
     variables['gmm'] = gmm_list
     variables['iv'] = iv_list
 
-    return(variables)
+    return((variables, options))
 
 
 
@@ -102,6 +106,22 @@ def parse_gmm_iv(part_2):
         list_iv = list_iv + parse_spaced_vars(vars, 1)
 
     return ([list_gmm, list_iv])
+
+def parse_options(part_3):
+    list_options = part_3.split()
+    options=options_info()
+    possible_options=['onestep','nolevel', 'timedumm']
+    for option in list_options:
+        if option=='onestep':
+            options.twosteps=False
+        elif option=='nolevel':
+            options.level=False
+        elif option=='timedumm':
+            options.timedumm=True
+        else:
+            raise Exception(option + ' not an option allowed')
+
+    return(options)
 
 def gen_list_rhs(name, start_lag, end_lag):
 
