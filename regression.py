@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 
 from command import parse_command
 from panel_data import new_panel_data
-import tests
+import specification_tests as tests
 import common_functions
 from common_functions import sum_product, Windmeijer
 
