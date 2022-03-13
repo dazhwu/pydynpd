@@ -236,13 +236,19 @@ class pydynpd:
 
         self.hansen = tests.hansen_overid(self.N, self.W2, self.zs2, self.num_instru,
                                           self.Cx_list[0].shape[1])
+        self.AR_list = tests.AR_test(self, 2)
+
         if self.twosteps:
-
-            self.AR_list = tests.AR_test(self, 2)
+            str_steps='two-step '
         else:
+            str_steps='one-step '
 
-            self.AR_list = tests.AR_test(self, 2)
+        if self.level:
+            str_gmm='system GMM'
+        else:
+            str_gmm='difference GMM'
 
+        print('Dynamic panel-data estimation, ' + str_steps + str_gmm)
         print(self.basic_information())
         print(self.regression_table())
         print(self.test_results())
@@ -250,7 +256,7 @@ class pydynpd:
 
     def basic_information(self):
         basic_table = PrettyTable()
-
+        basic_table.field_names = ["    ", "   ", "  "]
         basic_table.border=False
         basic_table.header=False
         basic_table.align = 'l'
