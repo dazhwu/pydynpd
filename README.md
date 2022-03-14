@@ -4,12 +4,12 @@
 
 pydynpd is the first python package that implements Difference and System GMM to estimate dynamic panel data models.
 
-Installlation: <br>
+## Installlation:
 ``` 
 pip install pydynpd
 ``` 
 
-usage: <br>
+## usage:
 ``` 
 import pandas as pd
 from  pydynpd import regression
@@ -19,7 +19,7 @@ command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  noleve
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
 
-result: <br>
+## result:
 ``` 
 Dynamic panel-data estimation, two-step difference GMM
  Group variable: id             Number of obs = 611    
