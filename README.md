@@ -54,7 +54,4 @@ Arellano, M., & Bover, O. (1995). Another look at the instrumental variable esti
 Blundell, R., & Bond, S. (1998). Initial conditions and moment restrictions in dynamic panel data models. Journal of econometrics, 87(1), 115-143.
 
 <a id="4">[4]</a> 
-Blundell, R., & Bond, S. (1998). Initial conditions and moment restrictions in dynamic panel data models. Journal of econometrics, 87(1), 115-143.
-
-<a id="5">[5]</a> 
 Windmeijer, F. (2005). A finite sample correction for the variance of linear efficient two-step GMM estimators. Journal of econometrics, 126(1), 25-51.
