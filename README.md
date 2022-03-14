@@ -46,3 +46,11 @@ Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ## References
 <a id="1">[1]</a> 
 Arellano, M., & Bond, S. (1991). Some tests of specification for panel data: Monte Carlo evidence and an application to employment equations. The review of economic studies, 58(2), 277-297.
+<a id="2">[2]</a> 
+Arellano, M., & Bover, O. (1995). Another look at the instrumental variable estimation of error-components models. Journal of econometrics, 68(1), 29-51.
+<a id="3">[3]</a> 
+Blundell, R., & Bond, S. (1998). Initial conditions and moment restrictions in dynamic panel data models. Journal of econometrics, 87(1), 115-143.
+<a id="4">[4]</a> 
+Blundell, R., & Bond, S. (1998). Initial conditions and moment restrictions in dynamic panel data models. Journal of econometrics, 87(1), 115-143.
+<a id="5">[5]</a> 
+Windmeijer, F. (2005). A finite sample correction for the variance of linear efficient two-step GMM estimators. Journal of econometrics, 126(1), 25-51.
