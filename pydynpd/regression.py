@@ -13,7 +13,7 @@ from pydynpd.common_functions import sum_product, Windmeijer
 import time
 
 
-class pydynpd:
+class abond:
 
     def __init__(self, command_str, df: DataFrame, identifier: list):
         # self.XZ_W2 = None
