@@ -62,12 +62,12 @@ Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 The objective of the package is similar to the following packages: <br>
 Package | Language
 --- | --- 
-xtabond2 | Stata
+xtabond2 | Mata （Stata）
 plm | R
 panelvar | R
 pdynmc | R
 
-Stata command reghdfe and the R function felm. The package tends to be much faster than these two options.
+
 
 ## References
 <a id="1">[1]</a> 
