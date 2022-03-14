@@ -4,7 +4,9 @@
 
 
 Installlation: <br>
-pip install pydynpd <br>
+``` 
+pip install pydynpd
+``` 
 
 usage: <br>
 ``` 
@@ -12,7 +14,8 @@ import pandas as pd
 from  pydynpd import regression
 
 df = pd.read_csv("data.csv")
-mydpd = regression.abond('n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  nolevel', df, ['id', 'year'])
+command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  nolevel'
+mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
 
 result: <br>
