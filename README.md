@@ -68,6 +68,15 @@ panelvar | R
 pdynmc | R
 ### Benchmarks
 
+estimates   | pydynpd | xtabond2 | plm | panelvar | pdynmc
+--- | --- | --- | --- | --- | --- 
+xtabond2 | Mata （Stata）
+plm | R
+panelvar | R
+pdynmc | R
+--- | --- | --- | --- | --- | --- 
+running time (secs) | 0.0838 | 0.0610  | |7.85 
+
 
 
 ## References
