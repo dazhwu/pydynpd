@@ -10,6 +10,14 @@ Below is a typical dynamic panel data model:
  
 In the equation above, x is a predetermined variable that is potentially correlated with past errors, s is a strictly exogenous variable, and u is fixed effect.
 
+## Features supported:
+* Differene and System GMM
+* One-step and Two-step
+* Robust standard errors. For two-step GMM, the calculation suggested by Windmeijer (2005) is used.
+* Hansen over-identification test
+* Arellano-Bond test for autocorrelation
+* Time dummies
+
 
 ## Installlation:
 ``` 
