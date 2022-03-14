@@ -43,3 +43,6 @@ Hansen test of overid. restrictions: chi(32) = 32.666 Prob > Chi2 = 0.434
 Arellano-Bond test for AR(1) in first differences: z = -1.29 Pr > z =0.198
 Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ``` 
+## References
+<a id="1">[1]</a> 
+Arellano, M., & Bond, S. (1991). Some tests of specification for panel data: Monte Carlo evidence and an application to employment equations. The review of economic studies, 58(2), 277-297.
