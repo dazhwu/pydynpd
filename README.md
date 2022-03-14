@@ -2,7 +2,7 @@
 [![DOI](https://zenodo.org/badge/466146436.svg)](https://zenodo.org/badge/latestdoi/466146436)
 [![pypi package](https://img.shields.io/pypi/v/pydynpd?style=plastic)](https://pypi.org/project/pydynpd/)
 
-pydynpd is the first python package that implements Difference and System GMM to estimate dynamic panel data models.
+pydynpd is the first python package to implement Difference and System GMM [1][2][3] to estimate dynamic panel data models.
 
 ## Installlation:
 ``` 
