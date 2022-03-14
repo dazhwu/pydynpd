@@ -58,7 +58,7 @@ Hansen test of overid. restrictions: chi(32) = 32.666 Prob > Chi2 = 0.434
 Arellano-Bond test for AR(1) in first differences: z = -1.29 Pr > z =0.198
 Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ``` 
-## Benchmarks
+## Similar packages
 The objective of the package is similar to the following packages: <br>
 Package | Language
 --- | --- 
@@ -66,6 +66,7 @@ xtabond2 | Mata （Stata）
 plm | R
 panelvar | R
 pdynmc | R
+### Benchmarks
 
 
 
