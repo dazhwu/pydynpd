@@ -3,7 +3,7 @@
 [![pypi package](https://img.shields.io/pypi/v/pydynpd?style=plastic)](https://pypi.org/project/pydynpd/)
 
 pydynpd is the first python package to implement Difference and System GMM [1][2][3] to estimate dynamic panel data models.
-![y_{it}=\sum^p_{i=1} \alpha_i y_{i,t-i}+\sum^q_{j=1} \beta_j x_{j,t}+\sum^r_{k=1} \gamma_k z_{j,t}+u_{it}](https://latex.codecogs.com/svg.image?y_{it}=\sum^p_{i=1}&space;\alpha_i&space;y_{i,t-i}&plus;\sum^q_{j=1}&space;\beta_j&space;x_{j,t}&plus;\sum^r_{k=1}&space;\gamma_k&space;z_{j,t}&plus;u_{it})
+![y_{it}=\sum^p_{l=1} \alpha_l y_{i,t-l}+\beta x_{i,t}+\gamma s_{i,t}+\nu_i+\epsilon_{it}](https://latex.codecogs.com/svg.image?y_{it}=\sum^p_{l=1}&space;\alpha_l&space;y_{i,t-l}&plus;\beta&space;x_{i,t}&plus;\gamma&space;s_{i,t}&plus;\nu_i&plus;\epsilon_{it})
 
 
 
