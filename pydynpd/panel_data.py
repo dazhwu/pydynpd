@@ -5,6 +5,7 @@ import numpy as np
 from pydynpd.variable import regular_variable, gmm_var
 from pydynpd.info import df_info, z_info, options_info
 import time
+from sys import exit
 
 # https://stackoverflow.com/questions/29352511/numpy-sort-ndarray-on-multiple-columns
 
@@ -369,8 +370,15 @@ def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
     tbr = []
 
     for var in variable_list:
+        if var.name not in df.columns:
+            print('Column ' + var.name + ' does not exist in the data set provided')
+            exit()
+
         if var.name not in list_cols:
             list_cols.append(var.name)
+
+
+
 
     list_array = split_into_groups(make_balanced(df[list_cols].to_numpy(), info.N, info.T), info.N, info.T)
 
@@ -424,6 +432,7 @@ def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last
 
         new_iv=regular_variable(name, 0)
         variables['iv'].append(new_var)
+
 
 
 

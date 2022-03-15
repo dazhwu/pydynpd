@@ -1,6 +1,7 @@
 import pydynpd.variable
 from pydynpd.variable import gmm_var, regular_variable
 from pydynpd.info import  options_info
+from sys import exit
 import re
 
 '''  n L(1\2).n L(0\1).w k| gmm(n, 2:4) gmm(w, 1:3) iv(ys L(0\1).k)| twostep nolevel robust'
@@ -17,7 +18,8 @@ def parse_command(command_str):
     variables = {}
     parts = command_str.split('|')
     if len(parts) <= 1:
-        raise Exception('two parts at least')
+        print('There should be at least two parts in command string')
+        exit()
     else:
         part_1 = parts[0]
         dep_indep_list = parse_dep_indep(part_1)
@@ -61,12 +63,9 @@ def parse_spaced_vars(list_vars, indep_iv):
         elif prog_2.match(var):
             new_vars=gen_list_rhs(match_groups_single.group(2), int(match_groups_single.group(1)),
                                     int(match_groups_single.group(1)))
-
         else:
             new_vars=gen_list_rhs(var, 0,0)
-            # https://rollbar.com/blog/throwing-exceptions-in-python/
 
-            # raise Exception(var + ' is not a valid variable')
 
         tbr+=new_vars
 
@@ -94,9 +93,14 @@ def parse_gmm_iv(part_2):
         vars = match_groups_multiple.group(1).split()
         min_lag = int(match_groups_multiple.group(2))
         max_lag = int(match_groups_multiple.group(3))
+        if min_lag > max_lag:
+            print( part + ': minimum lag cannot be greater than maximum lag')
+            exit()
         for var in vars:
             temp_var = gmm_var(var, min_lag, max_lag, 0)
             list_gmm.append(temp_var)
+
+
 
     iv_search_parts = re.findall('iv[(][a-zA-Z_0-9 .(/)]{1,}[)]', part_2)
     prog_2 = re.compile('^iv[(]([a-zA-Z_0-9 .(/)]{1,})[)]$')
@@ -121,7 +125,8 @@ def parse_options(part_3):
         elif option=='collapse':
             options.collapse=True
         else:
-            raise Exception(option + ' not an option allowed')
+            print(option + ' not an option allowed')
+            exit()
 
     return(options)
 
