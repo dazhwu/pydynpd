@@ -85,7 +85,7 @@ running time (secs) | 8.38 | 6.10  | 14.92 |784.9 |143.83| ...
 
 As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in its model. As for pdynmc, we first set "include.x" to be TRUE, but it crashed. Then we set "include.x" to be FALSE, it finished calculation. However, it only included lagged dependent variables. Maybe we didn't use pdynmc properly.
 
-Regarding runnint time, in thoery xtabond2 has a clear advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtbond2. Moreover, it is significanly faster than the three R packages which were not compiled just like pydynpd.
+Regarding runnint time, in thoery xtabond2 should have a clear advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the three R packages which were not compiled just like pydynpd.
 
 ## References
 <a id="1">[1]</a> 
