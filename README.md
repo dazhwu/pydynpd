@@ -60,7 +60,7 @@ Arellano-Bond test for AR(1) in first differences: z = -1.29 Pr > z =0.198
 Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ``` 
 ## Similar packages
-The objective of the package is similar to the following packages: <br>
+The objective of the package is similar to the following open-source packages (note: though Stata is a comercial software, xtabond2 is open sourced): <br>
 Package | Language
 --- | --- 
 xtabond2 | Mata （Stata）
@@ -83,7 +83,9 @@ AR(1) Test|-2.35|-2.35|-1.92|...
 AR(2) Test|-1.15|-1.15|-0.12|...
 running time (secs) | 8.38 | 6.10  | 14.92 |784.9 |143.83| ...
 
+As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in its model. As for pdynmc, we first set "include.x" to be TRUE, but it crashed. Then we set "include.x" to be FALSE, it finished calculation. However, it only included lagged dependent variables. Maybe we didn't use pdynmc properly.
 
+Regarding runnint time, in thoery xtabond2 has a clear advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtbond2. Moreover, it is significanly faster than the three R packages which were not compiled just like pydynpd.
 
 ## References
 <a id="1">[1]</a> 
