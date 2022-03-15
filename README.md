@@ -67,6 +67,8 @@ xtabond2 | Mata （Stata）
 plm | R
 panelvar | R
 pdynmc | R
+
+To compare pydynpd with similar packages, we performed a benchmark test. More specifically, for each package we run 100 times to estimate the same model with the same data. Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 ### Benchmarks
 
 estimates   | pydynpd | xtabond2 | plm | panelvar | pdynmc 1   | pdynmc 2 
