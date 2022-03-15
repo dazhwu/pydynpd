@@ -4,12 +4,14 @@ from  pydynpd import regression
 
 
 
-import time
+#import time
 
 #start = time.time()
+#for i in range(100):
 df = pd.read_csv("data.csv")
 
-mydpd = regression.abond('n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  nolevel', df, ['id', 'year'])
+command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) '
+mydpd = regression.abond(command_str, df, ['id', 'year'])
 
 
 

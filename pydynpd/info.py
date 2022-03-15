@@ -43,6 +43,7 @@ class options_info:
     twosteps: bool=True
     level: bool=True
     timedumm: bool=False
+    collapse: bool=False
 
 
 # @dataclass

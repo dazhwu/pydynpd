@@ -3,7 +3,7 @@ from pandas import DataFrame
 import numpy as np
 
 from pydynpd.variable import regular_variable, gmm_var
-from pydynpd.info import df_info, z_info
+from pydynpd.info import df_info, z_info, options_info
 import time
 
 # https://stackoverflow.com/questions/29352511/numpy-sort-ndarray-on-multiple-columns
@@ -11,8 +11,8 @@ import time
 # https://itecnote.com/tecnote/python-efficiently-applying-a-function-to-a-grouped-pandas-dataframe-in-parallel/
 
 
-def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm):
-    start=time.time()
+def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_info):
+#    start=time.time()
     if len(identifiers) == 2:
         _individual = identifiers[0]
         _time = identifiers[1]
@@ -21,11 +21,10 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm)
 
     variables = p_variables
 
-    level = p_level
-    timedumm=p_timedumm
+    level = options.level
+    timedumm=options.timedumm
+    collapse=options.collapse
     method = 'fd'
-
-
 
     df_information = get_info(df, variables, method, _individual, _time)
 
@@ -36,12 +35,13 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm)
     xy_tables = get_xy_table_list(df, variables, df_information)
     final_xy_tables = get_final_xy_tables(xy_tables, df_information, level)
 
-    if level:
-        z_information, z_list = build_z_level(variables, df_information, gmm_tables)
-    else:
-        z_information, z_list = build_z_diff(variables, df_information, gmm_tables, False)
 
-    print(time.time()-start)
+    if level:
+        z_information, z_list = build_z_level(variables, df_information, gmm_tables, collapse)
+    else:
+        z_information, z_list = build_z_diff(variables, df_information, gmm_tables, False, collapse)
+
+#    print(time.time()-start)
     return ((z_list, z_information, df_information, final_xy_tables))
 
 
@@ -172,12 +172,12 @@ def split_into_groups(arr, N, T):
     return (tbr)
 
 
-def build_z_level(variables: dict, info: df_info, gmm_tables: dict):
+def build_z_level(variables: dict, info: df_info, gmm_tables: dict, collapse=False):
 
     lev_last_index = info.last_index
     lev_first_index = info.first_index - 1
 
-    z_information, z_list = build_z_diff(variables, info, gmm_tables, True)
+    z_information, z_list = build_z_diff(variables, info, gmm_tables, True, collapse)
 
     width = lev_last_index - lev_first_index + 1
 
@@ -203,8 +203,10 @@ def build_z_level(variables: dict, info: df_info, gmm_tables: dict):
         for var_id in range(len(gmm_vars)):
             lag = gmm_vars[var_id].min_lag - 1
             for j in range(width):
-
-                z[start_row + var_id * width + j, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
+                if collapse:
+                    z[start_row + var_id, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
+                else:
+                    z[start_row + var_id * width + j, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
 
         start_pos = z_information.num_gmm_instr
         for var_id in range(len(iv_vars)):
@@ -218,7 +220,7 @@ def build_z_level(variables: dict, info: df_info, gmm_tables: dict):
     return ((z_information, z_list))
 
 
-def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
+def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level, collapse=False):
     z_list = []
 
     gmm_vars = variables['gmm']
@@ -229,9 +231,12 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
 
     diff_width = info.last_index - info.first_index + 1
     level_width = diff_width + 1
-    level_height = len(gmm_vars) * level_width  + 1 #+ len(iv_vars)
+    if collapse:
+        level_height = len(gmm_vars)  + 1  # + len(iv_vars)
+    else:
+        level_height = len(gmm_vars) * level_width  + 1 #+ len(iv_vars)
 
-    num_gmm_instr, gmm_diff_info = prepare_Z_gmm_diff(variables, diff_width, info)
+    num_gmm_instr, gmm_diff_info = prepare_Z_gmm_diff(variables, diff_width, info, collapse)
     iv_diff_info = prepare_Z_iv_diff(variables, diff_width, info)
 
     diff_height = (num_gmm_instr + iv_diff_info.shape[0])
@@ -239,7 +244,7 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
     z_information = z_info(diff_height=diff_height, diff_width=diff_width, level_width=level_width,
                            level_height=level_height, num_gmm_instr=num_gmm_instr, num_instr=diff_height)
     
-                           
+    #print(diff_height)
 
     if level:
         height = diff_height + level_height
@@ -263,12 +268,10 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level):
                 start = gmm_diff_info[var_id * 3 + 0, j]
                 end = gmm_diff_info[var_id * 3 + 1, j]
 
-                z[row_pos:(row_pos + end - start + 1), j] = array_gmm[start:(end + 1), var_id]
-                #print(array_gmm[range(end,(start - 1),-1), var_id].shape)
-                #print(z[row_pos:(row_pos + end - start + 1), j].shape )
+                #z[row_pos:(row_pos + end - start + 1), j] = array_gmm[start:(end + 1), var_id]
 
-                # for k in range(end-start +1):
-                #     z[row_pos+k, j] = array_gmm[end-k, var_id]
+                for k in range(end-start +1):
+                    z[row_pos+k, j] = array_gmm[end-k, var_id]
             var_id += 1
 
         row_pos = num_gmm_instr
@@ -303,33 +306,40 @@ def prepare_Z_iv_diff(variables: dict, width, info: df_info):
     return (t_info)
 
 
-def prepare_Z_gmm_diff(variables: dict, width, info: df_info):
-    start_index = 0
+def prepare_Z_gmm_diff(variables: dict, width, info: df_info, collapse=False):
+
+
+    start_row = 0
+
     gmm_vars = variables['gmm']
     num_gmm = len(gmm_vars)
     t_info = np.empty((num_gmm * 3, width), dtype='int32')
     var_id = 0
     for var_id in range(num_gmm):
         var = gmm_vars[var_id]
-        # print(var.min_lag, var.max_lag)
+
         first_tend = info.first_index - var.min_lag
         last_tend = info.last_index - var.min_lag
-        # print(first_tend, last_tend)
-        # first_ti=max(0, self.first_index-var.max_lag)
 
         tend = np.arange(first_tend, last_tend + 1, dtype='int32')
         t_info[var_id * 3 + 1,] = tend
+
+
         for i in range(0, width):
             tstart = max(0, tend[i] + var.min_lag - var.max_lag)
             t_info[var_id * 3 + 0, i] = tstart
             # t_info[var_id*3+1, i]=tend[i]
-            t_info[var_id * 3 + 2, i] = start_index
+            t_info[var_id * 3 + 2, i] = start_row   # physical position of the row
 
             num = tend[i] - tstart + 1
             # num_instru += num
-            start_index += num
+            if collapse:
+                if i==(width-1):
+                    start_row += num
+            else:
+                start_row += num
 
-    num_gmm_instr = start_index
+    num_gmm_instr = start_row  #number of gmm instruments in diff eq
     return ((num_gmm_instr, t_info))
 
 

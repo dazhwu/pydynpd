@@ -25,12 +25,13 @@ class abond:
         self.twosteps = options.twosteps
         self.level = options.level
         self.timedumm=options.timedumm
+        self.collapse=options.collapse
 
         self.identifier=identifier
         robust = True
 
         self.z_list, self.z_information, df_inf, final_xy_tables \
-            = new_panel_data(df, ['id', 'year'], self.variables, self.level, self.timedumm)
+            = new_panel_data(df, ['id', 'year'], self.variables, options)
 
         self._z_t_list = [z.transpose() for z in self.z_list]
         self.num_instru=self.z_information.num_instr

@@ -110,7 +110,7 @@ def parse_gmm_iv(part_2):
 def parse_options(part_3):
     list_options = part_3.split()
     options=options_info()
-    possible_options=['onestep','nolevel', 'timedumm']
+    possible_options=['onestep','nolevel', 'timedumm', 'collapse']
     for option in list_options:
         if option=='onestep':
             options.twosteps=False
@@ -118,6 +118,8 @@ def parse_options(part_3):
             options.level=False
         elif option=='timedumm':
             options.timedumm=True
+        elif option=='collapse':
+            options.collapse=True
         else:
             raise Exception(option + ' not an option allowed')
 
