@@ -17,6 +17,7 @@ In the equation above, x is a predetermined variable that is potentially correla
 * Hansen over-identification test
 * Arellano-Bond test for autocorrelation
 * Time dummies
+* Collapse GMM instruments to limit instrument proliferation
 
 
 ## Installlation:
