@@ -12,6 +12,7 @@ import time
 
 
 def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm):
+    start=time.time()
     if len(identifiers) == 2:
         _individual = identifiers[0]
         _time = identifiers[1]
@@ -40,6 +41,7 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, p_level, p_timedumm)
     else:
         z_information, z_list = build_z_diff(variables, df_information, gmm_tables, False)
 
+    print(time.time()-start)
     return ((z_list, z_information, df_information, final_xy_tables))
 
 
@@ -126,15 +128,25 @@ def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
         height_upper = Dx_list[0].shape[0]
         height_lower = x_list[0].shape[0]
         height_total = height_upper + height_lower
+        width=x_list[0].shape[1]
 
         for i in range(df_information.N):  # , nogil=True):  #df_information.N
+            temp_y=np.empty((height_total,1), dtype='float64')
+            temp_y[0:height_upper,0]=Dy_list[i][0:height_upper,0]
+            temp_y[height_upper:height_total,0]=y_list[i][0:height_lower,0]
+            # temp_y = np.vstack((Dy_list[i], y_list[i]))
 
-            temp_y = np.vstack((Dy_list[i], y_list[i]))
-            temp_x = np.vstack((Dx_list[i], x_list[i]))
-            temp_constant = np.zeros((height_total, 1), dtype='float64')
-            temp_constant[height_upper:height_total, 0] = 1
-
-            temp_x = np.hstack((temp_x, temp_constant))
+            temp_x=np.empty((height_total, width+1))
+            temp_x[0:height_upper, 0:width] = Dx_list[i][0:height_upper, 0:width]
+            temp_x[height_upper:height_total, 0:width] = x_list[i][0:height_lower, 0:width]
+            temp_x[0:height_upper, width]=0
+            temp_x[height_upper:height_total, width] = 1
+            #
+            # temp_x = np.vstack((Dx_list[i], x_list[i]))
+            # temp_constant = np.zeros((height_total, 1), dtype='float64')
+            # temp_constant[height_upper:height_total, 0] = 1
+            #
+            # temp_x = np.hstack((temp_x, temp_constant))
             Cy_list.append(temp_y)
             Cx_list.append(temp_x)
     else:  # diff-GMM
@@ -148,15 +160,15 @@ def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
     return (final_xy_tables)
 
 
-def split_into_groups(arr, N):
+def split_into_groups(arr, N, T):
     # needs to be sorted
 
-    # tbr=[]
-    # for i in range(0, self.N):
-    #     temp_arr=np.empty((self.T, arr.shape[1]), dtype='float64')
-    #     temp_arr[:]=arr[i*self.T:(i+1)*self.T,:]
-    #     tbr.append(temp_arr)
-    tbr = np.vsplit(arr, N)
+    tbr=[]
+    for i in range(0, N):
+        temp_arr=np.empty((T, arr.shape[1]), dtype='float64')
+        temp_arr[:]=arr[i*T:(i+1)*T,:]
+        tbr.append(temp_arr)
+    #tbr = np.vsplit(arr, N)
     return (tbr)
 
 
@@ -350,7 +362,7 @@ def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
         if var.name not in list_cols:
             list_cols.append(var.name)
 
-    list_array = split_into_groups(make_balanced(df[list_cols].to_numpy(), info.N, info.T), info.N)
+    list_array = split_into_groups(make_balanced(df[list_cols].to_numpy(), info.N, info.T), info.N, info.T)
 
     variable_names = [var.name for var in variable_list]
     which_col = [list_cols.index(var_name) for var_name in variable_names]
