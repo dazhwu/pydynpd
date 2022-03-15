@@ -2,11 +2,12 @@ import numpy as np
 from scipy import stats
 import math
 from pydynpd.info import hansen_test_info
+from pydynpd.common_functions import sum_product
 
 
-def hansen_overid(N, W, zs, num_instru, num_indep):
+def hansen_overid(ZuuZ, zs, num_instru, num_indep):
 
-    hansen_test=np.linalg.multi_dot([zs.transpose(),np.linalg.pinv(W*N), zs])
+    hansen_test=np.linalg.multi_dot([zs.transpose(),np.linalg.pinv(ZuuZ), zs])
     df=num_instru - num_indep
     crit=stats.chi2.ppf (q=0.95 , df=df)  #if hansen > crit then H0 is not supported
     p_value=1-stats.chi2.cdf(hansen_test, df)
@@ -89,28 +90,3 @@ def AR_test(regression, m): #N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx
     return (AR_list)
         
         
-def sum_product(listOflist, n_rows):
-    num_elements=len(listOflist)
-
-    for i in range(n_rows):
-        list_temp=[]
-        for j in range(num_elements):
-            if type(listOflist[j])==list:
-                var_list=listOflist[j]
-                list_temp.append(var_list[i])
-            elif type(listOflist[j])==np.ndarray:
-                var_mat=listOflist[j]
-                list_temp.append(var_mat)
-            else:
-                pass  #throw error
-        temp=np.linalg.multi_dot(list_temp)
-        if i==0:
-            tbr=temp
-        else:
-            tbr=np.add(tbr, temp)
-
-    return(tbr)            
-    
-            
-        
-    

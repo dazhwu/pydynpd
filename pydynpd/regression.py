@@ -16,17 +16,8 @@ import time
 class abond:
 
     def __init__(self, command_str, df: DataFrame, identifier: list):
-        # self.XZ_W2 = None
-        # self.SS1 = None
-        # self._residual1_t = None
-        # self.residual1 = None
-        # self.beta1 = None
-        # self.M1 = None
-        # self.XZ_W1 = None
-        # self.Zy = None
-        # self.XZ = None
-        # self.W1 = None
 
+        self.initiate_properties()
 
         self.variables, options = parse_command(command_str)
 
@@ -59,6 +50,40 @@ class abond:
         #     self.step_1()
 
         self.generate_summary()
+    def initiate_properties(self):
+
+        self.z_information=None
+        self.AR_list=None
+        self.Cx_list=None
+        self.Cy_list=None
+        self.residual1=None
+        self.residual2=None
+
+
+        self.H1=None
+        self.H2=None
+        self.M1=None
+        self.M2=None
+        self.SS1=None
+        self.SS2=None
+        self.W1=None
+        self.W2=None
+        self.XZ=None
+        self.XZ_W1=None
+        self.XZ_W2=None
+        self.ZuuZ=None
+        self.Zy=None
+        self.vcov_step1=None
+        self.vcov_step2=None
+        self.zs1=None
+        self.zs2=None
+
+
+
+        self.N=0
+        self.num_obs=0
+        self.num_instru=0
+
 
     def step_1(self):
         N = self.N
@@ -238,7 +263,7 @@ class abond:
 
     def generate_summary(self):
 
-        self.hansen = tests.hansen_overid(self.N, self.W2, self.zs2, self.num_instru,
+        self.hansen = tests.hansen_overid(self.ZuuZ, self.zs2, self.num_instru,
                                           self.Cx_list[0].shape[1])
         self.AR_list = tests.AR_test(self, 2)
 
