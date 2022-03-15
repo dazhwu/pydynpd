@@ -19,7 +19,7 @@ def sum_product(listOflist, n_rows):
         if i == 0:
             tbr = temp
         else:
-            tbr = np.add(tbr, temp)
+            tbr += temp
 
     return (tbr)
 
