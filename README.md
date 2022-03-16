@@ -71,19 +71,19 @@ pdynmc | R
 To compare pydynpd with similar packages, we performed a benchmark test. More specifically, for each package we run 100 times to estimate the same model with the same data. Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 ### Benchmarks
 
-estimates   | pydynpd | xtabond2 | plm | panelvar | pdynmc 1   | pdynmc 2 
---- | --- | --- | --- | --- | --- | --- 
-L1.n | 0.9453（0.1430）|0.9453（0.1430）| 0.9933 (0.1465)|0.9453（0.1430）|1.3011 (0.0909)| Error reported by pdynmc
-L2.n | -0.0860 (0.1082) |-0.0860 (0.1082)| -0.1640 (0.1071) |-0.0860 (0.1082)| -0.3338 (0.0846)
-w | -0.4478 (0.1522) | -0.4478 (0.1522)| 0.0594 (0.0284)|-0.4478 (0.1522)|
+estimates   | pydynpd | xtabond2 | plm | panelvar 
+--- | --- | --- | --- | --- 
+L1.n | 0.9453（0.1430）|0.9453（0.1430）| 0.9933 (0.1465)|0.9453（0.1430）
+L2.n | -0.0860 (0.1082) |-0.0860 (0.1082)| -0.1640 (0.1071) |-0.0860 (0.1082)
+w | -0.4478 (0.1522) | -0.4478 (0.1522)| 0.0594 (0.0284)|-0.4478 (0.1522)
 k | 0.1236 (0.0509) |0.1236 (0.0509)|0.1403 (0.0500)|0.1236 (0.0509)|
 const | 1.5631 (0.4993) |1.5631 (0.4993)| ... |1.5631 (0.4993)|
 --- | --- | --- | --- | --- | --- 
-number of instruments derived|51|51|51|51|34| ...
-Hensen Test|96.44|96.44|105.7|96.44|67.82
+number of instruments derived|51|51|51|51
+Hensen Test|96.44|96.44|105.7|96.44
 AR(1) Test|-2.35|-2.35|-1.92|...
 AR(2) Test|-1.15|-1.15|-0.12|...
-running time (secs) | 8.38 | 6.10  | 14.92 |784.9 |143.83| ...
+running time (secs) | 8.38 | 6.10  | 14.92 |784.9 
 
 As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in system GMM in its model. As for pdynmc, we first set "include.x" to be TRUE, but it crashed. Then we set "include.x" to be FALSE, it finished calculation. However, it only included lagged dependent variables. Maybe we didn't use pdynmc properly.
 
