@@ -1,6 +1,7 @@
 from pandas import DataFrame
 
 import numpy as np
+import math
 
 from pydynpd.variable import regular_variable, gmm_var
 from pydynpd.info import df_info, z_info, options_info
@@ -433,7 +434,19 @@ def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last
         new_iv=regular_variable(name, 0)
         variables['iv'].append(new_var)
 
+        
+def generate_D_matrix(T, max_lag):
+    # matrix used in Forward Orthogonal Deviation
+    D=np.zeros((T-1-max_lag, T), dtype='float64')
 
+    for i in range(T-1-max_lag):
+        for j in range(i, T):
+            if i==j:
+                D[i,j]=math.sqrt((T-i-1)/(T-i))
+            else:
+                D[i,j]=(-1)*math.sqrt(1/((T-i)*(T-i-1))
+    
+    return(D)
 
 
 
