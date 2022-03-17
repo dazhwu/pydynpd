@@ -451,7 +451,7 @@ def generate_D_matrix(T, max_lag):
             if i==j:
                 D[i,j]=math.sqrt((T-i-1)/(T-i))
             else:
-                D[i,j]=(-1)*math.sqrt(1/((T-i)*(T-i-1))
+                D[i,j]=(-1)*math.sqrt(1/((T-i)*(T-i-1)))
     
     return(D)
 

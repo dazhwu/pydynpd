@@ -1,6 +1,7 @@
 import pydynpd.variable
 from pydynpd.variable import gmm_var, regular_variable
 from pydynpd.info import  options_info
+import sys
 from sys import exit
 import re
 
@@ -90,6 +91,7 @@ def parse_gmm_iv(part_2):
 
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
+        print(match_groups_multiple)
         vars = match_groups_multiple.group(1).split()
         min_lag = int(match_groups_multiple.group(2))
         max_lag = int(match_groups_multiple.group(3))
@@ -103,7 +105,23 @@ def parse_gmm_iv(part_2):
             temp_var = gmm_var(var, min_lag, max_lag, 0)
             list_gmm.append(temp_var)
 
+    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[.][)]', part_2)
+    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([.])[)]$')
+    for part in gmm_search_parts:
 
+        # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        match_groups_multiple = prog_1.match(part)
+        print(match_groups_multiple)
+        vars = match_groups_multiple.group(1).split()
+        min_lag = int(match_groups_multiple.group(2))
+        max_lag = sys.maxsize
+
+        if min_lag < 0:
+            print(part + ': lags must be non-negative')
+            exit()
+        for var in vars:
+            temp_var = gmm_var(var, min_lag, max_lag, 0)
+            list_gmm.append(temp_var)
 
     iv_search_parts = re.findall('iv[(][a-zA-Z_0-9 .(/)]{1,}[)]', part_2)
     prog_2 = re.compile('^iv[(]([a-zA-Z_0-9 .(/)]{1,})[)]$')
