@@ -37,7 +37,12 @@ mydpd = regression.abond(command_str, df, ['id', 'year'])
 ### Function abond(command string, data frame, identifier)
 where command string consists of two or three parts. The first two parts are required. <br>
 <P> Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in command string. For example, L2.n means to lag variable n two periods. Shortcut L(1/2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n </P>
-<p> Part two desribes instruments. There are two types of styles. GMM([list of variables], min_lag max_lag) 
+<p> Part two desribes how instruments are created. The grammar in this part is similar to that in Stata package XTabond2. More specifically, GMM(varaible list, min_lag max_lag) indicates that lags min_lag through max_lag of each variable included in list of variables are used to generate instruments. For example, GMM(w k, 1 3) means lags 1 through 3 of variables w and k are treated as instruments. On the other hand, IV(variable list) means each variable on variable list is treated as instruments.
+<p> Part three is optional. It includes the following possible options:
+* onestep
+* nolevel
+* collapse
+
  </p>
 
 ## result:
