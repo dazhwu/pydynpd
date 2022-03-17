@@ -96,6 +96,9 @@ def parse_gmm_iv(part_2):
         if min_lag > max_lag:
             print( part + ': minimum lag cannot be greater than maximum lag')
             exit()
+        if min_lag<0:
+            print(part + ': lags must be non-negative')
+            exit()
         for var in vars:
             temp_var = gmm_var(var, min_lag, max_lag, 0)
             list_gmm.append(temp_var)

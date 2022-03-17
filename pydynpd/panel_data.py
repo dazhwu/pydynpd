@@ -58,6 +58,9 @@ def get_info(df: DataFrame, variables, method, _individual, _time):
 
     df['_NT'] = df['_individual'] * T + df['_time']
 
+    if N<=T:
+        print('Warning: system and difference GMMs do not work well on long (T>=N) panel data')
+
     for var in variables['dep_indep'] + variables['iv']:
         if var.lag > max_lag:
             max_lag = var.lag
@@ -72,6 +75,10 @@ def get_info(df: DataFrame, variables, method, _individual, _time):
     else:
         last_index = T - 2
         first_index = max_lag
+
+    if first_index>=last_index:
+        print('The number of periods in the data set is not high enough')
+        exit()
 
     tbr = df_info(N=N, T=T, ids=['_NT'], _individual=_individual, _time=_time, max_lag=max_lag, first_index=first_index,
                   last_index=last_index)
