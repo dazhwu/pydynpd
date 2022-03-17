@@ -34,9 +34,11 @@ df = pd.read_csv("data.csv")
 command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  nolevel'
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
-### abond(command string, data frame, identifier)
+### Function abond(command string, data frame, identifier)
 where command string consists of two or three parts. The first two parts are required. <br>
 <P> Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in command string. For example, L2.n means to lag variable n two periods. Shortcut L(1/2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n </P>
+<p> Part two desribes instruments. There are two types of styles. GMM([list of variables], min_lag max_lag) 
+ </p>
 
 ## result:
 ``` 
