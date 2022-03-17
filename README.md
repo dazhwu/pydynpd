@@ -12,7 +12,7 @@ In the equation above, x is a predetermined variable that is potentially correla
 
 ## Features supported:
 * Differene and System GMM
-* One-step and Two-step
+* One-step and Two-step estimates
 * Robust standard errors. For two-step GMM, the calculation suggested by Windmeijer (2005) is used.
 * Hansen over-identification test
 * Arellano-Bond test for autocorrelation
@@ -34,9 +34,17 @@ df = pd.read_csv("data.csv")
 command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3)  iv(k) | timedumm  nolevel'
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
-### abond(command string, data frame, identifier)
+### Function abond(command string, data frame, identifier)
 where command string consists of two or three parts. The first two parts are required. <br>
-<P> Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in command string. For example, L2.n means to lag variable n two periods. Shortcut L(1/2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n </P>
+* Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in command string. For example, L2.n means to lag variable n two periods. Shortcut L(1/2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n. 
+* Part two desribes how instruments are created. The grammar in this part is similar to that in Stata package XTabond2. More specifically, GMM(varaible list, min_lag max_lag) indicates that lags min_lag through max_lag of each variable included in list of variables are used to generate instruments. For example, GMM(w k, 1 3) means lags 1 through 3 of variables w and k are treated as instruments. On the other hand, IV(variable list) means each variable on variable list is treated as instruments.
+* Part three is optional. It includes the following possible options: 
+  * onestep: perform one-step estimation rather than the default two-step estimation.
+  * nolevel: only perform difference GMM
+  * timedumm: include time dummies
+  * collapse: collapse instruments
+
+
 
 ## result:
 ``` 
