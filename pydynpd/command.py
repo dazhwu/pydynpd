@@ -91,19 +91,12 @@ def parse_gmm_iv(part_2):
 
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
-        print(match_groups_multiple)
+
         vars = match_groups_multiple.group(1).split()
         min_lag = int(match_groups_multiple.group(2))
         max_lag = int(match_groups_multiple.group(3))
-        if min_lag > max_lag:
-            print( part + ': minimum lag cannot be greater than maximum lag')
-            exit()
-        if min_lag<0:
-            print(part + ': lags must be non-negative')
-            exit()
-        for var in vars:
-            temp_var = gmm_var(var, min_lag, max_lag, 0)
-            list_gmm.append(temp_var)
+
+        list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
 
     gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[.][)]', part_2)
     prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([.])[)]$')
@@ -111,17 +104,39 @@ def parse_gmm_iv(part_2):
 
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
-        print(match_groups_multiple)
+
         vars = match_groups_multiple.group(1).split()
         min_lag = int(match_groups_multiple.group(2))
         max_lag = sys.maxsize
 
-        if min_lag < 0:
-            print(part + ': lags must be non-negative')
-            exit()
-        for var in vars:
-            temp_var = gmm_var(var, min_lag, max_lag, 0)
-            list_gmm.append(temp_var)
+        list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
+
+    gmm_search_parts = re.findall('endo[(][a-zA-Z_0-9 ]{1,}[)]', part_2)
+    prog_1 = re.compile('^endo[(]([a-zA-Z_0-9 ]{1,})[)]$')
+
+    for part in gmm_search_parts:
+
+        # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        match_groups_multiple = prog_1.match(part)
+
+        vars = match_groups_multiple.group(1).split()
+        min_lag = 2
+        max_lag = sys.maxsize
+
+        list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
+
+    gmm_search_parts = re.findall('pred[(][a-zA-Z_0-9 ]{1,}[)]', part_2)
+    prog_1 = re.compile('^pred[(]([a-zA-Z_0-9 ]{1,})[)]$')
+
+    for part in gmm_search_parts:
+        # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        match_groups_multiple = prog_1.match(part)
+
+        vars = match_groups_multiple.group(1).split()
+        min_lag = 1
+        max_lag = sys.maxsize
+
+        list_gmm = process_GMM(vars, min_lag, max_lag, list_gmm, part)
 
     iv_search_parts = re.findall('iv[(][a-zA-Z_0-9 .(/)]{1,}[)]', part_2)
     prog_2 = re.compile('^iv[(]([a-zA-Z_0-9 .(/)]{1,})[)]$')
@@ -129,6 +144,7 @@ def parse_gmm_iv(part_2):
         match_groups_multiple = prog_2.match(part)
         vars = match_groups_multiple.group(1).split()
         list_iv = list_iv + parse_spaced_vars(vars, 1)
+
 
     return ([list_gmm, list_iv])
 
@@ -150,6 +166,19 @@ def parse_options(part_3):
             exit()
 
     return(options)
+
+def process_GMM(vars, min_lag, max_lag, list_gmm, part):
+    if min_lag > max_lag:
+        print(part + ': minimum lag cannot be greater than maximum lag')
+        exit()
+    if min_lag < 0:
+        print(part + ': lags must be non-negative')
+        exit()
+    for var in vars:
+        temp_var = gmm_var(var, min_lag, max_lag, 0)
+        list_gmm.append(temp_var)
+
+    return list_gmm
 
 def gen_list_rhs(name, start_lag, end_lag):
 
