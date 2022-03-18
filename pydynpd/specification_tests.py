@@ -5,9 +5,9 @@ from pydynpd.info import hansen_test_info
 from pydynpd.common_functions import sum_product
 
 
-def hansen_overid(ZuuZ, zs, num_instru, num_indep):
+def hansen_overid(W2_inv, N, zs,    num_instru, num_indep):
 
-    hansen_test=np.linalg.multi_dot([zs.transpose(),np.linalg.pinv(ZuuZ), zs])
+    hansen_test=np.linalg.multi_dot([zs.transpose(),W2_inv, zs])*(1.0/N)
     df=num_instru - num_indep
     crit=stats.chi2.ppf (q=0.95 , df=df)  #if hansen > crit then H0 is not supported
     p_value=1-stats.chi2.cdf(hansen_test, df)
@@ -24,12 +24,14 @@ def AR_test(regression, m): #N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx
     if regression.twosteps:
         M=regression.M2
         XZ_W=regression.XZ_W2
+        M_XZ_W=regression._M2_XZ_W2
         vcov=regression.vcov_step2
         residual=regression.residual2
         residual_t=regression._residual2_t
     else:
         M=regression.M1
         XZ_W=regression.XZ_W1
+        M_XZ_W=regression._M1_XZ_W2
         vcov=regression.vcov_step1
         residual = regression.residual1
         residual_t = regression._residual1_t
@@ -77,7 +79,7 @@ def AR_test(regression, m): #N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx
 
         temp3=sum_product([z_list, residual, r_t_list, lagm_t_list],N)
         #temp3 = sum_product([z_list, H, lagm_t_list], N)
-        temp2=np.linalg.multi_dot([EX, M, XZ_W, temp3])
+        temp2=np.linalg.multi_dot([EX, M_XZ_W, temp3])
         d2=(-2)*temp2
 
         d3=np.linalg.multi_dot([EX,vcov,EX.transpose()])

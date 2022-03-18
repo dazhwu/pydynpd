@@ -138,7 +138,7 @@ def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
         height_lower = x_list[0].shape[0]
         height_total = height_upper + height_lower
         width=x_list[0].shape[1]
-
+        #Cx=np.empty()
         for i in range(df_information.N):  # , nogil=True):  #df_information.N
             temp_y=np.empty((height_total,1), dtype='float64')
             temp_y[0:height_upper,0]=Dy_list[i][0:height_upper,0]
@@ -202,6 +202,7 @@ def build_z_level(variables: dict, info: df_info, gmm_tables: dict, collapse=Fal
 
     for i in range(info.N):
         z = z_list[i]
+        #print(z is z_list[i])
         # z[start_row-1,start_col:(start_col+self.level_width)]=1
         z[z_information.diff_height + z_information.level_height - 1,
         start_col:(start_col + z_information.level_width)] = 1

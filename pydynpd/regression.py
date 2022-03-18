@@ -51,33 +51,34 @@ class abond:
         #     self.step_1()
 
         self.generate_summary()
+
     def initiate_properties(self):
 
-        self.z_information=None
-        self.AR_list=None
-        self.Cx_list=None
-        self.Cy_list=None
-        self.residual1=None
-        self.residual2=None
+        # self.z_information=None
+        # self.AR_list=None
+        # self.Cx_list=None
+        # self.Cy_list=None
+        # self.residual1=None
+        # self.residual2=None
 
 
-        self.H1=None
-        self.H2=None
-        self.M1=None
-        self.M2=None
-        self.SS1=None
-        self.SS2=None
-        self.W1=None
-        self.W2=None
-        self.XZ=None
-        self.XZ_W1=None
-        self.XZ_W2=None
-        self.ZuuZ=None
-        self.Zy=None
-        self.vcov_step1=None
-        self.vcov_step2=None
-        self.zs1=None
-        self.zs2=None
+        # self.H1=None
+        # self.H2=None
+        # self.M1=None
+        # self.M2=None
+        # self.SS1=None
+        # self.SS2=None
+        # self.W1=None
+        # self.W2=None
+        # self.XZ=None
+        # self.XZ_W1=None
+        # self.XZ_W2=None
+        # self.ZuuZ=None
+        # self.Zy=None
+        # self.vcov_step1=None
+        # self.vcov_step2=None
+        # self.zs1=None
+        # self.zs2=None
 
 
 
@@ -103,8 +104,9 @@ class abond:
         XZ_W1 = np.matmul(XZ, np.linalg.pinv(W1))
 
         M1 = pinv(np.matmul(XZ_W1, XZ.transpose()))
+        M1_XZ_W1=np.matmul(M1, XZ_W1)
 
-        beta1 = multi_dot([M1, XZ_W1, Zy.transpose()])
+        beta1 = multi_dot([M1_XZ_W1, Zy.transpose()])
 
         residual1 = self.calculate_residual(Cy_list, Cx_list, beta1)
 
@@ -120,6 +122,8 @@ class abond:
         self.Zy = Zy
         self.XZ_W1 = XZ_W1
         self.M1 = M1
+        self._M1_XZ_W1=M1_XZ_W1
+
         self.beta1 = beta1
         self.residual1 = residual1
         self._residual1_t = _residual1_t
@@ -145,14 +149,14 @@ class abond:
         ZuuZ=self.ZuuZ
         W2=self.W2
 
-
-        XZ_W2: ndarray = np.matmul(XZ, pinv(W2))
+        W2_inv=pinv(W2)
+        XZ_W2: ndarray = np.matmul(XZ, W2_inv)
 
         M2 = pinv(np.matmul(XZ_W2, XZ.transpose()))
 
+        M2_XZ_W2=np.matmul(M2, XZ_W2)
 
-
-        beta2 = multi_dot([M2, XZ_W2, Zy.transpose()])
+        beta2 = multi_dot([M2_XZ_W2, Zy.transpose()])
 
         residual2 = self.calculate_residual(Cy_list, Cx_list, beta2)
         _residual2_t = [mat.transpose() for mat in residual2]
@@ -163,13 +167,16 @@ class abond:
 
         self.H2 = [np.matmul(r, r.transpose()) for r in self.residual1]
         self.XZ_W2 = XZ_W2
+        self._W2_inv=W2_inv
+        
         self.M2 = M2
-
+        self._M2_XZ_W2=M2_XZ_W2
         self.beta2 = beta2
         self.residual2 = residual2
         self._residual2_t = _residual2_t
         self.SS2 = SS2
         self.zs2 = zs2
+
 
         self.vcov_step2 = self.vcov(2)
         self.std_err2 = np.sqrt(np.diag(self.vcov_step2))
@@ -187,11 +194,11 @@ class abond:
     def vcov(self, step: int):
         # report robust vcov only
         if step == 2:
-            return Windmeijer(self.M2, self.XZ_W2, self.W2, self.zs2,
+            return Windmeijer(self.M2, self._M2_XZ_W2, self._W2_inv, self.zs2,
                                                self.vcov_step1, self.Cx_list, self.z_list, self.residual1)
         else:
-            return self.N * np.linalg.multi_dot([self.M1, self.XZ_W1, self.W2,
-                                                 self.XZ_W1.transpose(), self.M1])
+            return self.N * np.linalg.multi_dot([self._M1_XZ_W1, self.W2,
+                                                 self._M1_XZ_W1.transpose()])
 
         # elif self.twosteps:   #two steps non robust
         #     return(self.M2*self.N)
@@ -264,7 +271,7 @@ class abond:
 
     def generate_summary(self):
 
-        self.hansen = tests.hansen_overid(self.ZuuZ, self.zs2, self.num_instru,
+        self.hansen = tests.hansen_overid(self._W2_inv, self.N, self.zs2, self.num_instru,
                                           self.Cx_list[0].shape[1])
         self.AR_list = tests.AR_test(self, 2)
 

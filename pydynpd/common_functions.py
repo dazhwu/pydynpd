@@ -23,7 +23,7 @@ def sum_product(listOflist, n_rows):
 
     return (tbr)
 
-def Windmeijer(M2, XZ_W2, W2, zs2, vcov_step1, Cx_list, z_list, residual1):
+def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual1):
     N = len(Cx_list)
 
     D = np.empty((M2.shape[0], M2.shape[1]), dtype='float64')
@@ -49,7 +49,7 @@ def Windmeijer(M2, XZ_W2, W2, zs2, vcov_step1, Cx_list, z_list, residual1):
 
         partial_dir = (-1.0 / N) * zxz
 
-        Dj = np.linalg.multi_dot([M2, XZ_W2, partial_dir, np.linalg.pinv(W2), zs2])
+        Dj = np.linalg.multi_dot([_M2_XZ_W2, partial_dir, W2_inv, zs2])
         Dj = (-1) * Dj
 
         D[:, j:(j + 1)] = Dj

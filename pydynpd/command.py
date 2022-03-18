@@ -115,7 +115,6 @@ def parse_gmm_iv(part_2):
     prog_1 = re.compile('^endo[(]([a-zA-Z_0-9 ]{1,})[)]$')
 
     for part in gmm_search_parts:
-
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
 
