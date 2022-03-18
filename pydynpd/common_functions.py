@@ -1,4 +1,7 @@
+
 import numpy as np
+from scipy.sparse import csc_matrix, csr_matrix
+import sys
 
 
 def sum_product(listOflist, n_rows):
@@ -59,3 +62,51 @@ def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual
     temp = temp + np.matmul(np.matmul(D, vcov_step1), D.transpose())
     #
     return (temp)
+
+def sum_product_sparse(listOflist, n_rows):
+# first element on listOflist must be a list
+
+
+    for i in range(n_rows):
+        mat=listOflist[0][i]
+
+        for j in range(1, len(listOflist)):
+
+            element=listOflist[j]
+
+            if type(element)==list:
+                current_mat=element[i]
+
+            elif type(element)==np.ndarray:
+
+                current_mat = element
+            else:
+                print('not accepted type')
+                sys.exit()
+
+
+            temp=csc_matrix.dot(mat, current_mat)
+
+            mat=temp
+
+        if i==0:
+            tbr=temp
+        else:
+            tbr+=temp
+    if not type(tbr)==np.ndarray:
+        tbr=tbr.todense()
+
+    return tbr
+
+
+def make_sparse_list(arr_list):
+    nrow=len(arr_list)
+    new_list=[]
+    for i in range(nrow):
+        arr=arr_list[i]
+        new_arr=csc_matrix(arr)
+        new_list.append(new_arr)
+
+    return(new_list)
+
+
