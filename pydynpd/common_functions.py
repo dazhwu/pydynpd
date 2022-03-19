@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.sparse import csc_matrix, csr_matrix
 import sys
-
+from pydynpd.info import sumproduct_task
 
 def sum_product(listOflist, n_rows):
     num_elements = len(listOflist)
@@ -26,22 +26,24 @@ def sum_product(listOflist, n_rows):
 
     return (tbr)
 
-def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual1):
-    N = len(Cx_list)
+def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual1,N):
+
 
     D = np.empty((M2.shape[0], M2.shape[1]), dtype='float64')
 
-    for j in range(0, Cx_list[0].shape[1]):
+    x_height=int(Cx_list.shape[0]/N)
+    z_height=int(z_list.shape[0]/N)
+    for j in range(0, Cx_list.shape[1]):
 
         for i in range(0, N):
-            x = Cx_list[i]
+            x = Cx_list[(i*x_height):(i*x_height+x_height),:]
 
-            u = residual1[i]
-            z = z_list[i]
+            u = residual1[(i*x_height):(i*x_height+x_height),0:1]
+            z = z_list[(i*z_height):(i*z_height+z_height),:]
 
             xu = np.matmul(x[:, j:(j + 1)], u.transpose())
 
-            temp = np.linalg.multi_dot([z, xu + xu.transpose(), z.transpose()])
+            temp = z @ (xu + xu.transpose()) @ z.transpose()
             # temp = np.matmul(z, xu + xu.transpose())
 
             # temp = np.matmul(temp, z.transpose())
@@ -63,40 +65,6 @@ def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual
     #
     return (temp)
 
-def sum_product_sparse(listOflist, n_rows):
-# first element on listOflist must be a list
-
-
-    for i in range(n_rows):
-        mat=listOflist[0][i]
-
-        for j in range(1, len(listOflist)):
-
-            element=listOflist[j]
-
-            if type(element)==list:
-                current_mat=element[i]
-
-            elif type(element)==np.ndarray:
-
-                current_mat = element
-            else:
-                print('not accepted type')
-                sys.exit()
-
-
-            temp=csc_matrix.dot(mat, current_mat)
-
-            mat=temp
-
-        if i==0:
-            tbr=temp
-        else:
-            tbr+=temp
-    if not type(tbr)==np.ndarray:
-        tbr=tbr.todense()
-
-    return tbr
 
 
 def make_sparse_list(arr_list):

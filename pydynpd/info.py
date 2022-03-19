@@ -22,6 +22,8 @@ class z_info:
     diff_height: int
     level_width: int
     level_height: int
+    width:int
+    height: int
     num_gmm_instr: int
     num_instr: int
     # int num_vars
@@ -40,34 +42,48 @@ class AR_test_info:
 
 @dataclass
 class options_info:
-    twosteps: bool=True
+    steps: int=2
     level: bool=True
     timedumm: bool=False
     collapse: bool=False
 
 
-# @dataclass
-# class regression_info:
-#     twosteps: bool
-#     robust: bool
-#     level: bool
-#     num_obs: int
-#     num_instruments: int
-#     N:int
-#     T: int
-#     dep: str
-#     indep: list
-#     beta1: list
-#     beta2: list
-#     residual1: list
-#     residual1_t: list
-#     SS: float
-#     XZ_W1: np.ndarray
-#     XZ_W2: np.ndarray
-#     W1: np.ndarray
-#     W2: np.ndarray
-#     M1: np.ndarray
-#     M2: np.ndarray
+@dataclass
+class sumproduct_task:
+    array_list: list
+    division_list: list
+
+
+@dataclass
+class regression_info:
+    # twosteps: bool
+    # robust: bool
+    # level: bool
+    # num_obs: int
+    # num_instruments: int
+    # N:int
+    # T: int
+    # # dep: str
+    # indep: list
+
+    # beta2: list
+    H: np.ndarray
+    residual: np.ndarray
+    residual_t: np.ndarray
+    SS: float
+    XZ: np.ndarray
+    Zy: np.ndarray
+    XZ_W: np.ndarray
+    W_inv: np.ndarray
+    M_XZ_W: np.ndarray
+    ZuuZ: np.ndarray
+    W: np.ndarray
+    M: np.ndarray
+    beta: list
+    vcov: np.ndarray
+    def __init__(self, W):
+        self.W=W
+        self.W_inv=np.linalg.pinv(W)
 #
 #     def __init__(self, twosteps, robust, level, num_obs,  num_instruments, N, T,
 #                  beta1, residual1, residual1_t, SS, XZ_W1,  XZ, M1, M2, W1, W2):

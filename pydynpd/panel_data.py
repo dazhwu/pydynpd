@@ -28,13 +28,16 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
     collapse=options.collapse
     method = 'fd'
 
+
     df_information = get_info(df, variables, method, _individual, _time)
 
     if timedumm:
         add_time_dummy(df, variables, _time, df_information.first_index, df_information.last_index)
 
     gmm_tables = get_gmm_table_list(df, variables, df_information, level)
+
     xy_tables = get_xy_table_list(df, variables, df_information)
+
     final_xy_tables = get_final_xy_tables(xy_tables, df_information, level)
 
 
@@ -42,6 +45,8 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
         z_information, z_list = build_z_level(variables, df_information, gmm_tables, collapse)
     else:
         z_information, z_list = build_z_diff(variables, df_information, gmm_tables, False, collapse)
+
+
 
 #    print(time.time()-start)
     return ((z_list, z_information, df_information, final_xy_tables))
@@ -125,43 +130,46 @@ def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
 
     final_xy_tables = {}
 
+    N=df_information.N
     Dx_list = xy_tables['Dx']
     Dy_list = xy_tables['Dy']
     x_list = xy_tables['x']
     y_list = xy_tables['y']
 
-    if level:  # sys-GMM
-        Cx_list = []
-        Cy_list = []
+    Dx_height = Dx_list[0].shape[0]
+    x_height = x_list[0].shape[0]
+    height_total = Dx_height+x_height
 
-        height_upper = Dx_list[0].shape[0]
-        height_lower = x_list[0].shape[0]
-        height_total = height_upper + height_lower
-        width=x_list[0].shape[1]
+
+    if level:  # sys-GMM
+        width = x_list[0].shape[1]
+        Cx_list=np.empty((height_total*N, width+1), dtype=np.float64)
+        Cy_list = np.empty((height_total * N, 1), dtype=np.float64)
         #Cx=np.empty()
-        for i in range(df_information.N):  # , nogil=True):  #df_information.N
-            temp_y=np.empty((height_total,1), dtype='float64')
-            temp_y[0:height_upper,0]=Dy_list[i][0:height_upper,0]
-            temp_y[height_upper:height_total,0]=y_list[i][0:height_lower,0]
+        for i in range(N):  # , nogil=True):  #df_information.N
+            temp_y=Cy_list[(height_total*i):(height_total*(i+1)),:]
+            temp_y[0:Dx_height,0]=Dy_list[i][0:Dx_height,0]
+            temp_y[Dx_height:height_total,0]=y_list[i][0:x_height,0]
             # temp_y = np.vstack((Dy_list[i], y_list[i]))
 
-            temp_x=np.empty((height_total, width+1))
-            temp_x[0:height_upper, 0:width] = Dx_list[i][0:height_upper, 0:width]
-            temp_x[height_upper:height_total, 0:width] = x_list[i][0:height_lower, 0:width]
-            temp_x[0:height_upper, width]=0
-            temp_x[height_upper:height_total, width] = 1
-            #
-            # temp_x = np.vstack((Dx_list[i], x_list[i]))
-            # temp_constant = np.zeros((height_total, 1), dtype='float64')
-            # temp_constant[height_upper:height_total, 0] = 1
-            #
-            # temp_x = np.hstack((temp_x, temp_constant))
-            Cy_list.append(temp_y)
-            Cx_list.append(temp_x)
-    else:  # diff-GMM
+            temp_x=Cx_list[(height_total*i):(height_total*(i+1)),:]
+            temp_x[0:Dx_height, 0:width] = Dx_list[i][0:Dx_height, 0:width]
+            temp_x[Dx_height:height_total, 0:width] = x_list[i][0:x_height, 0:width]
+            temp_x[0:Dx_height, width]=0
+            temp_x[Dx_height:height_total, width] = 1
 
-        Cy_list = Dy_list
-        Cx_list = Dx_list
+    else:  # diff-GMM
+        width=Dx_list[0].shape[1]
+        Cx_list = np.empty((Dx_height * N, width), dtype=np.float64)
+        Cy_list = np.empty((Dx_height * N, 1), dtype=np.float64)
+
+        for i in range(N):  # , nogil=True):  #df_information.N
+            temp_y = Cy_list[(Dx_height * i):(Dx_height * (i + 1)), :]
+            temp_y[0:Dx_height, 0] = Dy_list[i][0:Dx_height, 0]
+
+            temp_x = Cx_list[(Dx_height * i):(Dx_height * (i + 1)), :]
+            temp_x[0:Dx_height, :] = Dx_list[i][0:Dx_height, :]
+
 
     final_xy_tables['Cy'] = Cy_list
     final_xy_tables['Cx'] = Cx_list
@@ -188,40 +196,44 @@ def build_z_level(variables: dict, info: df_info, gmm_tables: dict, collapse=Fal
 
     z_information, z_list = build_z_diff(variables, info, gmm_tables, True, collapse)
 
-    width = lev_last_index - lev_first_index + 1
+    level_width=z_information.level_width
+    level_height=z_information.level_height
+    diff_width=z_information.diff_width
+    diff_height=z_information.diff_height
+    width=z_information.width
+    height=z_information.height
 
     gmm_vars = variables['gmm']
     iv_vars = variables['iv']
     Dgmm_list = gmm_tables['Dgmm']
     iv_list = gmm_tables['iv']
 
-    height = len(gmm_vars) * width + len(iv_vars)
+    #height = len(gmm_vars) * width + len(iv_vars)
 
-    start_row = z_information.diff_height  # z_list[0].shape[0]-height
-    start_col = z_information.diff_width  # z_list[0].shape[1]-width
+    start_row = diff_height  # z_list[0].shape[0]-height
+    start_col = diff_width  # z_list[0].shape[1]-width
 
     for i in range(info.N):
-        z = z_list[i]
+        z = z_list[i*height:(i+1)*height]
         #print(z is z_list[i])
         # z[start_row-1,start_col:(start_col+self.level_width)]=1
-        z[z_information.diff_height + z_information.level_height - 1,
-        start_col:(start_col + z_information.level_width)] = 1
+        z[height - 1,   start_col:width] = 1
 
         array_Dgmm = Dgmm_list[i]
         array_iv = iv_list[i]
 
         for var_id in range(len(gmm_vars)):
             lag = gmm_vars[var_id].min_lag - 1
-            for j in range(width):
+            for j in range(level_width):
                 if collapse:
                     z[start_row + var_id, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
                 else:
-                    z[start_row + var_id * width + j, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
+                    z[start_row + var_id * level_width + j, start_col + j] = array_Dgmm[lev_first_index - lag + j, var_id]
 
         start_pos = z_information.num_gmm_instr
         for var_id in range(len(iv_vars)):
             var = iv_vars[var_id]
-            z[start_pos + var_id, start_col:z_list[0].shape[1]] = array_iv[lev_first_index:(lev_last_index + 1), var_id]
+            z[start_pos + var_id, start_col:width] = array_iv[lev_first_index:(lev_last_index + 1), var_id]
     
         z[np.isnan(z)] = 0
         
@@ -251,9 +263,6 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level, collap
 
     diff_height = (num_gmm_instr + iv_diff_info.shape[0])
 
-    z_information = z_info(diff_height=diff_height, diff_width=diff_width, level_width=level_width,
-                           level_height=level_height, num_gmm_instr=num_gmm_instr, num_instr=diff_height)
-    
     #print(diff_height)
 
     if level:
@@ -263,10 +272,15 @@ def build_z_diff(variables: dict, info: df_info, gmm_tables: dict, level, collap
         height = diff_height
         width = diff_width
 
-    for i in range(info.N):
-        z = np.zeros((height, width), dtype='float64')
+    z_information = z_info(diff_height=diff_height, diff_width=diff_width, level_width=level_width,
+                           level_height=level_height, height=height, width=width, \
+                           num_gmm_instr=num_gmm_instr, num_instr=diff_height)
 
-        z_list.append(z)
+    z_list=np.zeros((height*info.N, width), dtype=np.float64)
+
+    for i in range(info.N):
+        z = z_list[i*height:(i+1)*height,:]
+
         array_gmm = gmm_list[i]
         array_fd_iv = Div_list[i]
 
