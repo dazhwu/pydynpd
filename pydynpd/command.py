@@ -14,7 +14,9 @@ import re
 '''
 
 
-def parse_command(command_str):
+def parse_command(command_str, df_col_names):
+    global  cols
+    cols=df_col_names
 
     variables = {}
     parts = command_str.split('|')
@@ -67,15 +69,22 @@ def parse_spaced_vars(list_vars, indep_iv):
         else:
             new_vars=gen_list_rhs(var, 0,0)
 
+        if len(new_vars) == 0:
+            return ([], var)
 
         tbr+=new_vars
 
-    return (tbr)
+    return (tbr, '')
 
 def parse_dep_indep(part_1):
     list_vars = part_1.split()
 
-    list_dep_indep = parse_spaced_vars(list_vars, 0)
+
+
+    list_dep_indep, missing_name = parse_spaced_vars(list_vars, 0)
+    if len(list_dep_indep)==0:
+        print(part_1 + ': ' + missing_name + ' does not exist' )
+        exit()
 
     return (list_dep_indep)
 
@@ -85,31 +94,44 @@ def parse_gmm_iv(part_2):
     list_gmm = []
     list_iv = []
 
-    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[0-9]{1,}[)]', part_2)
-    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([0-9]{1,})[)]$')
+    #gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[0-9]{1,}[)]', part_2)
+    #prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([0-9]{1,})[)]$')
+    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}(?:(?:[.])|(?:[0-9]{1,}))[)]', part_2)
+    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}((?:[.])|(?:[0-9]{1,}))[)]$')
     for part in gmm_search_parts:
 
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
 
         vars = match_groups_multiple.group(1).split()
+
+        for var_name in vars:
+            if  (var_name not in cols):
+                print(part + ': ' + var_name + ' does not exist')
+                exit()
+
+
         min_lag = int(match_groups_multiple.group(2))
-        max_lag = int(match_groups_multiple.group(3))
+        if match_groups_multiple.group(3)=='.':
+            max_lag=sys.maxsize
+        else:
+            max_lag = int(match_groups_multiple.group(3))
+
 
         list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
 
-    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[.][)]', part_2)
-    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([.])[)]$')
-    for part in gmm_search_parts:
-
-        # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
-        match_groups_multiple = prog_1.match(part)
-
-        vars = match_groups_multiple.group(1).split()
-        min_lag = int(match_groups_multiple.group(2))
-        max_lag = sys.maxsize
-
-        list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
+    # gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[.][)]', part_2)
+    # prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([.])[)]$')
+    # for part in gmm_search_parts:
+    #
+    #     # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+    #     match_groups_multiple = prog_1.match(part)
+    #
+    #     vars = match_groups_multiple.group(1).split()
+    #     min_lag = int(match_groups_multiple.group(2))
+    #     max_lag = sys.maxsize
+    #
+    #     list_gmm=process_GMM(vars, min_lag,max_lag,list_gmm, part)
 
     gmm_search_parts = re.findall('endo[(][a-zA-Z_0-9 ]{1,}[)]', part_2)
     prog_1 = re.compile('^endo[(]([a-zA-Z_0-9 ]{1,})[)]$')
@@ -142,7 +164,12 @@ def parse_gmm_iv(part_2):
     for part in iv_search_parts:
         match_groups_multiple = prog_2.match(part)
         vars = match_groups_multiple.group(1).split()
-        list_iv = list_iv + parse_spaced_vars(vars, 1)
+        temp_list, strR= parse_spaced_vars(vars, 1)
+        if len(temp_list)==0:
+            print(part + ': ' + strR + ' does not exist')
+            exit()
+        else:
+            list_iv = list_iv + temp_list
 
 
     return ([list_gmm, list_iv])
@@ -154,6 +181,8 @@ def parse_options(part_3):
     for option in list_options:
         if option=='onestep':
             options.steps=1
+        elif option=='iterated':
+            options.steps=1000
         elif option=='nolevel':
             options.level=False
         elif option=='timedumm':
@@ -173,6 +202,9 @@ def process_GMM(vars, min_lag, max_lag, list_gmm, part):
     if min_lag < 0:
         print(part + ': lags must be non-negative')
         exit()
+    if len(vars)==0:
+        print(part + ': no variable is included before ,')
+        exit()
     for var in vars:
         temp_var = gmm_var(var, min_lag, max_lag, 0)
         list_gmm.append(temp_var)
@@ -181,11 +213,11 @@ def process_GMM(vars, min_lag, max_lag, list_gmm, part):
 
 def gen_list_rhs(name, start_lag, end_lag):
 
-
     tbr=[]
-    for i in range(start_lag, (end_lag+1)):
-        new_var=regular_variable(name, i)
-        tbr.append(new_var)
+    if name in cols:
+        for i in range(start_lag, (end_lag+1)):
+            new_var=regular_variable(name, i)
+            tbr.append(new_var)
 
     return(tbr)
 

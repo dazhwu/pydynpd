@@ -21,7 +21,7 @@ class abond:
 
         self.initiate_properties()
 
-        self.variables, options = parse_command(command_str)
+        self.variables, options = parse_command(command_str, df.columns)
 
 
         self.steps = options.steps
@@ -52,11 +52,36 @@ class abond:
         self._XZ, self._Zy = self.calculate_basic()
         self._XZ_t=self._XZ.transpose()
         self._Zy_t=self._Zy.transpose()
-        
-        
-        self.GMM(1)  #step 1
-        self.GMM(2)  # step 1
 
+        self.GMM(1)
+        if self.steps==1 or self.steps==2:
+              #step 1
+            self.GMM(2)  # step 1
+        else:
+            current_step=1
+            converge=False
+            while not converge:
+                previous_step=current_step
+                current_step+=1
+                print('step' + str(current_step))
+                self.GMM(current_step)
+                beta_current=self.result_list[current_step-1].beta
+                beta_previous=self.result_list[current_step-2].beta
+                for j in range(beta_current.shape[0]):
+                    temp=(beta_current[j]-beta_previous[j])**2
+                    temp2=(beta_previous[j])**2
+                    if j==0:
+                        nom=temp
+                        denom=temp2
+                    else:
+                        nom+=temp
+                        denom+=temp2
+                crit=np.sqrt(nom/denom)
+
+                if crit < 0.00001:
+                    converge=True
+                    self.steps=current_step
+                    print('converged')
 
 
         self.generate_summary(self.steps)
@@ -186,13 +211,15 @@ class abond:
         step_1 = self.result_list[0]
         step_2 = self.result_list[1]
 
-        if step == 2:
-            M2=step_2.M
-            _M2_XZ_W2=step_2._M_XZ_W
-            _W2_inv=step_2.W_inv
-            zs2=step_2.zs
-            vcov_step1=step_1.vcov
-            residual1=step_1.residual
+        if step >= 2:
+            the_step=self.result_list[step-1]
+            previous_step=self.result_list[step-2]
+            M2=the_step.M
+            _M2_XZ_W2=the_step._M_XZ_W
+            _W2_inv=the_step.W_inv
+            zs2=the_step.zs
+            vcov_step1=previous_step.vcov
+            residual1=previous_step.residual
             return Windmeijer(M2, _M2_XZ_W2, _W2_inv, zs2,
                                                vcov_step1, self.Cx_list, self.z_list, residual1, self.N)
         elif step==1:
@@ -278,15 +305,26 @@ class abond:
         if step==1 or step==2:
             _W2_inv=step2.W_inv
             zs=step2.zs
+
             self.hansen = tests.hansen_overid(_W2_inv, self.N, zs, self.num_instru, \
                                           self.Cx_list.shape[1])
+            
+            
+        else:
+            current_step=self.result_list[step-1]
+            _W2_inv = current_step.W_inv
+            zs = current_step.zs
+            self.hansen = tests.hansen_overid(_W2_inv, self.N, zs, self.num_instru, \
+                                              self.Cx_list.shape[1])
+
         self.AR_list = tests.AR_test(self, step, 2)
 
         if self.steps==2:
             str_steps='two-step '
-        else:
+        elif self.steps==1:
             str_steps='one-step '
-
+        else:
+            str_steps=str(self.steps) + '-step '
         if self.level:
             str_gmm='system GMM'
         else:

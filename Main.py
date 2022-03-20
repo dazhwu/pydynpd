@@ -11,7 +11,7 @@ import time
 df = pd.read_csv("data.csv")
 
 
-command_str='n L(1/2).n w k  | gmm(n, 2 4) gmm(w, 1 3) iv(k)'
+command_str='n L(1/2).n w k  | gmm(w, 2 3) gmm(w, 1 3) iv(w)'
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 
 

@@ -29,6 +29,8 @@ def AR_test(regression, step, m): #N, H, M, z_list, XZ_W,vcov, residual,residual
         current_step=step2
     elif step==1:
         current_step=step1
+    else:
+        current_step=regression.result_list[step-1]
 
     M=current_step.M
     XZ_W=current_step._XZ_W
