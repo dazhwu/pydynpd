@@ -94,11 +94,11 @@ number of instruments derived|51|51|51|51
 Hensen Test|96.44|96.44|105.7|96.44
 AR(1) Test|-2.35|-2.35|-1.92|N/A
 AR(2) Test|-1.15|-1.15|-0.12|N/A
-running time (secs) | 6.95 | 6.10  | 14.92 |784.9 
+running time (secs) | 6.34 | 6.10  | 14.92 |784.9 
 
 As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in system GMM in its model.
 
-Regarding runnint time, in thoery xtabond2 should have a clear advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the two R packages which are interpreted scripts just like pydynpd.
+Regarding runnint time, in thoery xtabond2 should have an advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the two R packages which are interpreted scripts just like pydynpd.
 
 ## References
 <a id="1">[1]</a> 
