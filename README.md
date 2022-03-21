@@ -94,7 +94,7 @@ number of instruments derived|51|51|51|51
 Hensen Test|96.44|96.44|105.7|96.44
 AR(1) Test|-2.35|-2.35|-1.92|N/A
 AR(2) Test|-1.15|-1.15|-0.12|N/A
-running time (secs) | 6.34 | 6.10  | 14.92 |784.9 
+running time (secs) | 6.34 | 6.10  | 13.82 |733.8 
 
 As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in system GMM in its model.
 
