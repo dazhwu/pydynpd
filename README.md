@@ -20,7 +20,7 @@ In the equation above, x is a predetermined variable that is potentially correla
 * Collapse GMM instruments to limit instrument proliferation
 
 
-## Installlation:
+## Installation:
 ``` 
 pip install pydynpd
 ``` 
