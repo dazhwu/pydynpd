@@ -34,7 +34,7 @@ class abond:
         robust = True
 
         self.z_list, self.z_information, df_inf, final_xy_tables \
-            = new_panel_data(df, ['id', 'year'], self.variables, options)
+            = new_panel_data(df, identifier, self.variables, options)
 
         self._z_t_list = self.z_list.transpose()
         self.num_instru=self.z_information.num_instr

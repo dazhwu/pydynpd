@@ -53,10 +53,13 @@ def get_info(df: DataFrame, variables, method, _individual, _time):
     max_lag = 0
 
     df['_individual'] = df[_individual].astype('category').cat.codes
+    df['_individual'] = df['_individual'].astype('int64')
     N = df['_individual'].unique().size
+
 
     df['_time'] = df[_time].astype('category').cat.codes
     T = df['_time'].unique().size
+
 
     df['_NT'] = df['_individual'] * T + df['_time']
 
@@ -436,6 +439,7 @@ def make_balanced(ori, n_individual, n_time):
     # arr_full[:, 1] = arr_full[:, 2] % T
 
     mask = np.in1d(arr_full[:, 0], ori[:, 0])
+
     arr_full[mask, 1:arr_full.shape[1]] = ori[:, 1:ori.shape[1]]
 
     return (arr_full)
