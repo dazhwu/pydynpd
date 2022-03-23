@@ -93,13 +93,14 @@ def parse_gmm_iv(part_2):
 
     list_gmm = []
     list_iv = []
+    matching_parts=[]
 
     #gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}[0-9]{1,}[)]', part_2)
     #prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}([0-9]{1,})[)]$')
-    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}(?:(?:[.])|(?:[0-9]{1,}))[)]', part_2)
-    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}((?:[.])|(?:[0-9]{1,}))[)]$')
+    gmm_search_parts = re.findall('gmm[(][a-zA-Z_0-9 ]{1,}[,][ ]{0,}[0-9]{1,}[ ]{1,}(?:(?:[.])|(?:[0-9]{1,}))[ ]{0,}[)]', part_2)
+    prog_1 = re.compile('^gmm[(]([a-zA-Z_0-9 ]{1,})[,][ ]{0,}([0-9]{1,})[ ]{1,}((?:[.])|(?:[0-9]{1,}))[ ]{0,}[)]$')
     for part in gmm_search_parts:
-
+        matching_parts.append(part)
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         match_groups_multiple = prog_1.match(part)
 
@@ -138,6 +139,7 @@ def parse_gmm_iv(part_2):
 
     for part in gmm_search_parts:
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        matching_parts.append(part)
         match_groups_multiple = prog_1.match(part)
 
         vars = match_groups_multiple.group(1).split()
@@ -151,6 +153,7 @@ def parse_gmm_iv(part_2):
 
     for part in gmm_search_parts:
         # prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        matching_parts.append(part)
         match_groups_multiple = prog_1.match(part)
 
         vars = match_groups_multiple.group(1).split()
@@ -162,6 +165,7 @@ def parse_gmm_iv(part_2):
     iv_search_parts = re.findall('iv[(][a-zA-Z_0-9 .(/)]{1,}[)]', part_2)
     prog_2 = re.compile('^iv[(]([a-zA-Z_0-9 .(/)]{1,})[)]$')
     for part in iv_search_parts:
+        matching_parts.append(part)
         match_groups_multiple = prog_2.match(part)
         vars = match_groups_multiple.group(1).split()
         temp_list, strR= parse_spaced_vars(vars, 1)
@@ -170,6 +174,14 @@ def parse_gmm_iv(part_2):
             exit()
         else:
             list_iv = list_iv + temp_list
+
+    part2_cpy=part_2.copy()
+    for part in matching_parts:
+        part2_cpy=part2_cpy.replace(part, '')
+
+    if len(part2_cpy.strip())>0:
+        print(part2_cpy.strip() + ': invalid GMM or IV statement')
+        exit()
 
 
     return ([list_gmm, list_iv])
