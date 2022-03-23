@@ -18,7 +18,7 @@ URL = 'https://github.com/dazhwu/pydynpd'
 EMAIL = 'wudz800@gmail.com'
 AUTHOR = 'Dazhong Wu'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.7'
+VERSION = '0.0.8'
 
 # What packages are required for this module to be executed?
 REQUIRED = [

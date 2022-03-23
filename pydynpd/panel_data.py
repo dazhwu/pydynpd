@@ -46,9 +46,6 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
     else:
         z_information, z_list = build_z_diff(variables, df_information, gmm_tables, False, collapse)
 
-
-
-#    print(time.time()-start)
     return ((z_list, z_information, df_information, final_xy_tables))
 
 
@@ -71,8 +68,8 @@ def get_info(df: DataFrame, variables, method, _individual, _time):
             max_lag = var.lag
 
     for var in variables['gmm']:
-        if var.min_lag > max_lag:
-            max_lag = var.min_lag
+        if (var.min_lag-1) > max_lag:
+            max_lag = var.min_lag-1
 
     if method == 'fd':
         last_index = T - 1  # zero based

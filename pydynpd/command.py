@@ -175,7 +175,7 @@ def parse_gmm_iv(part_2):
         else:
             list_iv = list_iv + temp_list
 
-    part2_cpy=part_2.copy()
+    part2_cpy=part_2
     for part in matching_parts:
         part2_cpy=part2_cpy.replace(part, '')
 
