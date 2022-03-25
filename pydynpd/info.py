@@ -15,19 +15,19 @@ class df_info:
     max_lag: int
 
 
-
 @dataclass
 class z_info:
     diff_width: int
     diff_height: int
     level_width: int
     level_height: int
-    width:int
+    width: int
     height: int
     num_gmm_instr: int
     num_instr: int
     # int num_vars
     # int num_gmm_instr
+
 
 @dataclass
 class hansen_test_info:
@@ -36,16 +36,18 @@ class hansen_test_info:
     p_value: float
     critical_value: float
 
+
 @dataclass
 class AR_test_info:
     lag: int
 
+
 @dataclass
 class options_info:
-    steps: int=2
-    level: bool=True
-    timedumm: bool=False
-    collapse: bool=False
+    steps: int = 2
+    level: bool = True
+    timedumm: bool = False
+    collapse: bool = False
 
 
 @dataclass
@@ -81,9 +83,10 @@ class regression_info:
     M: np.ndarray
     beta: list
     vcov: np.ndarray
+
     def __init__(self, W):
-        self.W=W
-        self.W_inv=np.linalg.pinv(W)
+        self.W = W
+        self.W_inv = np.linalg.pinv(W)
 #
 #     def __init__(self, twosteps, robust, level, num_obs,  num_instruments, N, T,
 #                  beta1, residual1, residual1_t, SS, XZ_W1,  XZ, M1, M2, W1, W2):
