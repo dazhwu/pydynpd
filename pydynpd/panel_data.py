@@ -3,8 +3,6 @@ from pandas import DataFrame
 import numpy as np
 import math
 
-from polars import first
-
 from pydynpd.variable import regular_variable, gmm_var
 from pydynpd.info import df_info, z_info, options_info
 import time
@@ -38,9 +36,9 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
     df_information = df_info(N=N, T=T, ids=ids, _individual=_individual, _time=_time, max_lag=max_lag,
                              first_index=first_index, last_index=last_index)
     if timedumm:
-        add_time_dummy(df, variables, _time,                        df_information.first_index, df_information.last_index)
+        add_time_dummy(df, variables, _time, df_information.first_index, df_information.last_index)
 
-    z_information, gmm_diff_info, iv_diff_info = calculate_z_dimension(        variables, df_information, level, collapse)
+    z_information, gmm_diff_info, iv_diff_info = calculate_z_dimension(variables, df_information, level, collapse)
 
     gmm_tables = get_gmm_table_list(df, variables, df_information, level)
 
@@ -56,6 +54,7 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
             variables, gmm_tables, df_information, z_information, gmm_diff_info, iv_diff_info, False, collapse)
 
     return ((z_list, z_information, df_information, final_xy_tables))
+
 
 def xtset(df: DataFrame, _individual, _time):
     df['_individual'] = df[_individual].astype('category').cat.codes
@@ -73,6 +72,7 @@ def xtset(df: DataFrame, _individual, _time):
             'Warning: system and difference GMMs do not work well on long (T>=N) panel data')
 
     return (N, T, ['_NT'])
+
 
 def get_info(variables, method, T):
     max_lag = 0
@@ -98,6 +98,7 @@ def get_info(variables, method, T):
 
     return (max_lag, first_index, last_index)
 
+
 def get_gmm_table_list(df: DataFrame, variables, df_information: df_info, level):
     iv_list = gen_ori_list(df, variables['iv'], df_information)
     gmm_list = gen_ori_list(df, variables['gmm'], df_information)
@@ -113,6 +114,7 @@ def get_gmm_table_list(df: DataFrame, variables, df_information: df_info, level)
     gmm_tables['Div'] = Div_list
 
     return (gmm_tables)
+
 
 def get_xy_table_list(df: DataFrame, variables: dict, df_information: df_info):
     xy_tables = {}
@@ -132,6 +134,7 @@ def get_xy_table_list(df: DataFrame, variables: dict, df_information: df_info):
     xy_tables['Dy'] = Dy_list
 
     return (xy_tables)
+
 
 def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
     final_xy_tables = {}
@@ -181,6 +184,7 @@ def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
 
     return (final_xy_tables)
 
+
 def split_into_groups(arr, N, T):
     # needs to be sorted
 
@@ -191,6 +195,7 @@ def split_into_groups(arr, N, T):
         tbr.append(temp_arr)
     # tbr = np.vsplit(arr, N)
     return (tbr)
+
 
 def build_z_level(variables: dict, gmm_tables: dict, info: df_info, z_information: z_info, gmm_diff_info, iv_diff_info,
                   collapse=False):
@@ -219,7 +224,6 @@ def build_z_level(variables: dict, gmm_tables: dict, info: df_info, z_informatio
 
     for i in range(info.N):
         z = z_list[i * height:(i + 1) * height]
-        # print(z is z_list[i])
         # z[start_row-1,start_col:(start_col+self.level_width)]=1
         z[height - 1, start_col:width] = 1
 
@@ -247,6 +251,7 @@ def build_z_level(variables: dict, gmm_tables: dict, info: df_info, z_informatio
     z_information.num_gmm_instr += len(gmm_vars)
     z_information.num_instr += z_information.level_height
     return z_list
+
 
 def calculate_z_dimension(variables: dict, info: df_info, level, collapse=False):
     gmm_vars = variables['gmm']
@@ -276,6 +281,7 @@ def calculate_z_dimension(variables: dict, info: df_info, level, collapse=False)
                            num_gmm_instr=num_gmm_instr, num_instr=diff_height)
 
     return (z_information, gmm_diff_info, iv_diff_info)
+
 
 def build_z_diff(variables: dict, gmm_tables: dict, info: df_info, z_information: z_info, gmm_diff_info, iv_diff_info,
                  level, collapse=False):
@@ -330,6 +336,7 @@ def build_z_diff(variables: dict, gmm_tables: dict, info: df_info, z_information
 
     return z_list
 
+
 def prepare_Z_iv_diff(variables: dict, width, info: df_info):
     iv_vars = variables['iv']  # need to be placed at the beginning
     num_iv = len(iv_vars)
@@ -343,6 +350,7 @@ def prepare_Z_iv_diff(variables: dict, width, info: df_info):
         # num_iv_instr += width
 
     return (t_info)
+
 
 def prepare_Z_gmm_diff(variables: dict, width, info: df_info, collapse=False):
     start_row = 0
@@ -378,6 +386,7 @@ def prepare_Z_gmm_diff(variables: dict, width, info: df_info, collapse=False):
     num_gmm_instr = start_row  # number of gmm instruments in diff eq
     return ((num_gmm_instr, t_info))
 
+
 def gen_fd_list(ori_array_list, cut=False):
     tbr = []
     num_rows = ori_array_list[0].shape[0]
@@ -395,6 +404,7 @@ def gen_fd_list(ori_array_list, cut=False):
         tbr.append(tbr_arr)
 
     return (tbr)
+
 
 def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
     num_variables = len(variable_list)
@@ -436,6 +446,7 @@ def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
 
     return (tbr)
 
+
 def make_balanced(ori, n_individual, n_time):
     arr_full = np.empty((n_individual * n_time, ori.shape[1]), dtype='float64')
 
@@ -450,6 +461,7 @@ def make_balanced(ori, n_individual, n_time):
 
     return (arr_full)
 
+
 def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last_index):
     unique_time = sorted(df[_time].unique())[(first_index):(last_index + 1)]
 
@@ -462,6 +474,7 @@ def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last
 
         new_iv = regular_variable(name, 0)
         variables['iv'].append(new_var)
+
 
 def generate_D_matrix(T, max_lag):
     # matrix used in Forward Orthogonal Deviation

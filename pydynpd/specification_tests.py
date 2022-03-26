@@ -45,7 +45,7 @@ def AR_test(regression, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residu
 
     diff_width = regression.z_information.diff_width
 
-    if regression.level:
+    if regression.options.level:
 
         # r_list=[]
         # r_t_list=[]

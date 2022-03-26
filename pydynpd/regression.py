@@ -6,7 +6,7 @@ import scipy.stats as st
 from pandas import DataFrame
 from prettytable import PrettyTable
 
-from pydynpd.command import parse_command
+from pydynpd.command import command
 from pydynpd.panel_data import new_panel_data
 import pydynpd.specification_tests as tests
 import pydynpd.common_functions
@@ -21,19 +21,15 @@ class abond:
 
         self.initiate_properties()
 
-        self.variables, options = parse_command(command_str, df.columns)
-
-        self.steps = options.steps
-
-        self.level = options.level
-        self.timedumm = options.timedumm
-        self.collapse = options.collapse
+        user_command = command(command_str, df.columns)
+        self.variables=user_command.variables
+        self.options=user_command.options
 
         self.identifier = identifier
         robust = True
 
         self.z_list, self.z_information, df_inf, final_xy_tables \
-            = new_panel_data(df, identifier, self.variables, options)
+            = new_panel_data(df, identifier, self.variables, self.options)
 
         self._z_t_list = self.z_list.transpose()
         self.num_instru = self.z_information.num_instr
@@ -53,7 +49,7 @@ class abond:
         self._Zy_t = self._Zy.transpose()
 
         self.GMM(1)
-        if self.steps == 1 or self.steps == 2:
+        if self.options.steps == 1 or self.options.steps == 2:
             # step 1
             self.GMM(2)  # step 1
         else:
@@ -79,10 +75,10 @@ class abond:
 
                 if crit < 0.00001:
                     converge = True
-                    self.steps = current_step
+                    self.options.steps = current_step
                     print('converged')
 
-        self.generate_summary(self.steps)
+        self.generate_summary(self.options.steps)
 
     def initiate_properties(self):
 
@@ -274,7 +270,7 @@ class abond:
             # num_NA+=np.count_nonzero(row_if_nan[range(0,int((np.size(y)+1)/2))])
             # num_NA2 += np.count_nonzero(row_if_nan[range(max_observations_per_group,??? )])
             num_NA += np.count_nonzero(row_if_nan)
-            if self.level:
+            if self.options.level:
                 num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
 
             na_list.append(row_if_nan)
@@ -285,7 +281,7 @@ class abond:
                     z[:, j] = 0
                     # n_obs = n_obs - 1
         # return(Cx_list, Cy_list, z_list)
-        if self.level:
+        if self.options.level:
             return (self.z_information.level_width * N - num_NA)
         else:
             return (self.z_information.diff_width * N - num_NA)
@@ -310,13 +306,13 @@ class abond:
 
         self.AR_list = tests.AR_test(self, step, 2)
 
-        if self.steps == 2:
+        if self.options.steps == 2:
             str_steps = 'two-step '
-        elif self.steps == 1:
+        elif self.options.steps == 1:
             str_steps = 'one-step '
         else:
-            str_steps = str(self.steps) + '-step '
-        if self.level:
+            str_steps = str(self.options.steps) + '-step '
+        if self.options.level:
             str_gmm = 'system GMM'
         else:
             str_gmm = 'difference GMM'
@@ -365,7 +361,7 @@ class abond:
                 var_name = 'L' + str(var_lag) + '.' + var_name
             var_names.append(var_name)
 
-        if self.level:
+        if self.options.level:
             var_names.append('_con')
 
         num_indep = len(var_names)
