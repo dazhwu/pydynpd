@@ -5,6 +5,7 @@ from numpy.linalg import pinv, multi_dot
 import scipy.stats as st
 from pandas import DataFrame
 from prettytable import PrettyTable
+from sys import exit
 
 from pydynpd.command import command
 from pydynpd.panel_data import new_panel_data
@@ -12,30 +13,72 @@ import pydynpd.specification_tests as tests
 import pydynpd.common_functions
 from pydynpd.info import regression_info, sumproduct_task
 from pydynpd.common_functions import sum_product, Windmeijer
+from pydynpd.variable import regular_variable, gmm_var
 import time
+import warnings
+
+
 
 
 class abond:
 
-    def __init__(self, command_str, df: DataFrame, identifier: list):
+    def __init__(self, command_str, df: DataFrame, identifiers: list):
 
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
         self.initiate_properties()
 
         user_command = command(command_str, df.columns)
+        self.df=df
         self.variables=user_command.variables
         self.options=user_command.options
 
-        self.identifier = identifier
+        if len(identifiers) != 2:
+            print('two variables needed')
+            exit()
+
+        self.identifiers = identifiers
         robust = True
 
-        self.z_list, self.z_information, df_inf, final_xy_tables \
-            = new_panel_data(df, identifier, self.variables, self.options)
 
+        if self.options.beginner:
+            self.df=df.copy()
+            current_lag=1
+            dep=self.variables['dep_indep'][0].name
+            self.regular_process(True)
+
+            for current_lag in range(2, self.T):
+                new_var=regular_variable(dep, current_lag)
+                self.variables['dep_indep'].insert(current_lag, new_var)
+                try:
+                    self.regular_process(True)
+                except Exception as e:
+                    break
+        else:
+            self.regular_process(True)
+
+
+    def form_variables_arrayes(self):
+        self.variables['dep_indep']
+
+
+
+    def regular_process(self, print_result=True):
+
+        try:
+            self.z_list, self.z_information, df_inf, final_xy_tables \
+                = new_panel_data(self.df, self.identifiers, self.variables, self.options)
+        except Exception as e:
+            if self.options.beginner:
+                raise Exception (e)
+            else:
+                print(e)
+                exit()
+        self.df_inf=df_inf
         self._z_t_list = self.z_list.transpose()
         self.num_instru = self.z_information.num_instr
 
         self.N = df_inf.N
-
+        self.T= df_inf.T
         self.Cx_list = final_xy_tables['Cx']
         self.Cy_list = final_xy_tables['Cy']
 
@@ -53,32 +96,35 @@ class abond:
             # step 1
             self.GMM(2)  # step 1
         else:
-            current_step = 1
-            converge = False
-            while not converge:
-                previous_step = current_step
-                current_step += 1
-                print('step' + str(current_step))
-                self.GMM(current_step)
-                beta_current = self.result_list[current_step - 1].beta
-                beta_previous = self.result_list[current_step - 2].beta
-                for j in range(beta_current.shape[0]):
-                    temp = (beta_current[j] - beta_previous[j]) ** 2
-                    temp2 = (beta_previous[j]) ** 2
-                    if j == 0:
-                        nom = temp
-                        denom = temp2
-                    else:
-                        nom += temp
-                        denom += temp2
-                crit = np.sqrt(nom / denom)
-
-                if crit < 0.00001:
-                    converge = True
-                    self.options.steps = current_step
-                    print('converged')
+            self.iterative_GMM()
 
         self.generate_summary(self.options.steps)
+
+    def iterative_GMM(self):
+        current_step = 1
+        converge = False
+        while not converge:
+            previous_step = current_step
+            current_step += 1
+            print('step' + str(current_step))
+            self.GMM(current_step)
+            beta_current = self.result_list[current_step - 1].beta
+            beta_previous = self.result_list[current_step - 2].beta
+            for j in range(beta_current.shape[0]):
+                temp = (beta_current[j] - beta_previous[j]) ** 2
+                temp2 = (beta_previous[j]) ** 2
+                if j == 0:
+                    nom = temp
+                    denom = temp2
+                else:
+                    nom += temp
+                    denom += temp2
+            crit = np.sqrt(nom / denom)
+
+            if crit < 0.00001:
+                converge = True
+                self.options.steps = current_step
+                print('converged')
 
     def initiate_properties(self):
 
@@ -304,7 +350,10 @@ class abond:
             self.hansen = tests.hansen_overid(_W2_inv, self.N, zs, self.num_instru, \
                                               self.Cx_list.shape[1])
 
-        self.AR_list = tests.AR_test(self, step, 2)
+        try:
+            self.AR_list = tests.AR_test(self, step, 2)
+        except Exception as e:
+            raise Exception(e)
 
         if self.options.steps == 2:
             str_steps = 'two-step '
@@ -328,8 +377,8 @@ class abond:
         basic_table.border = False
         basic_table.header = False
         basic_table.align = 'l'
-        basic_table.add_row(['Group variable: ' + self.identifier[0], ' ', 'Number of obs = ' + str(self.num_obs)])
-        basic_table.add_row(['Time variable: ' + self.identifier[1], ' ', 'Number of groups = ' + str(self.N)])
+        basic_table.add_row(['Group variable: ' + self.identifiers[0], ' ', 'Number of obs = ' + str(self.num_obs)])
+        basic_table.add_row(['Time variable: ' + self.identifiers[1], ' ', 'Number of groups = ' + str(self.N)])
         basic_table.add_row(['Number of instruments = ' + str(self.num_instru), ' ', ''])
 
         return (basic_table.get_string())

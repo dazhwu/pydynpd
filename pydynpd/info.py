@@ -46,6 +46,7 @@ class AR_test_info:
 class options_info:
     steps: int = 2
     level: bool = True
+    beginner: bool = False
     timedumm: bool = False
     collapse: bool = False
 
@@ -54,6 +55,10 @@ class options_info:
 class sumproduct_task:
     array_list: list
     division_list: list
+
+@dataclass
+class beginner_models:
+    model: str
 
 
 @dataclass

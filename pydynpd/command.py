@@ -45,6 +45,7 @@ class command(object):
         self.temp_iv_list = temp_list(df_col_names)
         self.variables=None
         self.options=None
+        self.dep_GMM=None
 
         self.list_GMM=[]
 
@@ -57,17 +58,19 @@ class command(object):
             print('There should be at least two parts in command string')
             exit()
 
+        if len(parts) == 3:
+            part_3 = parts[2]
+            self.options = self.parse_options(part_3)
+        else:
+            self.options = options_info()
+
+
         part_1 = parts[0]
         self.parse_dep_indep(part_1)
 
         part_2 = parts[1]
         self.parse_gmm_iv(part_2)
 
-        if len(parts) == 3:
-            part_3 = parts[2]
-            self.options = self.parse_options(part_3)
-        else:
-            self.options = options_info()
 
         self.check_dep_indep()
         self.check_GMM()
@@ -84,24 +87,32 @@ class command(object):
 
         prog_1 = re.compile('^L\(([0-9]{1,})[:]([0-9]{1,})\)[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
         prog_2 = re.compile('^L([0-9]{1,})[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
+        prog_3 = re.compile('^L\(([0-9]{1,})[:]([?])\)[.]([a-zA-Z_]{1,}[a-zA-Z_0-9]{0,})$')
 
         for var in list_vars:
             match_groups_multiple = prog_1.match(var)
-            match_groups_single = prog_2.match(var)
 
             if match_groups_multiple:
                 LB=int(match_groups_multiple.group(1))
                 UB=int(match_groups_multiple.group(2))
                 name=match_groups_multiple.group(3)
                 ret= dest_list.insert(name, list(range(min(LB, UB), max(LB,UB)+1)))
-
-            elif prog_2.match(var):
-                lag = int(match_groups_multiple.group(1))
-                name = match_groups_multiple.group(2)
-                ret= dest_list.insert(name, [lag])
             else:
-                name=var
-                ret= dest_list.insert(name, [0])
+                match_groups_single = prog_2.match(var)
+                if match_groups_single:
+                    lag = int(match_groups_single.group(1))
+                    name = match_groups_single.group(2)
+                    ret= dest_list.insert(name, [lag])
+                else:
+                    match_groups_auto = prog_3.match(var)
+                    if match_groups_auto:
+                        LB = int(match_groups_auto.group(1))
+                        name = match_groups_auto.group(3)
+                        self.options.beginner=True
+                        ret=dest_list.insert(name, [1])
+                    else:
+                        name=var
+                        ret= dest_list.insert(name, [0])
 
             if ret==-1:
                 return name
@@ -203,7 +214,6 @@ class command(object):
     
     def parse_options(self, part_3):
         list_options = part_3.split()
-        options = options_info()
 
 
         # possible_options=[{'onestep', 'iterated'},'nolevel', 'timedumm', 'collapse']
@@ -288,8 +298,10 @@ class command(object):
     def check_GMM(self):
         dep_name=self.temp_part1_list.names[0]
 
-        for var in self.list_GMM:
+        for i in range(len(self.list_GMM)):
+            var=self.list_GMM[i]
             if var.name==dep_name:
+                self.dep_GMM=[i]
                 if var.min_lag<2:
                     print('must use lag 2 or earlier of the dependent variable as instruments')
                     exit()

@@ -15,12 +15,10 @@ from sys import exit
 
 def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_info):
     #    start=time.time()
-    if len(identifiers) == 2:
-        _individual = identifiers[0]
-        _time = identifiers[1]
-    else:
-        print('two variables needed')
-        exit()
+
+    _individual = identifiers[0]
+    _time = identifiers[1]
+
 
     variables = p_variables
 
@@ -32,6 +30,10 @@ def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_inf
     N, T, ids = xtset(df, _individual, _time)
 
     max_lag, first_index, last_index = get_info(variables, method, T)
+
+    if first_index > last_index:
+        raise Exception ("Not enough periods to run the model")
+
 
     df_information = df_info(N=N, T=T, ids=ids, _individual=_individual, _time=_time, max_lag=max_lag,
                              first_index=first_index, last_index=last_index)
@@ -70,7 +72,6 @@ def xtset(df: DataFrame, _individual, _time):
     if N <= T:
         print(
             'Warning: system and difference GMMs do not work well on long (T>=N) panel data')
-
     return (N, T, ['_NT'])
 
 
@@ -92,9 +93,7 @@ def get_info(variables, method, T):
         last_index = T - 2
         first_index = max_lag - 1
 
-    if first_index >= last_index:
-        print('The number of periods in the data set is not high enough')
-        exit()
+
 
     return (max_lag, first_index, last_index)
 
@@ -413,10 +412,10 @@ def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
     tbr = []
 
     for var in variable_list:
-        if var.name not in df.columns:
-            print('Column ' + var.name +
-                  ' does not exist in the data set provided')
-            exit()
+        # if var.name not in df.columns:
+        #     print('Column ' + var.name +
+        #           ' does not exist in the data set provided')
+        #     exit()
 
         if var.name not in list_cols:
             list_cols.append(var.name)
@@ -463,6 +462,7 @@ def make_balanced(ori, n_individual, n_time):
 
 
 def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last_index):
+
     unique_time = sorted(df[_time].unique())[(first_index):(last_index + 1)]
 
     prefix = _time + '_'
@@ -472,7 +472,7 @@ def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last
         new_var = regular_variable(name, 0)
         variables['dep_indep'].append(new_var)
 
-        new_iv = regular_variable(name, 0)
+        #new_iv = regular_variable(name, 0)
         variables['iv'].append(new_var)
 
 

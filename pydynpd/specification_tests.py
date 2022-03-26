@@ -123,8 +123,10 @@ def AR_test(regression, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residu
         d2 = (-2) * temp2
 
         d3 = np.linalg.multi_dot([EX, vcov, EX.transpose()])
-
-        AR_temp = float(d0 / math.sqrt(d1 + d2 + d3))
+        try:
+            AR_temp = float(d0 / math.sqrt(d1 + d2 + d3))
+        except Exception as e:
+            raise Exception ('AR test failed')
 
         AR_list.append(AR_temp)
 
