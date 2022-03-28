@@ -1,23 +1,19 @@
-import numpy as np
-from numpy import ndarray
-from numpy import matmul
-from numpy.linalg import pinv, multi_dot
-import scipy.stats as st
-from pandas import DataFrame
-from prettytable import PrettyTable
+import warnings
 from sys import exit
 
-from pydynpd.command import command
-from pydynpd.panel_data import new_panel_data
+import numpy as np
+import scipy.stats as st
+from numpy.linalg import pinv
+from pandas import DataFrame
+from prettytable import PrettyTable
+
 import pydynpd.specification_tests as tests
-import pydynpd.common_functions
-from pydynpd.info import regression_info, sumproduct_task
-from pydynpd.common_functions import sum_product, Windmeijer
-from pydynpd.variable import regular_variable, gmm_var
-import time
-import warnings
-
-
+from pydynpd.command import command
+from pydynpd.common_functions import Windmeijer
+from pydynpd.info import regression_info, df_info, options_info
+from pydynpd.panel_data import panel_data
+from pydynpd.dynamic_panel_model import dynamic_panel_model
+from pydynpd.variable import regular_variable
 
 
 class abond:
@@ -27,78 +23,79 @@ class abond:
         warnings.filterwarnings("ignore", category=RuntimeWarning)
         self.initiate_properties()
 
-        user_command = command(command_str, df.columns)
-        self.df=df
-        self.variables=user_command.variables
-        self.options=user_command.options
-
         if len(identifiers) != 2:
             print('two variables needed')
             exit()
 
-        self.identifiers = identifiers
-        robust = True
+        self.identifiers=identifiers
+        user_command = command(command_str, df.columns)
+        pdata=panel_data(df, identifiers, user_command.variables, user_command.options)
+        # self.df = df
+        # self.variables = user_command.variables
+        # self.options = user_command.options
+        #self.identifiers = identifiers
+        #robust = True
 
-
-        if self.options.beginner:
-            self.df=df.copy()
-            current_lag=1
-            dep=self.variables['dep_indep'][0].name
+        if user_command.options.beginner:
+            self.df = df.copy()
+            current_lag = 1
+            dep = self.variables['dep_indep'][0].name
             self.regular_process(True)
 
             for current_lag in range(2, self.T):
-                new_var=regular_variable(dep, current_lag)
+                new_var = regular_variable(dep, current_lag)
                 self.variables['dep_indep'].insert(current_lag, new_var)
                 try:
                     self.regular_process(True)
                 except Exception as e:
                     break
         else:
-            self.regular_process(True)
-
+            model=dynamic_panel_model(pdata, user_command.variables, user_command.options)
+            self.regular_process(model, True)
 
     def form_variables_arrayes(self):
         self.variables['dep_indep']
 
+    def regular_process(self, model: dynamic_panel_model, print_result=True):
+
+        # try:
+        #     self.z_list, self.z_information, df_inf, final_xy_tables \
+        #         = new_panel_data(self.df, self.identifiers, self.variables, self.options)
+        # except Exception as e:
+        #     if self.options.beginner:
+        #         raise Exception(e)
+        #     else:
+        #         print(e)
+        #         exit()
 
 
-    def regular_process(self, print_result=True):
-
-        try:
-            self.z_list, self.z_information, df_inf, final_xy_tables \
-                = new_panel_data(self.df, self.identifiers, self.variables, self.options)
-        except Exception as e:
-            if self.options.beginner:
-                raise Exception (e)
-            else:
-                print(e)
-                exit()
-        self.df_inf=df_inf
+        self.z_list=model.z_list
+        df_inf = model.df_information
         self._z_t_list = self.z_list.transpose()
-        self.num_instru = self.z_information.num_instr
+        self.num_instru = model.z_information.num_instr
 
         self.N = df_inf.N
-        self.T= df_inf.T
-        self.Cx_list = final_xy_tables['Cx']
-        self.Cy_list = final_xy_tables['Cy']
+        self.T = df_inf.T
+        self.Cx_list = model.final_xy_tables['Cx']
+        self.Cy_list = model.final_xy_tables['Cy']
 
-        self.num_obs = self.prepare_reg()
+        self.num_obs = self.prepare_reg(model)
 
         self.result_list = []
 
-        self.H1 = self.get_H1()
+        self.H1 = self.get_H1(model)
         self._XZ, self._Zy = self.calculate_basic()
         self._XZ_t = self._XZ.transpose()
         self._Zy_t = self._Zy.transpose()
 
         self.GMM(1)
-        if self.options.steps == 1 or self.options.steps == 2:
+        if model.options.steps == 1 or model.options.steps == 2:
             # step 1
             self.GMM(2)  # step 1
         else:
             self.iterative_GMM()
 
-        self.generate_summary(self.options.steps)
+        self.generate_summary(model)
 
     def iterative_GMM(self):
         current_step = 1
@@ -271,9 +268,9 @@ class abond:
         #     return(self.M1*self.N)
         #     #return((self.N)*np.linalg.multi_dot([self.XZ_W1, self.W2, self.XZ.transpose(), self.M1, self.M1]))
 
-    def get_H1(self):
+    def get_H1(self, model):
         z_list = self.z_list
-        z_inf = self.z_information
+        z_inf = model.z_information
         width = z_list.shape[1]
 
         tbr = np.zeros((width, width), dtype='float64')
@@ -291,7 +288,7 @@ class abond:
 
         return (tbr)
 
-    def prepare_reg(self):
+    def prepare_reg(self, model: dynamic_panel_model):
 
         Cy_list = self.Cy_list
         Cx_list = self.Cx_list
@@ -316,8 +313,8 @@ class abond:
             # num_NA+=np.count_nonzero(row_if_nan[range(0,int((np.size(y)+1)/2))])
             # num_NA2 += np.count_nonzero(row_if_nan[range(max_observations_per_group,??? )])
             num_NA += np.count_nonzero(row_if_nan)
-            if self.options.level:
-                num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
+            if model.options.level:
+                num_NA -= np.count_nonzero(row_if_nan[range(0, model.z_information.diff_width)])
 
             na_list.append(row_if_nan)
             for j in range(0, len(row_if_nan)):
@@ -327,14 +324,18 @@ class abond:
                     z[:, j] = 0
                     # n_obs = n_obs - 1
         # return(Cx_list, Cy_list, z_list)
-        if self.options.level:
-            return (self.z_information.level_width * N - num_NA)
-        else:
-            return (self.z_information.diff_width * N - num_NA)
 
-    def generate_summary(self, step):
+        if model.options.level:
+            return (model.z_information.level_width * N - num_NA)
+        else:
+            return (model.z_information.diff_width * N - num_NA)
+
+    def generate_summary(self, model):
+
         step1 = self.result_list[0]
         step2 = self.result_list[1]
+        
+        step=model.options.steps
         if step == 1 or step == 2:
             _W2_inv = step2.W_inv
             zs = step2.zs
@@ -351,24 +352,25 @@ class abond:
                                               self.Cx_list.shape[1])
 
         try:
-            self.AR_list = tests.AR_test(self, step, 2)
+            self.AR_list = tests.AR_test(self, model, step, 2)
         except Exception as e:
             raise Exception(e)
 
-        if self.options.steps == 2:
+        if model.options.steps == 2:
             str_steps = 'two-step '
-        elif self.options.steps == 1:
+        elif model.options.steps == 1:
             str_steps = 'one-step '
         else:
             str_steps = str(self.options.steps) + '-step '
-        if self.options.level:
+
+        if model.options.level:
             str_gmm = 'system GMM'
         else:
             str_gmm = 'difference GMM'
 
         print('Dynamic panel-data estimation, ' + str_steps + str_gmm)
         print(self.basic_information())
-        print(self.regression_table(step))
+        print(self.regression_table(model, step))
         print(self.test_results())
 
     def basic_information(self):
@@ -396,21 +398,23 @@ class abond:
                 i + 1) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(P) + '\n'
         return (str_toprint)
 
-    def regression_table(self, step):
+    def regression_table(self, model, step):
         regression_result = self.result_list[step - 1]
         beta = regression_result.beta
         std_err = regression_result.std_err
 
-        dep_name = self.variables['dep_indep'][0].name
+        variables=model.variables
+
+        dep_name = variables['dep_indep'][0].name
         var_names = []
-        for i in range(1, len(self.variables['dep_indep'])):
-            var_name = self.variables['dep_indep'][i].name
-            var_lag = self.variables['dep_indep'][i].lag
+        for i in range(1, len(variables['dep_indep'])):
+            var_name = variables['dep_indep'][i].name
+            var_lag = variables['dep_indep'][i].lag
             if (var_lag) >= 1:
                 var_name = 'L' + str(var_lag) + '.' + var_name
             var_names.append(var_name)
 
-        if self.options.level:
+        if model.options.level:
             var_names.append('_con')
 
         num_indep = len(var_names)

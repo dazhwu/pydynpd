@@ -1,490 +1,130 @@
-from pandas import DataFrame
-
-import numpy as np
 import math
 
-from pydynpd.variable import regular_variable, gmm_var
-from pydynpd.info import df_info, z_info, options_info
-import time
-from sys import exit
+import numpy as np
+from pandas import DataFrame
+
+from pydynpd.info import options_info
+from pydynpd.variable import regular_variable
 
 
 # https://stackoverflow.com/questions/29352511/numpy-sort-ndarray-on-multiple-columns
 # https://itecnote.com/tecnote/python-efficiently-applying-a-function-to-a-grouped-pandas-dataframe-in-parallel/
 
 
-def new_panel_data(df: DataFrame, identifiers, p_variables, options: options_info):
-    #    start=time.time()
+class panel_data():
+    def __init__(self, df: DataFrame, identifiers, variables, options: options_info):
 
-    _individual = identifiers[0]
-    _time = identifiers[1]
+        self._individual = identifiers[0]
+        self._time = identifiers[1]
 
+        cols = []
+        #col_index = []
 
-    variables = p_variables
+        temp_list =[var.name for var in variables['dep_indep'] + variables['iv'] + variables['gmm']]
+        for var_name in temp_list:
+            if var_name not in cols:
+                cols.append(var_name)
 
-    level = options.level
-    timedumm = options.timedumm
-    collapse = options.collapse
-    method = 'fd'
+        # temp_df = df[ [self._individual, self._time] + cols].copy()
+        self.N, self.T, self.ids = self.xtset(df, self._individual, self._time)
+        
+        if options.timedumm:
+            self.col_timedumm=self.add_time_dummy(df, variables, self._time)
+        else:
+            self.col_timedumm=[]
+  
+        self.cols = self.ids + cols  #make sure ids is the first column
 
-    N, T, ids = xtset(df, _individual, _time)
+        self.data = self.make_balanced(df[self.cols + self.col_timedumm].to_numpy(), self.N, self.T)
+        num_cols=self.data.shape[1]
+        self.fd_data = self.fd_transform(self.data, self.N, [1, num_cols])
 
-    max_lag, first_index, last_index = get_info(variables, method, T)
 
-    if first_index > last_index:
-        raise Exception ("Not enough periods to run the model")
+    def xtset(self,df:DataFrame, _individual, _time):
 
+        df['_individual'] = df[_individual].astype('category').cat.codes
+        df['_individual'] = df['_individual'].astype('int64')
+        N = df['_individual'].unique().size
 
-    df_information = df_info(N=N, T=T, ids=ids, _individual=_individual, _time=_time, max_lag=max_lag,
-                             first_index=first_index, last_index=last_index)
-    if timedumm:
-        add_time_dummy(df, variables, _time, df_information.first_index, df_information.last_index)
+        df['_time'] = df[_time].astype('category').cat.codes
+        df['_time'] = df['_time'].astype('int64')
+        T = df['_time'].unique().size
 
-    z_information, gmm_diff_info, iv_diff_info = calculate_z_dimension(variables, df_information, level, collapse)
+        df['_NT'] = df['_individual'] * T + df['_time']
 
-    gmm_tables = get_gmm_table_list(df, variables, df_information, level)
+        if N <= T:
+            print(
+                'Warning: system and difference GMMs do not work well on long (T>=N) panel data')
+        return (N, T, ['_NT'])
 
-    xy_tables = get_xy_table_list(df, variables, df_information)
+    def make_balanced(self, ori, n_individual, n_time):
+        arr_full = np.empty((n_individual * n_time, ori.shape[1]), dtype='float64')
 
-    final_xy_tables = get_final_xy_tables(xy_tables, df_information, level)
+        arr_full[:] = np.NaN
+        # arr_full[:, 0] = np.repeat(range(0, N), T)
+        arr_full[:, 0] = range(0, n_individual * n_time)
+        # arr_full[:, 1] = arr_full[:, 2] % T
 
-    if level:
-        z_list = build_z_level(
-            variables, gmm_tables, df_information, z_information, gmm_diff_info, iv_diff_info, collapse)
-    else:
-        z_list = build_z_diff(
-            variables, gmm_tables, df_information, z_information, gmm_diff_info, iv_diff_info, False, collapse)
+        mask = np.in1d(arr_full[:, 0], ori[:, 0])
 
-    return ((z_list, z_information, df_information, final_xy_tables))
+        arr_full[mask, 1:arr_full.shape[1]] = ori[:, 1:ori.shape[1]]
 
+        return (arr_full)
 
-def xtset(df: DataFrame, _individual, _time):
-    df['_individual'] = df[_individual].astype('category').cat.codes
-    df['_individual'] = df['_individual'].astype('int64')
-    N = df['_individual'].unique().size
+    def add_time_dummy(self, df: DataFrame, variables: dict, _time: str):
 
-    df['_time'] = df[_time].astype('category').cat.codes
-    df['_time'] = df['_time'].astype('int64')
-    T = df['_time'].unique().size
+        unique_time = sorted(df[_time].unique())
+        col_timedumm=[]
 
-    df['_NT'] = df['_individual'] * T + df['_time']
+        prefix = _time + '_'
+        for num in unique_time:
+            name = prefix + str(num)
+            df[name] = np.where(df[_time] == num, 1, 0)
+            # new_var = regular_variable(name, 0)
+            # variables['dep_indep'].append(new_var)
+            # variables['iv'].append(new_var)
+            col_timedumm.append(name)
+        
+        return col_timedumm
 
-    if N <= T:
-        print(
-            'Warning: system and difference GMMs do not work well on long (T>=N) panel data')
-    return (N, T, ['_NT'])
 
 
-def get_info(variables, method, T):
-    max_lag = 0
-    max_gmm_minlag = 0
-    for var in variables['dep_indep'] + variables['iv']:
-        if var.lag > max_lag:
-            max_lag = var.lag
+    def fd_transform(self, ori_arr: np.ndarray, N, LU):
 
-    for var in variables['gmm']:
-        if var.min_lag > max_gmm_minlag:
-            max_gmm_minlag = var.min_lag
+        lb=LU[0]
+        ub=LU[1]
+        num_rows=ori_arr.shape[0]
 
-    if method == 'fd':
-        last_index = T - 1  # zero based
-        first_index = max(max_lag + 1, max_gmm_minlag)
-    else:
-        last_index = T - 2
-        first_index = max_lag - 1
+        height=int(num_rows/N)
+        num_cols = ori_arr.shape[1]
 
-
-
-    return (max_lag, first_index, last_index)
-
-
-def get_gmm_table_list(df: DataFrame, variables, df_information: df_info, level):
-    iv_list = gen_ori_list(df, variables['iv'], df_information)
-    gmm_list = gen_ori_list(df, variables['gmm'], df_information)
-    Div_list = gen_fd_list(iv_list)
-    gmm_tables = {}
-    if level:  # sys-GMM
-        Dgmm_list = gen_fd_list(gmm_list)
-        gmm_tables['Dgmm'] = Dgmm_list
-
-    gmm_tables['gmm'] = gmm_list
-    gmm_tables['iv'] = iv_list
-
-    gmm_tables['Div'] = Div_list
-
-    return (gmm_tables)
-
-
-def get_xy_table_list(df: DataFrame, variables: dict, df_information: df_info):
-    xy_tables = {}
-
-    num_var = len(variables['dep_indep'])
-    y_list = gen_ori_list(
-        df, variables['dep_indep'][0:1], df_information, True)
-    x_list = gen_ori_list(
-        df, variables['dep_indep'][1:num_var], df_information, True)
-
-    Dy_list = gen_fd_list(y_list, True)
-    Dx_list = gen_fd_list(x_list, True)
-
-    xy_tables['x'] = x_list
-    xy_tables['y'] = y_list
-    xy_tables['Dx'] = Dx_list
-    xy_tables['Dy'] = Dy_list
-
-    return (xy_tables)
-
-
-def get_final_xy_tables(xy_tables: dict, df_information: df_info, level):
-    final_xy_tables = {}
-
-    N = df_information.N
-    Dx_list = xy_tables['Dx']
-    Dy_list = xy_tables['Dy']
-    x_list = xy_tables['x']
-    y_list = xy_tables['y']
-
-    Dx_height = Dx_list[0].shape[0]
-    x_height = x_list[0].shape[0]
-    height_total = Dx_height + x_height
-
-    if level:  # sys-GMM
-        width = x_list[0].shape[1]
-        Cx_list = np.empty((height_total * N, width + 1), dtype=np.float64)
-        Cy_list = np.empty((height_total * N, 1), dtype=np.float64)
-        # Cx=np.empty()
-        for i in range(N):  # , nogil=True):  #df_information.N
-            temp_y = Cy_list[(height_total * i):(height_total * (i + 1)), :]
-            temp_y[0:Dx_height, 0] = Dy_list[i][0:Dx_height, 0]
-            temp_y[Dx_height:height_total, 0] = y_list[i][0:x_height, 0]
-            # temp_y = np.vstack((Dy_list[i], y_list[i]))
-
-            temp_x = Cx_list[(height_total * i):(height_total * (i + 1)), :]
-            temp_x[0:Dx_height, 0:width] = Dx_list[i][0:Dx_height, 0:width]
-            temp_x[Dx_height:height_total,
-            0:width] = x_list[i][0:x_height, 0:width]
-            temp_x[0:Dx_height, width] = 0
-            temp_x[Dx_height:height_total, width] = 1
-
-    else:  # diff-GMM
-        width = Dx_list[0].shape[1]
-        Cx_list = np.empty((Dx_height * N, width), dtype=np.float64)
-        Cy_list = np.empty((Dx_height * N, 1), dtype=np.float64)
-
-        for i in range(N):  # , nogil=True):  #df_information.N
-            temp_y = Cy_list[(Dx_height * i):(Dx_height * (i + 1)), :]
-            temp_y[0:Dx_height, 0] = Dy_list[i][0:Dx_height, 0]
-
-            temp_x = Cx_list[(Dx_height * i):(Dx_height * (i + 1)), :]
-            temp_x[0:Dx_height, :] = Dx_list[i][0:Dx_height, :]
-
-    final_xy_tables['Cy'] = Cy_list
-    final_xy_tables['Cx'] = Cx_list
-
-    return (final_xy_tables)
-
-
-def split_into_groups(arr, N, T):
-    # needs to be sorted
-
-    tbr = []
-    for i in range(0, N):
-        temp_arr = np.empty((T, arr.shape[1]), dtype='float64')
-        temp_arr[:] = arr[i * T:(i + 1) * T, :]
-        tbr.append(temp_arr)
-    # tbr = np.vsplit(arr, N)
-    return (tbr)
-
-
-def build_z_level(variables: dict, gmm_tables: dict, info: df_info, z_information: z_info, gmm_diff_info, iv_diff_info,
-                  collapse=False):
-    lev_last_index = info.last_index
-    lev_first_index = info.first_index - 1
-
-    z_list = build_z_diff(
-        variables, gmm_tables, info, z_information, gmm_diff_info, iv_diff_info, True, collapse)
-
-    level_width = z_information.level_width
-    level_height = z_information.level_height
-    diff_width = z_information.diff_width
-    diff_height = z_information.diff_height
-    width = z_information.width
-    height = z_information.height
-
-    gmm_vars = variables['gmm']
-    iv_vars = variables['iv']
-    Dgmm_list = gmm_tables['Dgmm']
-    iv_list = gmm_tables['iv']
-
-    # height = len(gmm_vars) * width + len(iv_vars)
-
-    start_row = diff_height  # z_list[0].shape[0]-height
-    start_col = diff_width  # z_list[0].shape[1]-width
-
-    for i in range(info.N):
-        z = z_list[i * height:(i + 1) * height]
-        # z[start_row-1,start_col:(start_col+self.level_width)]=1
-        z[height - 1, start_col:width] = 1
-
-        array_Dgmm = Dgmm_list[i]
-        array_iv = iv_list[i]
-
-        for var_id in range(len(gmm_vars)):
-            lag = gmm_vars[var_id].min_lag - 1
-            for j in range(level_width):
-                if collapse:
-                    z[start_row + var_id, start_col +
-                      j] = array_Dgmm[lev_first_index - lag + j, var_id]
-                else:
-                    z[start_row + var_id * level_width + j, start_col +
-                      j] = array_Dgmm[lev_first_index - lag + j, var_id]
-
-        start_pos = z_information.num_gmm_instr
-        for var_id in range(len(iv_vars)):
-            var = iv_vars[var_id]
-            z[start_pos + var_id,
-            start_col:width] = array_iv[lev_first_index:(lev_last_index + 1), var_id]
-
-        z[np.isnan(z)] = 0
-
-    z_information.num_gmm_instr += len(gmm_vars)
-    z_information.num_instr += z_information.level_height
-    return z_list
-
-
-def calculate_z_dimension(variables: dict, info: df_info, level, collapse=False):
-    gmm_vars = variables['gmm']
-
-    diff_width = info.last_index - info.first_index + 1
-    level_width = diff_width + 1
-    if collapse:
-        level_height = len(gmm_vars) + 1  # + len(iv_vars)
-    else:
-        level_height = len(gmm_vars) * level_width + 1  # + len(iv_vars)
-
-    num_gmm_instr, gmm_diff_info = prepare_Z_gmm_diff(
-        variables, diff_width, info, collapse)
-    iv_diff_info = prepare_Z_iv_diff(variables, diff_width, info)
-
-    diff_height = (num_gmm_instr + iv_diff_info.shape[0])
-
-    if level:
-        height = diff_height + level_height
-        width = diff_width + level_width
-    else:
-        height = diff_height
-        width = diff_width
-
-    z_information = z_info(diff_height=diff_height, diff_width=diff_width, level_width=level_width,
-                           level_height=level_height, height=height, width=width,
-                           num_gmm_instr=num_gmm_instr, num_instr=diff_height)
-
-    return (z_information, gmm_diff_info, iv_diff_info)
-
-
-def build_z_diff(variables: dict, gmm_tables: dict, info: df_info, z_information: z_info, gmm_diff_info, iv_diff_info,
-                 level, collapse=False):
-    z_list = []
-
-    gmm_vars = variables['gmm']
-    iv_vars = variables['iv']
-
-    gmm_list = gmm_tables['gmm']
-    Div_list = gmm_tables['Div']
-
-    diff_width = z_information.diff_width
-    height = z_information.height
-    width = z_information.width
-    num_gmm_instr = z_information.num_gmm_instr
-
-    z_list = np.zeros((height * info.N, width), dtype=np.float64)
-
-    for i in range(info.N):
-        z = z_list[i * height:(i + 1) * height, :]
-
-        array_gmm = gmm_list[i]
-        array_fd_iv = Div_list[i]
-
-        var_id = 0
-        for var in gmm_vars:
-
-            for j in range(diff_width):
-                row_pos = gmm_diff_info[var_id * 3 + 2, j]
-                start = gmm_diff_info[var_id * 3 + 0, j]
-                end = gmm_diff_info[var_id * 3 + 1, j]
-
-                # z[row_pos:(row_pos + end - start + 1), j] = array_gmm[start:(end + 1), var_id]
-
-                for k in range(end - start + 1):
-                    z[row_pos + k, j] = array_gmm[end - k, var_id]
-            var_id += 1
-
-        row_pos = num_gmm_instr
-
-        var_id = 0
-        for var_id in range(len(iv_vars)):
-            var = iv_vars[var_id]
-            for j in range(diff_width):
-                index_to_take = iv_diff_info[var_id, j]
-
-                z[row_pos, j] = array_fd_iv[index_to_take, var_id]
-
-            row_pos += 1
-
-        z[np.isnan(z)] = 0
-
-    return z_list
-
-
-def prepare_Z_iv_diff(variables: dict, width, info: df_info):
-    iv_vars = variables['iv']  # need to be placed at the beginning
-    num_iv = len(iv_vars)
-
-    t_info = np.empty((num_iv, width), dtype='int32')
-    # num_iv_instr = 0
-    var_id = 0
-    for var_id in range(num_iv):
-        var = iv_vars[var_id]
-        t_info[var_id,] = range(info.first_index, info.last_index + 1)
-        # num_iv_instr += width
-
-    return (t_info)
-
-
-def prepare_Z_gmm_diff(variables: dict, width, info: df_info, collapse=False):
-    start_row = 0
-
-    gmm_vars = variables['gmm']
-    num_gmm = len(gmm_vars)
-    t_info = np.empty((num_gmm * 3, width), dtype='int32')
-    var_id = 0
-    for var_id in range(num_gmm):
-        var = gmm_vars[var_id]
-
-        first_tend = info.first_index - var.min_lag
-        last_tend = info.last_index - var.min_lag
-
-        tend = np.arange(first_tend, last_tend + 1, dtype='int32')
-        t_info[var_id * 3 + 1,] = tend
-
-        for i in range(width):
-            tstart = max(0, tend[i] + var.min_lag - var.max_lag)
-            t_info[var_id * 3 + 0, i] = tstart
-            # t_info[var_id*3+1, i]=tend[i]
-            # physical position of the row
-            t_info[var_id * 3 + 2, i] = start_row
-
-            num = tend[i] - tstart + 1
-            # num_instru += num
-            if collapse:
-                if i == (width - 1):
-                    start_row += num
-            else:
-                start_row += num
-
-    num_gmm_instr = start_row  # number of gmm instruments in diff eq
-    return ((num_gmm_instr, t_info))
-
-
-def gen_fd_list(ori_array_list, cut=False):
-    tbr = []
-    num_rows = ori_array_list[0].shape[0]
-    num_cols = ori_array_list[0].shape[1]
-
-    for ori_arr in ori_array_list:
         lag_arr = np.zeros((num_rows, num_cols), dtype='float64')
         tbr_arr = np.zeros((num_rows, num_cols), dtype='float64')
-        lag_arr[range(0, 1), :] = np.NaN
-        lag_arr[range(1, num_rows), :] = ori_arr[range(0, (num_rows - 1)), :]
-        tbr_arr = ori_arr - lag_arr
-        if cut:
-            tbr_arr = tbr_arr[1:num_rows, :]
+        
+        for i in range(N):
+            tbr_arr_i=tbr_arr[(i*height):(i*height+height),:]
+            lag_arr_i=lag_arr[(i*height):(i*height+height),:]
+            
+            ori_i=ori_arr[(i*height):(i*height+height),:]
 
-        tbr.append(tbr_arr)
+            lag_arr_i[range(0, 1), :] = np.NaN
+            lag_arr_i[range(1, height), :] = ori_i[range(0, (height - 1)), :]
+            tbr_arr_i[:, range(lb, ub)] = ori_i[:, range(lb,ub)] - lag_arr_i[:, range(lb, ub)]
 
-    return (tbr)
+        # if cut:
+        #     tbr_arr = tbr_arr[1:num_rows, :]
+        tbr_arr[:,0]=ori_arr[:,0]
+        return tbr_arr
 
+    def generate_D_matrix(self, T, max_lag):
+        # matrix used in Forward Orthogonal Deviation
+        D = np.zeros((T - 1 - max_lag, T), dtype='float64')
 
-def gen_ori_list(df: DataFrame, variable_list, info: df_info, cut=False):
-    num_variables = len(variable_list)
-    list_cols = info.ids.copy()
-    # np.ndarray[np.double_t, ndim = 2] ori_arr  #pointer?
-    tbr = []
+        for i in range(T - 1 - max_lag):
+            for j in range(i, T):
+                if i == j:
+                    D[i, j] = math.sqrt((T - i - 1) / (T - i))
+                else:
+                    D[i, j] = (-1) * math.sqrt(1 / ((T - i) * (T - i - 1)))
 
-    for var in variable_list:
-        # if var.name not in df.columns:
-        #     print('Column ' + var.name +
-        #           ' does not exist in the data set provided')
-        #     exit()
-
-        if var.name not in list_cols:
-            list_cols.append(var.name)
-
-    list_array = split_into_groups(make_balanced(
-        df[list_cols].to_numpy(), info.N, info.T), info.N, info.T)
-
-    variable_names = [var.name for var in variable_list]
-    which_col = [list_cols.index(var_name) for var_name in variable_names]
-
-    for i in range(info.N):
-        ori_arr = np.empty((info.T, num_variables), dtype='float64')
-        col = 0
-        for j in range(num_variables):
-            var = variable_list[j]
-            if var.lag == 0:
-                ori_arr[:, col] = list_array[i][:, which_col[j]]
-            else:
-                ori_arr[range(0, var.lag), col] = np.NaN
-                ori_arr[range(var.lag, info.T), col] = list_array[i][range(
-                    0, info.T - var.lag), which_col[j]]
-
-            col += 1
-        if cut:
-            ori_arr = ori_arr[(info.first_index - 1):(info.last_index + 1), :]
-        tbr.append(ori_arr)
-
-    return (tbr)
-
-
-def make_balanced(ori, n_individual, n_time):
-    arr_full = np.empty((n_individual * n_time, ori.shape[1]), dtype='float64')
-
-    arr_full[:] = np.NaN
-    # arr_full[:, 0] = np.repeat(range(0, N), T)
-    arr_full[:, 0] = range(0, n_individual * n_time)
-    # arr_full[:, 1] = arr_full[:, 2] % T
-
-    mask = np.in1d(arr_full[:, 0], ori[:, 0])
-
-    arr_full[mask, 1:arr_full.shape[1]] = ori[:, 1:ori.shape[1]]
-
-    return (arr_full)
-
-
-def add_time_dummy(df: DataFrame, variables: dict, _time: str, first_index, last_index):
-
-    unique_time = sorted(df[_time].unique())[(first_index):(last_index + 1)]
-
-    prefix = _time + '_'
-    for num in unique_time:
-        name = prefix + str(num)
-        df[name] = np.where(df[_time] == num, 1, 0)
-        new_var = regular_variable(name, 0)
-        variables['dep_indep'].append(new_var)
-
-        #new_iv = regular_variable(name, 0)
-        variables['iv'].append(new_var)
-
-
-def generate_D_matrix(T, max_lag):
-    # matrix used in Forward Orthogonal Deviation
-    D = np.zeros((T - 1 - max_lag, T), dtype='float64')
-
-    for i in range(T - 1 - max_lag):
-        for j in range(i, T):
-            if i == j:
-                D[i, j] = math.sqrt((T - i - 1) / (T - i))
-            else:
-                D[i, j] = (-1) * math.sqrt(1 / ((T - i) * (T - i - 1)))
-
-    return (D)
+        return (D)

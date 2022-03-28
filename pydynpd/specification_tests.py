@@ -1,6 +1,8 @@
+import math
+
 import numpy as np
 from scipy import stats
-import math
+
 from pydynpd.info import hansen_test_info
 
 
@@ -15,7 +17,7 @@ def hansen_overid(W2_inv, N, zs, num_instru, num_indep):
     return (hansen_test)
 
 
-def AR_test(regression, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx_list, level, m):
+def AR_test(regression, model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx_list, level, m):
 
     N = regression.N
     z_list = regression.z_list
@@ -43,9 +45,9 @@ def AR_test(regression, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residu
     z_height = int(z_list.shape[0] / regression.N)
     x_width = Cx_list.shape[1]
 
-    diff_width = regression.z_information.diff_width
+    diff_width = model.z_information.diff_width
 
-    if regression.options.level:
+    if model.options.level:
 
         # r_list=[]
         # r_t_list=[]
@@ -126,7 +128,7 @@ def AR_test(regression, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residu
         try:
             AR_temp = float(d0 / math.sqrt(d1 + d2 + d3))
         except Exception as e:
-            raise Exception ('AR test failed')
+            raise Exception('AR test failed')
 
         AR_list.append(AR_temp)
 

@@ -1,7 +1,5 @@
 import numpy as np
-from scipy.sparse import csc_matrix, csr_matrix
-import sys
-from pydynpd.info import sumproduct_task
+from scipy.sparse import csc_matrix
 
 
 def sum_product(listOflist, n_rows):

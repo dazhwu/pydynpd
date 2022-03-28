@@ -7,8 +7,6 @@ import numpy as np
 class df_info:
     N: int
     T: int
-    _individual: str
-    _time: str
     ids: list
     first_index: int
     last_index: int
@@ -55,6 +53,7 @@ class options_info:
 class sumproduct_task:
     array_list: list
     division_list: list
+
 
 @dataclass
 class beginner_models:
