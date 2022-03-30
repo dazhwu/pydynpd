@@ -61,18 +61,8 @@ class beginner_models:
 
 
 @dataclass
-class regression_info:
-    # twosteps: bool
-    # robust: bool
-    # level: bool
-    # num_obs: int
-    # num_instruments: int
-    # N:int
-    # T: int
-    # # dep: str
-    # indep: list
+class step_result:
 
-    # beta2: list
     H: np.ndarray
     residual: np.ndarray
     residual_t: np.ndarray
@@ -91,24 +81,4 @@ class regression_info:
     def __init__(self, W):
         self.W = W
         self.W_inv = np.linalg.pinv(W)
-#
-#     def __init__(self, twosteps, robust, level, num_obs,  num_instruments, N, T,
-#                  beta1, residual1, residual1_t, SS, XZ_W1,  XZ, M1, M2, W1, W2):
-#         self.twosteps=twosteps
-#         self.robust=robust
-#         self.level=level
-#         self.num_obs=num_obs
-#         self.num_instruments=num_instruments
-#         self.N=N
-#         self.T=T
-#         self.beta1=beta1
-#         self.residual1=residual1
-#         self.residual1_t=residual1_t
-#         self.SS=SS
-#         self.XZ_W1=XZ_W1
-#         self.XZ=XZ
-#         self.M1=M1
-#         self.M2 = M2
-#         self.W1=W1
-#         self.W2=W2
-#
+

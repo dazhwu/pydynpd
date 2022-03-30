@@ -7,10 +7,6 @@ from pydynpd.info import options_info
 from pydynpd.variable import regular_variable
 
 
-# https://stackoverflow.com/questions/29352511/numpy-sort-ndarray-on-multiple-columns
-# https://itecnote.com/tecnote/python-efficiently-applying-a-function-to-a-grouped-pandas-dataframe-in-parallel/
-
-
 class panel_data():
     def __init__(self, df: DataFrame, identifiers, variables, options: options_info):
 
@@ -18,7 +14,6 @@ class panel_data():
         self._time = identifiers[1]
 
         cols = []
-        #col_index = []
 
         temp_list =[var.name for var in variables['dep_indep'] + variables['iv'] + variables['gmm']]
         for var_name in temp_list:

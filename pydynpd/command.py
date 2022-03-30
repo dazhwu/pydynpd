@@ -3,7 +3,7 @@ import sys
 from sys import exit
 
 from pydynpd.info import options_info
-from pydynpd.variable import gmm_var, regular_variable
+from pydynpd.variable import gmm_var, regular_variable, adjustable_lag_indep
 
 
 class temp_list:
@@ -11,17 +11,27 @@ class temp_list:
         self.names = []
         self.lags = []
         self.cols = cols
+        self.adjustable_min_lags=[] #True False
+        self.adjustable_max_lags=[]   #True False
 
-    def insert(self, name, lags):
+    def insert(self, name, lags, min_adj_lag=False, max_adj_lag=False):
         if name not in self.cols:
             return -1
 
         if name not in self.names:
             self.names.append(name)
             self.lags.append(lags)
+            self.adjustable_max_lags.append(max_adj_lag)
+            self.adjustable_min_lags.append(min_adj_lag)
         else:
             the_index = self.names.index(name)
             self.lags[the_index] += lags
+            if min_adj_lag==True:
+                self.adjustable_min_lags[the_index]=True
+            
+            if max_adj_lag==True:
+                self.adjustable_max_lags[the_index]=True
+                
 
         return 0
 
@@ -41,14 +51,16 @@ class command(object):
     def __init__(self, command_str, df_col_names):
         self.command_str = command_str
         self.cols = df_col_names
-        self.temp_part1_list = temp_list(df_col_names)
-        self.temp_iv_list = temp_list(df_col_names)
+        self._temp_part1_list = temp_list(df_col_names)
+        self._temp_iv_list = temp_list(df_col_names)
         self.variables = None
         self.options = options_info()
         self.dep_GMM = None
 
         self.list_GMM = []
-
+        # self.adjustable={}
+        # self.adjustable['indep']=[]
+        
         self.parse_command()
 
     def parse_command(self):
@@ -74,11 +86,12 @@ class command(object):
         self.check_GMM()
         self.check_iv()
         self.check_three_lists()
+        #self.check_adjustable()
 
         self.variables = {}
-        self.variables['dep_indep'] = self.tbr_list(self.temp_part1_list)
+        self.variables['dep_indep'] =self.tbr_list(self._temp_part1_list)
         self.variables['gmm'] = self.list_GMM
-        self.variables['iv'] = self.tbr_list(self.temp_iv_list)
+        self.variables['iv'] = self.tbr_list(self._temp_iv_list)
 
     def parse_spaced_vars(self, list_vars, dest_list):
 
@@ -106,7 +119,9 @@ class command(object):
                         LB = int(match_groups_auto.group(1))
                         name = match_groups_auto.group(3)
                         self.options.beginner = True
-                        ret = dest_list.insert(name, [1])
+                        ret = dest_list.insert(name, [LB], min_adj_lag=False, max_adj_lag=True )
+#                        new_var=adjustable_lag_indep(name, LB, None)
+#                        self.adjustable['indep'].append(new_var)
                     else:
                         name = var
                         ret = dest_list.insert(name, [0])
@@ -120,7 +135,7 @@ class command(object):
 
         list_vars = part_1.split()
 
-        ret = self.parse_spaced_vars(list_vars, self.temp_part1_list)
+        ret = self.parse_spaced_vars(list_vars, self._temp_part1_list)
 
         if ret != '':
             print(part_1 + ':  variable ' + ret + ' does not exist')
@@ -200,7 +215,7 @@ class command(object):
             matching_parts.append(part)
             match_groups_multiple = prog_2.match(part)
             vars = match_groups_multiple.group(1).split()
-            invalid_name = self.parse_spaced_vars(vars, self.temp_iv_list)
+            invalid_name = self.parse_spaced_vars(vars, self._temp_iv_list)
             if invalid_name != '':
                 print(part + ': ' + invalid_name + ' does not exist')
                 exit()
@@ -264,10 +279,10 @@ class command(object):
 
     def check_dep_indep(self):
 
-        self.temp_part1_list.purge()
+        self._temp_part1_list.purge()
 
-        dep = self.temp_part1_list.names[0]
-        dep_lags = self.temp_part1_list.lags[0]
+        dep = self._temp_part1_list.names[0]
+        dep_lags = self._temp_part1_list.lags[0]
 
         if dep_lags[0] != 0:
             print('dependent variable should not be lagged on the left hand side of the model')
@@ -281,10 +296,10 @@ class command(object):
             print('lag 1 of the dependent variable is not included')
             exit()
 
-        self.temp_part1_list.check_contiguous()
+        self._temp_part1_list.check_contiguous()
 
     def check_GMM(self):
-        dep_name = self.temp_part1_list.names[0]
+        dep_name = self._temp_part1_list.names[0]
 
         for i in range(len(self.list_GMM)):
             var = self.list_GMM[i]
@@ -295,23 +310,36 @@ class command(object):
                     exit()
 
     def check_iv(self):
-        self.temp_iv_list.purge()
-        self.temp_iv_list.check_contiguous()
+        self._temp_iv_list.purge()
+        self._temp_iv_list.check_contiguous()
 
     def check_three_lists(self):
         gmm_names = [var.name for var in self.list_GMM]
-        iv_names = self.temp_iv_list.names
+        iv_names = self._temp_iv_list.names
 
         for iv_name in iv_names:
             if iv_name in gmm_names:
                 print('variable ' + iv_name + ': a variable can be either in GMM style or in IV style, but not both')
                 exit()
 
-        for i in range(len(self.temp_part1_list.lags)):
-            var_name = self.temp_part1_list.names[i]
-            var_lags = self.temp_part1_list.lags[i]
+        for i in range(len(self._temp_part1_list.lags)):
+            var_name = self._temp_part1_list.names[i]
+            var_lags = self._temp_part1_list.lags[i]
             bool_GMM = var_name in gmm_names
             bool_IV = var_name in iv_names
 
             if not (bool_GMM or bool_IV):
-                self.temp_iv_list.insert(var_name, var_lags)
+                self._temp_iv_list.insert(var_name, var_lags)
+
+    # def check_adjustable(self):
+    # 
+    #     if len(self.adjustable['indep'])>0:
+    #         dep = self._temp_part1_list.names[0]
+    #         self._temp_part1_list.lags[0]=[1]
+    # 
+    #     for var in self.adjustable['indep']:
+    #         if var.name != dep:
+    #             print('in the current version, only the lags of the lagged dependent variable can be adjusted')
+    #             exit()
+    #         else:
+

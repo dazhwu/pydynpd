@@ -10,6 +10,12 @@ class gmm_var(regular_variable):
         self.min_lag = min_lag
         self.max_lag = max_lag
 
+class adjustable_lag_indep:
+    def __init__(self, name, min_lag, max_lag):
+        self.name=name
+        self.min_lag=min_lag
+        self.max_lag=max_lag
+
 # class indep_var(rhs_var):
 #     pass
 #

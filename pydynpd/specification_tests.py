@@ -17,20 +17,20 @@ def hansen_overid(W2_inv, N, zs, num_instru, num_indep):
     return (hansen_test)
 
 
-def AR_test(regression, model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx_list, level, m):
+def AR_test(model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t, Cx_list, level, m):
 
-    N = regression.N
-    z_list = regression.z_list
-    Cx_list = regression.Cx_list
+    N = model.N
+    z_list = model.z_list
+    Cx_list = model.final_xy_tables['Cx']
 
-    step1 = regression.result_list[0]
-    step2 = regression.result_list[1]
+    step1 = model.step_results[0]
+    step2 = model.step_results[1]
     if step == 2:
         current_step = step2
     elif step == 1:
         current_step = step1
     else:
-        current_step = regression.result_list[step - 1]
+        current_step = model.step_results[step - 1]
 
     M = current_step.M
     XZ_W = current_step._XZ_W
@@ -39,10 +39,10 @@ def AR_test(regression, model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual
     residual = current_step.residual
     residual_t = current_step._residual_t
 
-    r_height = int(residual.shape[0] / regression.N)
+    r_height = int(residual.shape[0] / N)
 
-    x_height = int(Cx_list.shape[0] / regression.N)
-    z_height = int(z_list.shape[0] / regression.N)
+    x_height = int(Cx_list.shape[0] / N)
+    z_height = int(z_list.shape[0] / N)
     x_width = Cx_list.shape[1]
 
     diff_width = model.z_information.diff_width
@@ -52,11 +52,11 @@ def AR_test(regression, model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual
         # r_list=[]
         # r_t_list=[]
         # x_list=[]
-        r_list = np.empty((diff_width * regression.N, 1), dtype=np.float64)
-        r_t_list = np.empty((1, diff_width * regression.N), dtype=np.float64)
-        x_list = np.empty((diff_width * regression.N, x_width), dtype=np.float64)
+        r_list = np.empty((diff_width * N, 1), dtype=np.float64)
+        r_t_list = np.empty((1, diff_width * N), dtype=np.float64)
+        x_list = np.empty((diff_width * N, x_width), dtype=np.float64)
 
-        for i in range(regression.N):
+        for i in range(N):
             r = residual[(i * r_height):(i * r_height + r_height), :]
             r_list[(i * diff_width):(i * diff_width + diff_width), 0:1] = r[0:diff_width, 0:1]
             #
@@ -79,7 +79,7 @@ def AR_test(regression, model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual
         lagm_list = np.ndarray((1, r_height * N), dtype='float64')
         lagm_t_list = np.ndarray((r_height * N, 1), dtype='float64')
 
-        r0_height = int(residual.shape[0] / regression.N)
+        r0_height = int(residual.shape[0] / N)
 
         for i in range(N):
             # calculate lag_res and lag_res_t

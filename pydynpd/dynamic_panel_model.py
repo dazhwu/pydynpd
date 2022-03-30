@@ -9,18 +9,22 @@ from pydynpd.variable import regular_variable
 class dynamic_panel_model(object):
     def __init__(self, pdata: panel_data, variables: dict, options: options_info):
         self.pdata = pdata
-        T = self.pdata.T
-        N = self.pdata.N
+        self.T = self.pdata.T
+        self.N = self.pdata.N
         self.variables = variables.copy()
         self.options = options
         method='fd'
 
-        max_lag, first_index, last_index = self.get_info(variables, 'fd', T)
+        max_lag, first_index, last_index = self.get_info(variables, 'fd', self.T)
 
-        self.df_information = df_info(N=N, T=T, ids=self.pdata.ids, max_lag=max_lag,
+        self.df_information = df_info(N=self.N, T=self.T, ids=self.pdata.ids, max_lag=max_lag,
                                       first_index=first_index, last_index=last_index)
 
-        if first_index + 3 > last_index:  # to do: change 3 to something rated to AR(p)
+        
+        self.step_results=[]
+        self.results=None
+
+        if first_index + 2 > last_index:  # to do: change 3 to something rated to AR(p)
             raise Exception("Not enough periods to run the model")
         else:
             if options.timedumm:
@@ -42,6 +46,8 @@ class dynamic_panel_model(object):
         z = instruments(self.variables, gmm_tables,self.df_information,self.options )
         self.z_information=z.z_information
         self.z_list =z.z_list
+        self.num_obs = self.prepare_reg()
+        self._z_t_list=self.z_list.transpose()
 
     def get_info(self,variables, method, T):
         max_lag = 0
@@ -191,3 +197,43 @@ class dynamic_panel_model(object):
                 col += 1
 
         return (tbr)
+    
+    def prepare_reg(self):
+
+        z_list=self.z_list
+        #num_instru = model.z_information.num_instr
+        Cx_list = self.final_xy_tables['Cx']
+        Cy_list = self.final_xy_tables['Cy']
+
+        N = self.N
+        xy_height = int(Cy_list.shape[0] / N)
+        z_height = int(z_list.shape[0] / N)
+
+        na_list = []
+        num_NA = 0
+
+        for i in range(N):
+            x = Cx_list[(i * xy_height):(i * xy_height + xy_height), :]
+            y = Cy_list[(i * xy_height):(i * xy_height + xy_height), :]
+            z = z_list[(i * z_height):(i * z_height + z_height), :]
+            row_if_nan = np.logical_or(np.isnan(x).any(axis=1), np.isnan(y).any(axis=1))
+            # num_NA+=np.count_nonzero(row_if_nan[range(0,int((np.size(y)+1)/2))])
+            # num_NA2 += np.count_nonzero(row_if_nan[range(max_observations_per_group,??? )])
+            num_NA += np.count_nonzero(row_if_nan)
+            if self.options.level:
+                num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
+
+            na_list.append(row_if_nan)
+            for j in range(0, len(row_if_nan)):
+                if row_if_nan[j] == True:
+                    x[j, :] = 0
+                    y[j, :] = 0
+                    z[:, j] = 0
+                    # n_obs = n_obs - 1
+        # return(Cx_list, Cy_list, z_list)
+
+        if self.options.level:
+            return (self.z_information.level_width * N - num_NA)
+        else:
+            return (self.z_information.diff_width * N - num_NA)
+
