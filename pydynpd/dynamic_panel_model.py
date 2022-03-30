@@ -22,7 +22,7 @@ class dynamic_panel_model(object):
 
         
         self.step_results=[]
-        self.results=None
+        self.results={}
 
         if first_index + 2 > last_index:  # to do: change 3 to something rated to AR(p)
             raise Exception("Not enough periods to run the model")
@@ -237,3 +237,10 @@ class dynamic_panel_model(object):
         else:
             return (self.z_information.diff_width * N - num_NA)
 
+    def form_results(self):
+        step=len(self.step_results)
+        the_list=self.step_results[step-1]
+        self.results['beta']=the_list.beta
+        self.results['std_err']=the_list.std_err
+        self.results['vcov']=the_list.vcov
+        self.results['W']=the_list.W

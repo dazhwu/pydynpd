@@ -77,6 +77,7 @@ class step_result:
     M: np.ndarray
     beta: list
     vcov: np.ndarray
+    std_err: list
 
     def __init__(self, W):
         self.W = W

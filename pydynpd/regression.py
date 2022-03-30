@@ -55,6 +55,7 @@ class abond:
             self.iterative_GMM(model, _XZ, _XZ_t, _Zy, _Zy_t)
             self.perform_test(model,model.options.steps)
         
+        model.form_results()
         ms=model_summary()
         ms.print_summary(model)
 
