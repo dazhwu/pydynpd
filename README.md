@@ -19,7 +19,12 @@ In the equation above, x is a predetermined variable that is potentially correla
 * Time dummies
 * Collapse GMM instruments to limit instrument proliferation
 
+## Contributing
+There are several ways to contribute to pydynpd:
 
+Submit issue/bug reports here, or try to fix the problem yourself and then submit a pull request.
+Request features or ask questions here.
+Browse the source code and see if anything looks out of place - let us know!
 ## Installation:
 ``` 
 pip install pydynpd
