@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
+
 # from sklearn.metrics.pairwise import cosine_similarity
-from scipy import sparse
 
 my_data = np.array([[5, 1, 1],
                     [3, 2, 3],

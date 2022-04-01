@@ -31,8 +31,11 @@ class model_summary(object):
         basic_table.align = 'l'
         basic_table.add_row(
             ['Group variable: ' + model.pdata._individual, ' ', 'Number of obs = ' + str(model.num_obs)])
-        basic_table.add_row(['Time variable: ' + model.pdata._time, ' ', 'Number of groups = ' + str(model.N)])
-        basic_table.add_row(['Number of instruments = ' + str(model.z_information.num_instr), ' ', ''])
+        basic_table.add_row(['Time variable: ' + model.pdata._time, ' ', 'Min obs per group: ' + str(model.min_obs)])
+        basic_table.add_row(['Number of instruments = ' + str(model.z_information.num_instr), ' ',
+                             'Max obs per group: ' + str(model.max_obs)])
+        basic_table.add_row(
+            ['Number of groups = ' + str(model.N), ' ', 'Avg obs per group: ' + '{0:.2f}'.format(model.avg_obs)])
 
         return (basic_table.get_string())
 

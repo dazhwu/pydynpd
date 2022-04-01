@@ -63,7 +63,7 @@ class dynamic_panel_model(object):
         z = instruments(self.variables, gmm_tables, self.df_information, self.options)
         self.z_information = z.z_information
         self.z_list = z.z_table
-        self.num_obs = self.prepare_reg()
+        self.num_obs, self.max_obs, self.min_obs, self.avg_obs = self.prepare_reg()
         self._z_t_list = self.z_list.transpose()
 
     def get_info(self, variables, method, T):
@@ -239,7 +239,9 @@ class dynamic_panel_model(object):
 
         na_list = []
         num_NA = 0
-
+        total = 0
+        max = 0
+        min = 0
         for i in range(N):
             x = Cx_dat[(i * xy_height):(i * xy_height + xy_height), :]
             y = Cy_dat[(i * xy_height):(i * xy_height + xy_height), :]
@@ -247,9 +249,19 @@ class dynamic_panel_model(object):
             row_if_nan = np.logical_or(np.isnan(x).any(axis=1), np.isnan(y).any(axis=1))
             # num_NA+=np.count_nonzero(row_if_nan[range(0,int((np.size(y)+1)/2))])
             # num_NA2 += np.count_nonzero(row_if_nan[range(max_observations_per_group,??? )])
-            num_NA += np.count_nonzero(row_if_nan)
             if self.options.level:
-                num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
+                temp = np.count_nonzero(row_if_nan[range(self.z_information.diff_width, self.z_information.width)])
+            else:
+                temp = np.count_nonzero(row_if_nan)
+            num_NA += temp
+
+            if temp > max:
+                max = temp
+            if temp < min:
+                min = temp
+            # num_NA += np.count_nonzero(row_if_nan)
+            # if self.options.level:
+            #     num_NA -= np.count_nonzero(row_if_nan[range(0, self.z_information.diff_width)])
 
             na_list.append(row_if_nan)
             for j in range(0, len(row_if_nan)):
@@ -261,6 +273,13 @@ class dynamic_panel_model(object):
         # return(Cx_dat, Cy_dat, z_list)
 
         if self.options.level:
-            return (self.z_information.level_width * N - num_NA)
+            nobs = self.z_information.level_width * N - num_NA
+
+
         else:
-            return (self.z_information.diff_width * N - num_NA)
+            nobs = self.z_information.diff_width * N - num_NA
+
+        max_obs = self.z_information.level_width - min
+        min_obs = self.z_information.level_width - max
+        avg_obs = self.z_information.level_width - (num_NA * 1.0) / N
+        return (nobs, max_obs, min_obs, avg_obs)

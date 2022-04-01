@@ -242,7 +242,7 @@ class command(object):
                 print(option + ' is not an option allowed')
                 exit()
 
-        if options.steps==1 and options.steps== 1000:
+        if options.steps == 1 and options.steps == 1000:
             print("One-step and iterative estimations are mutually exclusive")
             exit()
 
