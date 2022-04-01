@@ -12,7 +12,7 @@ In the equation above, x is a predetermined variable that is potentially correla
 
 ## Features supported:
 * Differene and System GMM
-* One-step and Two-step estimates
+* One-step, two-step, and iterative estimates
 * Robust standard errors. For two-step GMM, the calculation suggested by Windmeijer (2005) is used.
 * Hansen over-identification test
 * Arellano-Bond test for autocorrelation
