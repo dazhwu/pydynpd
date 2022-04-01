@@ -3,7 +3,7 @@ import sys
 from sys import exit
 
 from pydynpd.info import options_info
-from pydynpd.variable import gmm_var, regular_variable, adjustable_lag_indep
+from pydynpd.variable import gmm_var, regular_variable
 
 
 class temp_list:
@@ -11,8 +11,8 @@ class temp_list:
         self.names = []
         self.lags = []
         self.cols = cols
-        self.adjustable_min_lags=[] #True False
-        self.adjustable_max_lags=[]   #True False
+        self.adjustable_min_lags = []  # True False
+        self.adjustable_max_lags = []  # True False
 
     def insert(self, name, lags, min_adj_lag=False, max_adj_lag=False):
         if name not in self.cols:
@@ -26,12 +26,11 @@ class temp_list:
         else:
             the_index = self.names.index(name)
             self.lags[the_index] += lags
-            if min_adj_lag==True:
-                self.adjustable_min_lags[the_index]=True
-            
-            if max_adj_lag==True:
-                self.adjustable_max_lags[the_index]=True
-                
+            if min_adj_lag == True:
+                self.adjustable_min_lags[the_index] = True
+
+            if max_adj_lag == True:
+                self.adjustable_max_lags[the_index] = True
 
         return 0
 
@@ -57,10 +56,11 @@ class command(object):
         self.options = options_info()
         self.dep_GMM = None
 
-        self.list_GMM = []
+        self.list_Dgmm = []
+        self.list_Lgmm = []
         # self.adjustable={}
         # self.adjustable['indep']=[]
-        
+
         self.parse_command()
 
     def parse_command(self):
@@ -86,11 +86,12 @@ class command(object):
         self.check_GMM()
         self.check_iv()
         self.check_three_lists()
-        #self.check_adjustable()
+        # self.check_adjustable()
 
         self.variables = {}
-        self.variables['dep_indep'] =self.tbr_list(self._temp_part1_list)
-        self.variables['gmm'] = self.list_GMM
+        self.variables['dep_indep'] = self.tbr_list(self._temp_part1_list)
+        self.variables['Dgmm'] = self.list_Dgmm
+        self.variables['Lgmm'] = self.list_Lgmm
         self.variables['iv'] = self.tbr_list(self._temp_iv_list)
 
     def parse_spaced_vars(self, list_vars, dest_list):
@@ -119,9 +120,9 @@ class command(object):
                         LB = int(match_groups_auto.group(1))
                         name = match_groups_auto.group(3)
                         self.options.beginner = True
-                        ret = dest_list.insert(name, [LB], min_adj_lag=False, max_adj_lag=True )
-#                        new_var=adjustable_lag_indep(name, LB, None)
-#                        self.adjustable['indep'].append(new_var)
+                        ret = dest_list.insert(name, [LB], min_adj_lag=False, max_adj_lag=True)
+                    #                        new_var=adjustable_lag_indep(name, LB, None)
+                    #                        self.adjustable['indep'].append(new_var)
                     else:
                         name = var
                         ret = dest_list.insert(name, [0])
@@ -223,7 +224,7 @@ class command(object):
     def parse_options(self, part_3):
         list_options = part_3.split()
 
-        options=self.options
+        options = self.options
 
         # possible_options=[{'onestep', 'iterated'},'nolevel', 'timedumm', 'collapse']
         for option in list_options:
@@ -258,12 +259,15 @@ class command(object):
             if (var not in self.cols):
                 print(part + ': ' + var + ' does not exist')
                 exit()
-            existing_names = [v.name for v in self.list_GMM]
+            existing_names = [v.name for v in self.list_Dgmm]
             if var in existing_names:
                 print(part + ': ' + var + ' cannot be declared in part 2 for twice or more')
                 exit()
             temp_var = gmm_var(var, min_lag, max_lag, 0)
-            self.list_GMM.append(temp_var)
+            self.list_Dgmm.append(temp_var)
+            min_lag = max(min_lag - 1, 0)
+            temp_var = gmm_var(var, min_lag, min_lag, 0)
+            self.list_Lgmm.append(temp_var)
 
     def tbr_list(self, temp_list):
         tbr = []
@@ -301,8 +305,8 @@ class command(object):
     def check_GMM(self):
         dep_name = self._temp_part1_list.names[0]
 
-        for i in range(len(self.list_GMM)):
-            var = self.list_GMM[i]
+        for i in range(len(self.list_Dgmm)):
+            var = self.list_Dgmm[i]
             if var.name == dep_name:
                 self.dep_GMM = [i]
                 if var.min_lag < 2:
@@ -314,7 +318,7 @@ class command(object):
         self._temp_iv_list.check_contiguous()
 
     def check_three_lists(self):
-        gmm_names = [var.name for var in self.list_GMM]
+        gmm_names = [var.name for var in self.list_Dgmm]
         iv_names = self._temp_iv_list.names
 
         for iv_name in iv_names:
@@ -342,4 +346,3 @@ class command(object):
     #             print('in the current version, only the lags of the lagged dependent variable can be adjusted')
     #             exit()
     #         else:
-

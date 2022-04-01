@@ -21,7 +21,8 @@ def AR_test(model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t,
 
     N = model.N
     z_list = model.z_list
-    Cx_list = model.final_xy_tables['Cx']
+    Cx = model.final_xy_tables['Cx']
+    Cx_list = Cx.dat
 
     step1 = model.step_results[0]
     step2 = model.step_results[1]
@@ -41,9 +42,9 @@ def AR_test(model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t,
 
     r_height = int(residual.shape[0] / N)
 
-    x_height = int(Cx_list.shape[0] / N)
+    x_height = Cx.unit_height
     z_height = int(z_list.shape[0] / N)
-    x_width = Cx_list.shape[1]
+    x_width = Cx.width
 
     diff_width = model.z_information.diff_width
 

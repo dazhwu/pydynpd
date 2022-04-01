@@ -25,10 +25,10 @@ def sum_product(listOflist, n_rows):
     return (tbr)
 
 
-def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx_list, z_list, residual1, N):
+def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx, z_list, residual1, N):
     D = np.empty((M2.shape[0], M2.shape[1]), dtype='float64')
-
-    x_height = int(Cx_list.shape[0] / N)
+    Cx_list = Cx.dat
+    x_height = Cx.unit_height
     z_height = int(z_list.shape[0] / N)
     for j in range(0, Cx_list.shape[1]):
 

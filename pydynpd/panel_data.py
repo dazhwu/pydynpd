@@ -4,7 +4,6 @@ import numpy as np
 from pandas import DataFrame
 
 from pydynpd.info import options_info
-from pydynpd.variable import regular_variable
 
 
 class panel_data():
@@ -15,27 +14,26 @@ class panel_data():
 
         cols = []
 
-        temp_list =[var.name for var in variables['dep_indep'] + variables['iv'] + variables['gmm']]
+        temp_list = [var.name for var in variables['dep_indep'] + variables['iv'] + variables['Dgmm']]
         for var_name in temp_list:
             if var_name not in cols:
                 cols.append(var_name)
 
         # temp_df = df[ [self._individual, self._time] + cols].copy()
         self.N, self.T, self.ids = self.xtset(df, self._individual, self._time)
-        
+
         if options.timedumm:
-            self.col_timedumm=self.add_time_dummy(df, variables, self._time)
+            self.col_timedumm = self.add_time_dummy(df, variables, self._time)
         else:
-            self.col_timedumm=[]
-  
-        self.cols = self.ids + cols  #make sure ids is the first column
+            self.col_timedumm = []
+
+        self.cols = self.ids + cols  # make sure ids is the first column
 
         self.data = self.make_balanced(df[self.cols + self.col_timedumm].to_numpy(), self.N, self.T)
-        num_cols=self.data.shape[1]
+        num_cols = self.data.shape[1]
         self.fd_data = self.fd_transform(self.data, self.N, [1, num_cols])
 
-
-    def xtset(self,df:DataFrame, _individual, _time):
+    def xtset(self, df: DataFrame, _individual, _time):
 
         df['_individual'] = df[_individual].astype('category').cat.codes
         df['_individual'] = df['_individual'].astype('int64')
@@ -63,13 +61,14 @@ class panel_data():
         mask = np.in1d(arr_full[:, 0], ori[:, 0])
 
         arr_full[mask, 1:arr_full.shape[1]] = ori[:, 1:ori.shape[1]]
+        arr_full = arr_full[arr_full[:, 0].argsort()]
 
         return (arr_full)
 
     def add_time_dummy(self, df: DataFrame, variables: dict, _time: str):
 
         unique_time = sorted(df[_time].unique())
-        col_timedumm=[]
+        col_timedumm = []
 
         prefix = _time + '_'
         for num in unique_time:
@@ -79,36 +78,34 @@ class panel_data():
             # variables['dep_indep'].append(new_var)
             # variables['iv'].append(new_var)
             col_timedumm.append(name)
-        
+
         return col_timedumm
-
-
 
     def fd_transform(self, ori_arr: np.ndarray, N, LU):
 
-        lb=LU[0]
-        ub=LU[1]
-        num_rows=ori_arr.shape[0]
+        lb = LU[0]
+        ub = LU[1]
+        num_rows = ori_arr.shape[0]
 
-        height=int(num_rows/N)
+        height = int(num_rows / N)
         num_cols = ori_arr.shape[1]
 
         lag_arr = np.zeros((num_rows, num_cols), dtype='float64')
         tbr_arr = np.zeros((num_rows, num_cols), dtype='float64')
-        
+
         for i in range(N):
-            tbr_arr_i=tbr_arr[(i*height):(i*height+height),:]
-            lag_arr_i=lag_arr[(i*height):(i*height+height),:]
-            
-            ori_i=ori_arr[(i*height):(i*height+height),:]
+            tbr_arr_i = tbr_arr[(i * height):(i * height + height), :]
+            lag_arr_i = lag_arr[(i * height):(i * height + height), :]
+
+            ori_i = ori_arr[(i * height):(i * height + height), :]
 
             lag_arr_i[range(0, 1), :] = np.NaN
             lag_arr_i[range(1, height), :] = ori_i[range(0, (height - 1)), :]
-            tbr_arr_i[:, range(lb, ub)] = ori_i[:, range(lb,ub)] - lag_arr_i[:, range(lb, ub)]
+            tbr_arr_i[:, range(lb, ub)] = ori_i[:, range(lb, ub)] - lag_arr_i[:, range(lb, ub)]
 
         # if cut:
         #     tbr_arr = tbr_arr[1:num_rows, :]
-        tbr_arr[:,0]=ori_arr[:,0]
+        tbr_arr[:, 0] = ori_arr[:, 0]
         return tbr_arr
 
     def generate_D_matrix(self, T, max_lag):

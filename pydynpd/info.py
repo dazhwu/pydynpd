@@ -8,8 +8,9 @@ class df_info:
     N: int
     T: int
     ids: list
-    first_index: int
+    first_diff_index: int
     last_index: int
+    first_level_index: int
     max_lag: int
 
 
@@ -21,7 +22,8 @@ class z_info:
     level_height: int
     width: int
     height: int
-    num_gmm_instr: int
+    num_Dgmm_instr: int
+    num_Lgmm_instr: int
     num_instr: int
     # int num_vars
     # int num_gmm_instr
@@ -62,7 +64,6 @@ class beginner_models:
 
 @dataclass
 class step_result:
-
     H: np.ndarray
     residual: np.ndarray
     residual_t: np.ndarray
@@ -82,4 +83,3 @@ class step_result:
     def __init__(self, W):
         self.W = W
         self.W_inv = np.linalg.pinv(W)
-

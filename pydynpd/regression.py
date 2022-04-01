@@ -5,38 +5,39 @@ import numpy as np
 from numpy.linalg import pinv
 from pandas import DataFrame
 
-
 import pydynpd.specification_tests as tests
 from pydynpd.command import command
 from pydynpd.common_functions import Windmeijer
-from pydynpd.info import step_result
-from pydynpd.panel_data import panel_data
 from pydynpd.dynamic_panel_model import dynamic_panel_model
+from pydynpd.info import step_result
 from pydynpd.model_organizer import model_oranizer
 from pydynpd.model_summary import model_summary
+from pydynpd.panel_data import panel_data
+
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+
 
 class abond:
 
     def __init__(self, command_str, df: DataFrame, identifiers: list):
-        
+
         if len(identifiers) != 2:
             print('two variables needed')
             exit()
 
         user_command = command(command_str, df.columns)
-        pdata=panel_data(df, identifiers, user_command.variables, user_command.options)
+        pdata = panel_data(df, identifiers, user_command.variables, user_command.options)
 
         if user_command.options.beginner:
-            m_manager=model_oranizer(user_command, pdata)
+            m_manager = model_oranizer(user_command, pdata)
             for variables in m_manager.models.list_variables:
                 try:
-                    model=dynamic_panel_model(pdata, variables, user_command.options)
+                    model = dynamic_panel_model(pdata, variables, user_command.options)
                     self.regular_process(model)
                 except Exception as e:
-                    continue          
+                    continue
         else:
-            model=dynamic_panel_model(pdata, user_command.variables,user_command.options)
+            model = dynamic_panel_model(pdata, user_command.variables, user_command.options)
             self.regular_process(model)
 
     def regular_process(self, model: dynamic_panel_model):
@@ -47,20 +48,17 @@ class abond:
         _XZ_t = _XZ.transpose()
         _Zy_t = _Zy.transpose()
 
-        self.GMM(model, _XZ, _XZ_t, _Zy, _Zy_t,  1)
-        if model.options.steps == 1 or model.options.steps == 2:           
-            self.GMM(model, _XZ, _XZ_t, _Zy, _Zy_t,  2)  
-            self.perform_test(model,2)
+        self.GMM(model, _XZ, _XZ_t, _Zy, _Zy_t, 1)
+        if model.options.steps == 1 or model.options.steps == 2:
+            self.GMM(model, _XZ, _XZ_t, _Zy, _Zy_t, 2)
+            self.perform_test(model, 2)
         else:
             self.iterative_GMM(model, _XZ, _XZ_t, _Zy, _Zy_t)
-            self.perform_test(model,model.options.steps)
-        
-        model.form_results()
-        ms=model_summary()
+            self.perform_test(model, model.options.steps)
+
+        self.form_results(model)
+        ms = model_summary()
         ms.print_summary(model)
-
-
-        
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
         current_step = 1
@@ -85,16 +83,14 @@ class abond:
             if crit < 0.00001:
                 converge = True
                 model.options.steps = current_step
-                
 
-
-    def GMM(self, model: dynamic_panel_model, _XZ, _XZ_t, _Zy, _Zy_t, step:int):
+    def GMM(self, model: dynamic_panel_model, _XZ, _XZ_t, _Zy, _Zy_t, step: int):
         N = model.N
         num_obs = model.num_obs
         z_list = model.z_list
         _z_t_list = model._z_t_list
-        Cx_list = model.final_xy_tables['Cx']
-        Cy_list = model.final_xy_tables['Cy']       
+        Cx_list = model.final_xy_tables['Cx'].dat
+        Cy_list = model.final_xy_tables['Cy'].dat
 
         if step == 1:
             H1 = self.get_H1(model)
@@ -147,20 +143,22 @@ class abond:
 
         current_step.ZuuZ = ZuuZ
 
-        current_step.W_next=W_next   
-        
+        current_step.W_next = W_next
+
         current_step.vcov = self.vcov(model, step)
         current_step.std_err = np.sqrt(np.diag(current_step.vcov))
 
     def calculate_basic(self, model):
 
-        z_list=model.z_list
+        z_list = model.z_list
         _z_t_list = model._z_t_list
-        Cx_list = model.final_xy_tables['Cx']
-        Cy_list = model.final_xy_tables['Cy']
+        Cx = model.final_xy_tables['Cx']
+        Cy = model.final_xy_tables['Cy']
+        Cx_list = Cx.dat
+        Cy_list = Cy.dat
 
         z_height = int(z_list.shape[0] / model.N)
-        x_height = int(Cx_list.shape[0] / model.N)
+        x_height = Cx.unit_height
 
         for i in range(model.N):
             z = z_list[(z_height * i):(z_height * i + z_height), :]
@@ -197,12 +195,11 @@ class abond:
 
         return (tbr)
 
-    def vcov(self, model:dynamic_panel_model, step: int):
+    def vcov(self, model: dynamic_panel_model, step: int):
         # report robust vcov only
-        
-        
+
         z_list = model.z_list
-        Cx_list = model.final_xy_tables['Cx']
+        Cx = model.final_xy_tables['Cx']
 
         if step >= 2:
             the_step = model.step_results[step - 1]
@@ -214,7 +211,7 @@ class abond:
             vcov_step_previous = previous_step.vcov
             residual1 = previous_step.residual
             return Windmeijer(M2, _M2_XZ_W2, _W2_inv, zs2,
-                              vcov_step_previous, Cx_list, z_list, residual1, model.N)
+                              vcov_step_previous, Cx, z_list, residual1, model.N)
         elif step == 1:
             step_1 = model.step_results[0]
             _M_XZ_W = step_1._M_XZ_W
@@ -225,27 +222,26 @@ class abond:
         step1 = model.step_results[0]
         step2 = model.step_results[1]
         num_instru = model.z_information.num_instr
-        Cx_list = model.final_xy_tables['Cx']
-        
-        step=model.options.steps
+        Cx = model.final_xy_tables['Cx']
+
+        step = model.options.steps
         if step == 1 or step == 2:
             _W2_inv = step2.W_inv
             zs = step2.zs
 
             model.hansen = tests.hansen_overid(_W2_inv, model.N, zs, num_instru, \
-                                              Cx_list.shape[1])
+                                               Cx.width)
         else:
-            current_step = model.step_results[step - 1] 
+            current_step = model.step_results[step - 1]
             _W2_inv = current_step.W_inv
             zs = current_step.zs
             model.hansen = tests.hansen_overid(_W2_inv, model.N, zs, num_instru, \
-                                              Cx_list.shape[1])
+                                               Cx.width)
 
         try:
             model.AR_list = tests.AR_test(model, step, 2)
         except Exception as e:
             raise Exception(e)
-
 
     def get_H1(self, model: dynamic_panel_model):
         z_list = model.z_list
@@ -266,3 +262,13 @@ class abond:
         tbr[np.logical_and(j == 1 + i + z_inf.diff_width, i < z_inf.diff_width)] = 1
 
         return (tbr)
+
+    def form_results(self, model):
+        step = len(model.step_results)
+        the_list = model.step_results[step - 1]
+        self.results = {}
+        self.results['beta'] = the_list.beta
+        self.results['std_err'] = the_list.std_err
+        self.results['vcov'] = the_list.vcov
+        self.results['W'] = the_list.W
+        self.results['instrument_matrix'] = model.z_list

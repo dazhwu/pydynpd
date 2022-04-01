@@ -4,9 +4,7 @@ from prettytable import PrettyTable
 
 class model_summary(object):
 
-
     def print_summary(self, model):
-
 
         if model.options.steps == 2:
             str_steps = 'two-step '
@@ -31,7 +29,8 @@ class model_summary(object):
         basic_table.border = False
         basic_table.header = False
         basic_table.align = 'l'
-        basic_table.add_row(['Group variable: ' + model.pdata._individual, ' ', 'Number of obs = ' + str(model.num_obs)])
+        basic_table.add_row(
+            ['Group variable: ' + model.pdata._individual, ' ', 'Number of obs = ' + str(model.num_obs)])
         basic_table.add_row(['Time variable: ' + model.pdata._time, ' ', 'Number of groups = ' + str(model.N)])
         basic_table.add_row(['Number of instruments = ' + str(model.z_information.num_instr), ' ', ''])
 
@@ -51,12 +50,12 @@ class model_summary(object):
         return (str_toprint)
 
     def regression_table(self, model):
-        step=len(model.step_results)
+        step = len(model.step_results)
         regression_result = model.step_results[step - 1]
         beta = regression_result.beta
         std_err = regression_result.std_err
 
-        variables=model.variables
+        variables = model.variables
 
         dep_name = variables['dep_indep'][0].name
         var_names = []
