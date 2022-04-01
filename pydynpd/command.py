@@ -242,6 +242,10 @@ class command(object):
                 print(option + ' is not an option allowed')
                 exit()
 
+        if options.steps==1 and options.steps== 1000:
+            print("One-step and iterative estimations are mutually exclusive")
+            exit()
+
         return (options)
 
     def process_GMM(self, vars, min_lag, max_lag, part):
