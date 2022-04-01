@@ -34,3 +34,5 @@ pydynpd/__pycache__/__init__.cpython-39.pyc
 pydynpd.egg-info/PKG-INFO
 *.pyc
 *.pyc
+*.whl
+*.gz

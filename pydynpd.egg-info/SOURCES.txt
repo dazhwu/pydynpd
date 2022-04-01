@@ -6,8 +6,11 @@ pydynpd/__init__.py
 pydynpd/__version__.py
 pydynpd/command.py
 pydynpd/common_functions.py
+pydynpd/dynamic_panel_model.py
 pydynpd/info.py
-pydynpd/multicollinearity.py
+pydynpd/instruments.py
+pydynpd/model_organizer.py
+pydynpd/model_summary.py
 pydynpd/panel_data.py
 pydynpd/regression.py
 pydynpd/specification_tests.py
