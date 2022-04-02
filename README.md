@@ -46,7 +46,7 @@ where command string consists of two or three parts separated by |. The first tw
   <p>If there is no restriction on max_lag, dot (.) can be used. For example, GMM(w, 1:.) means all lags from lag 1 of variable w are used as instruments.</P>
   <p>endo and pred statements are for convinience. endo(variable list) is equivelent to GMM(variable list, 2:.) and pred(variable list) is the same as GMM(variable list, 1:.)</P>
   <p>Question mark (?) can be used in GMM statements as max_lag. That is, GMM(variable list, 2:?) means you want to try all possible max_lag numbers. Each possible max_lag number is a model. Command then will estimate each possible model, and report models that pass both hensen overidentification test and Arellano-Bond test for autocorrelation (to be implemented soon).</P>
-  On the other hand, IV(variable list) means each variable on variable list is treated as instrument. Lag operators can be used inside IV statements. For example, IV(L1.x) means lag 1 of variable x is treated as instrument. <br>
+  <p>On the other hand, IV(variable list) means each variable on variable list is treated as instrument. Lag operators can be used inside IV statements. For example, IV(L1.x) means lag 1 of variable x is treated as instrument. </p>
 * Part three is optional. It includes the following possible options: 
   * onestep: perform one-step GMM estimation rather than the default two-step GMM estimation.
   * iterated: perform iterative GMM estimation.
