@@ -1,4 +1,3 @@
-
 from prettytable import PrettyTable
 
 
@@ -18,16 +17,14 @@ class model_summary(object):
         else:
             str_gmm = 'difference GMM'
 
-        to_print=[]
-        #to_print.append(model.command_str)
-        to_print.append('Dynamic panel-data estimation, ' + str_steps + str_gmm )
-        to_print.append(self.basic_information(model) )
-        to_print.append(self.regression_table(model) )
+        to_print = []
+        # to_print.append(model.command_str)
+        to_print.append('Dynamic panel-data estimation, ' + str_steps + str_gmm)
+        to_print.append(self.basic_information(model))
+        to_print.append(self.regression_table(model))
         to_print.append(self.test_results(model))
         for line in to_print:
             print(line)
-
-
 
     def basic_information(self, model):
         basic_table = PrettyTable()
@@ -52,36 +49,35 @@ class model_summary(object):
         str_toprint = str_toprint + ' Prob > Chi2 = ' + '{:.3f}'.format(model.hansen.p_value) + '\n'
 
         for i in range(len(model.AR_list)):
-            the_AR=model.AR_list[i]
+            the_AR = model.AR_list[i]
             AR = the_AR.AR
-            P_value=the_AR.P_value
+            P_value = the_AR.P_value
 
             str_toprint = str_toprint + 'Arellano-Bond test for AR(' + str(
-                i + 1) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(P_value) + '\n'
+                i + 1) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(
+                P_value) + '\n'
         return (str_toprint)
 
     def regression_table(self, model):
 
-
         dep_name = model.variables['dep_indep'][0].name
-
 
         r_table = PrettyTable()
 
         r_table.field_names = [dep_name, "coef.", "Corrected Std. Err.", "z", "P>|z|"]
 
         r_table.float_format = '.7'
-        regression_table=model.regression_table
+        regression_table = model.regression_table
         # , "z", "P>|z|", "[95% Conf. Interval]" ]
-        num_indep = len(regression_table['variables'])
+        num_indep = len(regression_table.columns)
 
         for i in range(num_indep):
-            var_name = regression_table['variables'][i]
-            coeff = regression_table['coefficients'][i]
-            stderr = regression_table['std_errs'][i]
+            var_name = regression_table['variable'][i]
+            coeff = regression_table['coefficient'][i]
+            stderr = regression_table['std_err'][i]
 
-            z = regression_table['z_values'][i]
-            p= regression_table['p_values'][i]
+            z = regression_table['z_value'][i]
+            p = regression_table['p_value'][i]
             r_table.add_row([var_name, coeff, stderr, z, p])
 
         return r_table.get_string()

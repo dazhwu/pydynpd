@@ -27,24 +27,28 @@ class abond:
 
         user_command = command(command_str, df.columns)
         pdata = panel_data(df, identifiers, user_command.variables, user_command.options)
-
+        self.models = []
         if user_command.options.beginner:
             m_manager = model_oranizer(user_command, pdata)
-            num_models=len(m_manager.models.list_variables)
+            num_models = len(m_manager.models.list_variables)
+            j=0
             for i in range(num_models):
-                variables=m_manager.models.list_variables[i]
+                variables = m_manager.models.list_variables[i]
                 com_str = m_manager.models.list_command_str[i]
                 try:
-                    model = dynamic_panel_model(pdata, variables, user_command.options, com_str)
-                    self.regular_process(model, False)
-
+                    model = dynamic_panel_model(pdata, variables, user_command.options, com_str, user_command.part_2, user_command.part_3)
+                    print('model ' + str(j + 1))
+                    print(model.command_str)
+                    self.regular_process(model, True)
+                    j+=1
                 except Exception as e:
+
                     continue
         else:
             model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str)
             self.regular_process(model)
 
-    def regular_process(self, model: dynamic_panel_model, print_result=True):
+    def regular_process(self, model: dynamic_panel_model, beginner_mode=False):
 
         model.step_results = []
 
@@ -60,17 +64,15 @@ class abond:
             self.iterative_GMM(model, _XZ, _XZ_t, _Zy, _Zy_t)
             self.perform_test(model, model.options.steps)
 
-        self.form_results(model)
+        to_print = True
 
-        if print_result:
+        if beginner_mode:
+            to_print = self.check_model(model)
+        if to_print:
             model.form_regression_table()
             ms = model_summary()
             ms.print_summary(model)
-        else:
-            if self.check_model(model):
-                model.form_regression_table()
-                ms = model_summary()
-                ms.print_summary(model)
+            self.form_results(model)
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
         current_step = 1
@@ -275,25 +277,19 @@ class abond:
 
         return (tbr)
 
-
     def form_results(self, model):
         step = len(model.step_results)
         the_list = model.step_results[step - 1]
-        self.results = {}
-        self.results['beta'] = the_list.beta
-        self.results['std_err'] = the_list.std_err
-        self.results['vcov'] = the_list.vcov
-        self.results['W'] = the_list.W
-        self.results['instrument_matrix'] = model.z_list
+
+        self.models.append(model)  # results = {}
 
     def check_model(self, model):
-        tbr=False
-        num_ARs=len(model.AR_list)
-        last_AR=model.AR_list[num_ARs-1]
+        tbr = False
+        num_ARs = len(model.AR_list)
+        last_AR = model.AR_list[num_ARs - 1]
 
-        if last_AR.P_value>0.05:
-            if model.hansen.p_value>0.05 and model.hansen.p_value<0.99999:
+        if last_AR.P_value > 0.05:
+            if model.hansen.p_value > 0.05 and model.hansen.p_value < 0.99999:
                 return True
         else:
             return False
-

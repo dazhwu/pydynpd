@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import scipy
 
 from pydynpd.info import df_info, options_info
@@ -16,14 +17,16 @@ class data_table(object):
 
 
 class dynamic_panel_model(object):
-    def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str):
+    def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str, part_2: str, part_3: str):
         self.pdata = pdata
         self.T = self.pdata.T
         self.N = self.pdata.N
         self.variables = variables.copy()
         self.options = options
         method = 'fd'
-        self.command_str=command_str
+        self.command_str = command_str + '|' + part_2
+        if part_3!='':
+            self.command_str += '|' + part_3
         max_lag, first_diff_index, first_level_index, last_index = self.get_info(variables, 'fd', self.T)
 
         self.df_information = df_info(N=self.N, T=self.T, ids=self.pdata.ids, max_lag=max_lag,
@@ -231,7 +234,7 @@ class dynamic_panel_model(object):
         num_indeps = len(self.variables['dep_indep']) - 1
 
         var_names = []
-        for i in range(1, num_indeps+1):
+        for i in range(1, num_indeps + 1):
             var_name = self.variables['dep_indep'][i].name
             var_lag = self.variables['dep_indep'][i].lag
             if (var_lag) >= 1:
@@ -240,12 +243,11 @@ class dynamic_panel_model(object):
 
         if self.options.level:
             var_names.append('_con')
-            num_indeps+=1
+            num_indeps += 1
 
-        self.regression_table = np.zeros(num_indeps, dtype={
-            'names': ('variables', 'coefficients', 'std_errs', 'z_values', 'p_values'),
-            'formats': ('U10', np.float64, np.float64, np.float64, np.float64)})
-
+        # self.regression_table = np.zeros(num_indeps, dtype={
+        #     'names': ('variables', 'coefficients', 'std_errs', 'z_values', 'p_values'),
+        #     'formats': ('U10', np.float64, np.float64, np.float64, np.float64)})
 
         num_steps = len(self.step_results)
         last_result = self.step_results[num_steps - 1]
@@ -255,11 +257,14 @@ class dynamic_panel_model(object):
         z_value = [coeff[i] / std_err[i] for i in range(num_indeps)]
         p_value = [scipy.stats.norm.sf(abs(z)) * 2 for z in z_value]
 
-        self.regression_table['variables'] = var_names
-        self.regression_table['coefficients'] = coeff
-        self.regression_table['std_errs'] = std_err
-        self.regression_table['z_values'] = z_value
-        self.regression_table['p_values'] = p_value
+        self.regression_table = pd.DataFrame(list(zip(var_names, coeff, std_err, z_value, p_value)),
+                                             columns=['variable', 'coefficient', 'std_err', 'z_value', 'p_value'])
+
+        # self.regression_table['variables'] = var_names
+        # self.regression_table['coefficients'] = coeff
+        # self.regression_table['std_errs'] = std_err
+        # self.regression_table['z_values'] = z_value
+        # self.regression_table['p_values'] = p_value
 
     def prepare_reg(self):
 

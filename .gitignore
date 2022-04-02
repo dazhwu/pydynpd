@@ -36,3 +36,4 @@ pydynpd.egg-info/PKG-INFO
 *.pyc
 *.whl
 *.gz
+*.pyc

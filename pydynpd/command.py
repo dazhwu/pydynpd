@@ -71,16 +71,17 @@ class command(object):
             exit()
 
         if len(parts) == 3:
-            part_3 = parts[2]
-            self.options = self.parse_options(part_3)
+            self.part_3 = parts[2]
+            self.options = self.parse_options(self.part_3)
         else:
+            self.part_3=''
             self.options = options_info()
 
-        part_1 = parts[0]
-        self.parse_dep_indep(part_1)
+        self.part_1 = parts[0]
+        self.parse_dep_indep(self.part_1)
 
-        part_2 = parts[1]
-        self.parse_gmm_iv(part_2)
+        self.part_2 = parts[1]
+        self.parse_gmm_iv(self.part_2)
 
         self.check_dep_indep()
         self.check_GMM()
