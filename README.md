@@ -40,14 +40,16 @@ command_str='n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) | timedumm  noleve
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
 ### Function abond(command string, data frame, identifier)
-where command string consists of two or three parts. The first two parts are required. <br>
-* Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in command string. For example, L2.n means to lag variable n two periods. Shortcut L(1:2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n. 
-* Part two desribes how instruments are created. The grammar in this part is similar to that in Stata package XTabond2. More specifically, GMM(varaible list, min_lag: max_lag) indicates that lags min_lag through max_lag of each variable included in list of variables are used to generate instruments. For example, GMM(w k, 1:3) means lags 1 through 3 of variables w and k are treated as instruments, which implies that w and k are predetermined variables. On the other hand, IV(variable list) means each variable on variable list is treated as instrument.
+where command string consists of two or three parts separated by |. The first two parts are required. <br>
+* Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in this part. For example, L2.n means to lag variable n two periods. Shortcut L(1:2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n.<br> 
+* Part two desribes how instruments are created. The grammar in this part is similar to that in Stata package XTabond2. More specifically, GMM(varaible list, min_lag: max_lag) indicates that lags min_lag through max_lag of each variable included in list of variables are used to generate instruments. For example, GMM(w k, 1:3) means lags 1 through 3 of variables w and k are treated as instruments, which implies that w and k are predetermined variables. <br>
+  On the other hand, IV(variable list) means each variable on variable list is treated as instrument. Lag operators can be used inside IV statements. For example, IV(L1.x) means lag 1 of variable x is treated as instrument. <br>
 * Part three is optional. It includes the following possible options: 
-  * onestep: perform one-step estimation rather than the default two-step estimation.
+  * onestep: perform one-step GMM estimation rather than the default two-step GMM estimation.
+  * iterated: perform iterative GMM estimation.
   * nolevel: only perform difference GMM
-  * timedumm: include time dummies
-  * collapse: collapse instruments
+  * timedumm: automatically include time dummies in part 1, and IV statement in part 2.
+  * collapse: collapse instruments to reduce the proeblem of too many instruments
 
 
 
