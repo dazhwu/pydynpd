@@ -18,10 +18,15 @@ class model_summary(object):
         else:
             str_gmm = 'difference GMM'
 
-        print('Dynamic panel-data estimation, ' + str_steps + str_gmm)
-        print(self.basic_information(model))
-        print(self.regression_table(model))
-        print(self.test_results(model))
+        to_print=[]
+        to_print.append('Dynamic panel-data estimation, ' + str_steps + str_gmm )
+        to_print.append(self.basic_information(model) )
+        to_print.append(self.regression_table(model) )
+        to_print.append(self.test_results(model))
+        for line in to_print:
+            print(line)
+
+
 
     def basic_information(self, model):
         basic_table = PrettyTable()
