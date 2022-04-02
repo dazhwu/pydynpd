@@ -3,7 +3,7 @@ import math
 import numpy as np
 from scipy import stats
 
-from pydynpd.info import hansen_test_info
+from pydynpd.info import hansen_test_info, AR_test_info
 
 
 def hansen_overid(W2_inv, N, zs, num_instru, num_indep):
@@ -131,6 +131,8 @@ def AR_test(model, step, m):  # N, H, M, z_list, XZ_W,vcov, residual,residual_t,
         except Exception as e:
             raise Exception('AR test failed')
 
-        AR_list.append(AR_temp)
+        P_value = stats.norm.sf(abs(AR_temp)) * 2
+        new_AR=AR_test_info(j, AR_temp, P_value)
+        AR_list.append(new_AR)
 
     return (AR_list)

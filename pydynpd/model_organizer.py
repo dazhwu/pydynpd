@@ -38,6 +38,7 @@ class model_oranizer(object):
             new_variables = {}
             new_variables['dep_indep'] = self._temp_list_indep[i]
             new_variables['Dgmm'] = user_command.variables['Dgmm']
+            new_variables['Lgmm'] = user_command.variables['Lgmm']
             new_variables['iv'] = user_command.variables['iv']
             self.models.list_variables.append(new_variables)
             self.models.list_command_str = self._temp_list_command
@@ -63,12 +64,14 @@ class model_oranizer(object):
             for j in range(last_lag + 1, self.ending_time + 1):
                 new_model = model.copy()
                 new_str = str(command_str)
-                new_list_variables.append(new_model)
-                new_list_command_str.append(new_str)
+
                 for k in range(last_lag + 1, j + 1):
                     new_var = regular_variable(var_name, k)
                     new_model.append(new_var)
                     new_str += ' L' + str(k) + '.' + var_name + ' '
+
+                new_list_variables.append(new_model)
+                new_list_command_str.append(new_str)
 
         self._temp_list_indep += new_list_variables
         self._temp_list_command += new_list_command_str

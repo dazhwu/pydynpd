@@ -40,6 +40,8 @@ class hansen_test_info:
 @dataclass
 class AR_test_info:
     lag: int
+    AR: float
+    P_value: float
 
 
 @dataclass

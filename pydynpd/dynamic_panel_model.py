@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 
 from pydynpd.info import df_info, options_info
 from pydynpd.instruments import instruments
@@ -15,14 +16,14 @@ class data_table(object):
 
 
 class dynamic_panel_model(object):
-    def __init__(self, pdata: panel_data, variables: dict, options: options_info):
+    def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str):
         self.pdata = pdata
         self.T = self.pdata.T
         self.N = self.pdata.N
         self.variables = variables.copy()
         self.options = options
         method = 'fd'
-
+        self.command_str=command_str
         max_lag, first_diff_index, first_level_index, last_index = self.get_info(variables, 'fd', self.T)
 
         self.df_information = df_info(N=self.N, T=self.T, ids=self.pdata.ids, max_lag=max_lag,
@@ -36,6 +37,7 @@ class dynamic_panel_model(object):
         else:
             if options.timedumm:
                 self.update_time_dummies(first_diff_index, last_index)
+
             self.prepare_data()
 
     def update_time_dummies(self, first_diff_index, last_index):
@@ -223,6 +225,41 @@ class dynamic_panel_model(object):
 
         new_table = data_table(tbr, height)
         return (new_table)
+
+    def form_regression_table(self):
+
+        num_indeps = len(self.variables['dep_indep']) - 1
+
+        var_names = []
+        for i in range(1, num_indeps+1):
+            var_name = self.variables['dep_indep'][i].name
+            var_lag = self.variables['dep_indep'][i].lag
+            if (var_lag) >= 1:
+                var_name = 'L' + str(var_lag) + '.' + var_name
+            var_names.append(var_name)
+
+        if self.options.level:
+            var_names.append('_con')
+            num_indeps+=1
+
+        self.regression_table = np.zeros(num_indeps, dtype={
+            'names': ('variables', 'coefficients', 'std_errs', 'z_values', 'p_values'),
+            'formats': ('U10', np.float64, np.float64, np.float64, np.float64)})
+
+
+        num_steps = len(self.step_results)
+        last_result = self.step_results[num_steps - 1]
+
+        coeff = last_result.beta[:, 0]
+        std_err = last_result.std_err
+        z_value = [coeff[i] / std_err[i] for i in range(num_indeps)]
+        p_value = [scipy.stats.norm.sf(abs(z)) * 2 for z in z_value]
+
+        self.regression_table['variables'] = var_names
+        self.regression_table['coefficients'] = coeff
+        self.regression_table['std_errs'] = std_err
+        self.regression_table['z_values'] = z_value
+        self.regression_table['p_values'] = p_value
 
     def prepare_reg(self):
 
