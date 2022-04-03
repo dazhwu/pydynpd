@@ -185,6 +185,124 @@ Hansen test of overid. restrictions: chi(15) = 35.412 Prob > Chi2 = 0.002
 Arellano-Bond test for AR(1) in first differences: z = -1.47 Pr > z =0.142
 Arellano-Bond test for AR(2) in first differences: z = -0.03 Pr > z =0.977
 
+
+Dynamic panel-data estimation, two-step difference GMM
+------------------------------------------------------------------------------
+Group variable: id                              Number of obs      =       611
+Time variable : year                            Number of groups   =       140
+Number of instruments = 19                      Obs per group: min =         4
+Wald chi2(0)  =         .                                      avg =      4.36
+Prob > chi2   =         .                                      max =         6
+------------------------------------------------------------------------------
+             |              Corrected
+           n |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |    .391272   .2046422     1.91   0.056    -.0098193    .7923632
+         L2. |  -.0895707   .0715597    -1.25   0.211    -.2298252    .0506838
+             |
+           w |  -.4985842   .1298172    -3.84   0.000    -.7530212   -.2441471
+           k |   .4358161   .0722603     6.03   0.000     .2941885    .5774437
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(w k)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/4).n
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.47  Pr > z =  0.142
+Arellano-Bond test for AR(2) in first differences: z =  -0.03  Pr > z =  0.977
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(15)   =  82.74  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(15)   =  35.41  Prob > chi2 =  0.002
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  iv(w k)
+    Hansen test excluding group:     chi2(13)   =  16.38  Prob > chi2 =  0.229
+    Difference (null H = exogenous): chi2(2)    =  19.03  Prob > chi2 =  0.000
+
+
+. timer off 1
+
+. 
+. 
+. 
+. 
+. 
+. qui timer list
+
+. di in r "First time: " r(t1) 
+First time: 4.105
+
+
+Favoring speed over space. To switch, type or click on mata: mata set matafavor space, perm.
+Warning: Two-step estimated covariance matrix of moments is singular.
+  Using a generalized inverse to calculate optimal weighting matrix for two-step estimation.
+  Difference-in-Sargan/Hansen statistics may be negative.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: id                              Number of obs      =       751
+Time variable : year                            Number of groups   =       140
+Number of instruments = 27                      Obs per group: min =         5
+Wald chi2(4)  =  12841.94                                      avg =      5.36
+Prob > chi2   =     0.000                                      max =         7
+------------------------------------------------------------------------------
+             |              Corrected
+           n |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           n |
+         L1. |   .9234415   .2742355     3.37   0.001     .3859498    1.460933
+         L2. |  -.1542449   .1163042    -1.33   0.185     -.382197    .0737073
+             |
+           w |  -.1867863   .1386538    -1.35   0.178    -.4585427    .0849701
+           k |    .185966   .1350758     1.38   0.169    -.0787777    .4507097
+       _cons |    .869791   .6687335     1.30   0.193    -.4409025    2.180485
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(w k)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/4).n
+Instruments for levels equation
+  Standard
+    w k
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.n
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z =  -1.90  Pr > z =  0.058
+Arellano-Bond test for AR(2) in first differences: z =  -0.30  Pr > z =  0.768
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(22)   = 104.35  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(22)   =  55.45  Prob > chi2 =  0.000
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(15)   =  24.05  Prob > chi2 =  0.064
+    Difference (null H = exogenous): chi2(7)    =  31.40  Prob > chi2 =  0.000
+  iv(w k)
+    Hansen test excluding group:     chi2(20)   =  42.86  Prob > chi2 =  0.002
+    Difference (null H = exogenous): chi2(2)    =  12.59  Prob > chi2 =  0.002
+
+
+. timer off 1
+
+. 
+. 
+. 
+. 
+. 
+. qui timer list
+
+. di in r "First time: " r(t1) 
+First time: 4.468
+
+
 Dynamic panel-data estimation, two-step system GMM
  Group variable: id             Number of obs = 751     
  Time variable: year            Min obs per group: 5    
