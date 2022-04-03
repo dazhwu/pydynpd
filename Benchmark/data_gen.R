@@ -1,7 +1,7 @@
 #code is adapted from 
 #Phillips PC, Han C (2019). “Chapter 5 - Dynamic panel GMM using R.” In HD Vinod, C Rao
-(eds.), Conceptual Econometrics Using R, volume 41 of Handbook of Statistics, pp. 119 –
-144. Elsevier. doi:https://doi.org/10.1016/bs.host.2019.01.002.
+#(eds.), Conceptual Econometrics Using R, volume 41 of Handbook of Statistics, pp. 119 –
+#144. Elsevier. doi:https://doi.org/10.1016/bs.host.2019.01.002.
 
 library(Matrix)
 library(data.table)
