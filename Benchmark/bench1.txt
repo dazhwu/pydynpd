@@ -1,0 +1,102 @@
+pgmm(formula = n ~ lag(n, 1:2) + w + k | lag(n, 2:4), data = pd, 
+    effect = "individual", model = "twosteps", transformation = "d", 
+    robust = TRUE)
+
+Unbalanced Panel: n = 140, T = 7-9, N = 1031
+
+Number of Observations Used: 611
+Residuals:
+     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+-0.671621 -0.035738  0.000000 -0.004808  0.037571  0.560347 
+
+Coefficients:
+              Estimate Std. Error z-value  Pr(>|z|)    
+lag(n, 1:2)1  0.391272   0.204642  1.9120 0.0558786 .  
+lag(n, 1:2)2 -0.089571   0.071560 -1.2517 0.2106824    
+w            -0.498584   0.129817 -3.8407 0.0001227 ***
+k             0.435816   0.072260  6.0312 1.628e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Sargan test: chisq(15) = 35.41221 (p-value = 0.0021474)
+Autocorrelation test (1): normal = -1.469485 (p-value = 0.1417)
+Autocorrelation test (2): normal = -0.02836377 (p-value = 0.97737)
+Wald test for coefficients: chisq(4) = 313.7221 (p-value = < 2.22e-16)
+
+
+> summary(m2)
+
+Dynamic linear panel estimation (twostep)
+Estimation steps: 2
+
+Coefficients:
+     Estimate Std.Err.rob z-value.rob Pr(>|z.rob|)    
+L1.n  0.39127     0.20464       1.912      0.05588 .  
+L2.n -0.08957     0.07156      -1.252      0.21057    
+L0.w -0.49858     0.12982      -3.841      0.00012 ***
+L0.k  0.43582     0.07226       6.031      < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+ 19 total instruments are employed to estimate 4 parameters
+ 17 linear (DIF) 
+ 2 further controls (DIF) 
+ no time dummies 
+ 
+J-Test (overid restrictions):  35.41 with 15 DF, pvalue: 0.0021
+F-Statistic (slope coeff):  313.72 with 4 DF, pvalue: <0.001
+F-Statistic (time dummies):  no time dummies included in estimation
+> mtest.fct(m2, order = 2)
+
+	Arellano and Bond (1991) serial correlation test of degree 2
+
+data:  2step GMM Estimation
+normal = -0.034135, p-value = 0.9728
+alternative hypothesis: serial correlation of order 2 in the error terms
+
+> summary(p1)
+---------------------------------------------------
+Dynamic Panel VAR estimation, two-step GMM 
+---------------------------------------------------
+Transformation: First-differences 
+Group variable: id 
+Time variable: year 
+Number of observations = 611 
+Number of groups = 140 
+Obs per group: min = 4 
+               avg = 4.364286 
+               max = 6 
+Number of instruments = 19 
+
+===================
+        n          
+-------------------
+lag1_n   0.3913    
+        (0.2046)   
+lag2_n  -0.0896    
+        (0.0716)   
+w       -0.4986 ***
+        (0.1298)   
+k        0.4358 ***
+        (0.0723)   
+===================
+*** p < 0.001; ** p < 0.01; * p < 0.05
+
+---------------------------------------------------
+Instruments for  equation
+ Standard
+  FD.(w k)
+ GMM-type
+  Dependent vars: L(2, 4)
+  Collapse =  FALSE 
+---------------------------------------------------
+
+Hansen test of overid. restrictions: chi2(15) = 35.41 Prob > chi2 = 0.002
+(Robust, but weakened by many instruments.)
+
+
+Time difference of 8.95821 secs
+Time difference of 2.45346 mins
+Time difference of 9.361664 mins
+
+4.013917922973633
