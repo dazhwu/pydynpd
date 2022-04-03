@@ -45,7 +45,7 @@ class abond:
 
                     continue
         else:
-            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str)
+            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str, user_command.part_2, user_command.part_3)
             self.regular_process(model)
 
     def regular_process(self, model: dynamic_panel_model, beginner_mode=False):
