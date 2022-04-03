@@ -74,7 +74,7 @@ class command(object):
             self.part_3 = parts[2]
             self.options = self.parse_options(self.part_3)
         else:
-            self.part_3=''
+            self.part_3 = ''
             self.options = options_info()
 
         self.part_1 = parts[0]

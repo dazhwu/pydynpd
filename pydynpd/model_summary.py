@@ -64,12 +64,12 @@ class model_summary(object):
 
         r_table = PrettyTable()
 
-        r_table.field_names = [dep_name, "coef.", "Corrected Std. Err.", "z", "P>|z|"]
+        r_table.field_names = [dep_name, "coef.", "Corrected Std. Err.", "z", "P>|z|", " "]
 
         r_table.float_format = '.7'
         regression_table = model.regression_table
         # , "z", "P>|z|", "[95% Conf. Interval]" ]
-        num_indep = len(regression_table.columns)
+        num_indep = len(regression_table.index)
 
         for i in range(num_indep):
             var_name = regression_table['variable'][i]
@@ -78,6 +78,7 @@ class model_summary(object):
 
             z = regression_table['z_value'][i]
             p = regression_table['p_value'][i]
-            r_table.add_row([var_name, coeff, stderr, z, p])
+            sig = regression_table['sig'][i]
+            r_table.add_row([var_name, coeff, stderr, z, p, sig])
 
         return r_table.get_string()

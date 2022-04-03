@@ -31,21 +31,23 @@ class abond:
         if user_command.options.beginner:
             m_manager = model_oranizer(user_command, pdata)
             num_models = len(m_manager.models.list_variables)
-            j=0
+            j = 0
             for i in range(num_models):
                 variables = m_manager.models.list_variables[i]
                 com_str = m_manager.models.list_command_str[i]
                 try:
-                    model = dynamic_panel_model(pdata, variables, user_command.options, com_str, user_command.part_2, user_command.part_3)
+                    model = dynamic_panel_model(pdata, variables, user_command.options, com_str, user_command.part_2,
+                                                user_command.part_3)
                     print('model ' + str(j + 1))
                     print(model.command_str)
                     self.regular_process(model, True)
-                    j+=1
+                    j += 1
                 except Exception as e:
 
                     continue
         else:
-            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str, user_command.part_2, user_command.part_3)
+            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str,
+                                        user_command.part_2, user_command.part_3)
             self.regular_process(model)
 
     def regular_process(self, model: dynamic_panel_model, beginner_mode=False):

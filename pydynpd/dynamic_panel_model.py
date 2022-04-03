@@ -17,7 +17,8 @@ class data_table(object):
 
 
 class dynamic_panel_model(object):
-    def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str, part_2: str, part_3: str):
+    def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str, part_2: str,
+                 part_3: str):
         self.pdata = pdata
         self.T = self.pdata.T
         self.N = self.pdata.N
@@ -25,7 +26,7 @@ class dynamic_panel_model(object):
         self.options = options
         method = 'fd'
         self.command_str = command_str + '|' + part_2
-        if part_3!='':
+        if part_3 != '':
             self.command_str += '|' + part_3
         max_lag, first_diff_index, first_level_index, last_index = self.get_info(variables, 'fd', self.T)
 
@@ -256,9 +257,11 @@ class dynamic_panel_model(object):
         std_err = last_result.std_err
         z_value = [coeff[i] / std_err[i] for i in range(num_indeps)]
         p_value = [scipy.stats.norm.sf(abs(z)) * 2 for z in z_value]
+        sig = ['***' if p <= 0.001 else ('**' if p <= 0.01 else ('*' if p <= 0.05 else ' ')) for p in p_value]
 
-        self.regression_table = pd.DataFrame(list(zip(var_names, coeff, std_err, z_value, p_value)),
-                                             columns=['variable', 'coefficient', 'std_err', 'z_value', 'p_value'])
+        self.regression_table = pd.DataFrame(list(zip(var_names, coeff, std_err, z_value, p_value, sig)),
+                                             columns=['variable', 'coefficient', 'std_err', 'z_value', 'p_value',
+                                                      'sig'])
 
         # self.regression_table['variables'] = var_names
         # self.regression_table['coefficients'] = coeff
