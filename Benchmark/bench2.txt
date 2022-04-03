@@ -1,6 +1,7 @@
 Time difference of 12.02428 secs
 Time difference of 3.035802 mins
 Time difference of 10.88633 mins
+4.840353965759277
 
 summary(z1)
 Oneway (individual) effect Two-steps model System GMM 
