@@ -185,6 +185,24 @@ Hansen test of overid. restrictions: chi(15) = 35.412 Prob > Chi2 = 0.002
 Arellano-Bond test for AR(1) in first differences: z = -1.47 Pr > z =0.142
 Arellano-Bond test for AR(2) in first differences: z = -0.03 Pr > z =0.977
 
+Dynamic panel-data estimation, two-step system GMM
+ Group variable: id             Number of obs = 751     
+ Time variable: year            Min obs per group: 5    
+ Number of instruments = 27     Max obs per group: 7    
+ Number of groups = 140         Avg obs per group: 5.36 
++------+------------+---------------------+------------+-----------+-----+
+|  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
++------+------------+---------------------+------------+-----------+-----+
+| L1.n | 0.9234415  |      0.2742355      | 3.3673306  | 0.0007590 | *** |
+| L2.n | -0.1542449 |      0.1163042      | -1.3262186 | 0.1847673 |     |
+|  w   | -0.1867863 |      0.1386538      | -1.3471420 | 0.1779345 |     |
+|  k   | 0.1859660  |      0.1350758      | 1.3767531  | 0.1685886 |     |
+| _con | 0.8697910  |      0.6687335      | 1.3006543  | 0.1933768 |     |
++------+------------+---------------------+------------+-----------+-----+
+Hansen test of overid. restrictions: chi(22) = 55.450 Prob > Chi2 = 0.000
+Arellano-Bond test for AR(1) in first differences: z = -1.90 Pr > z =0.058
+Arellano-Bond test for AR(2) in first differences: z = -0.30 Pr > z =0.768
+4.840353965759277
 
 Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 
