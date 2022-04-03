@@ -321,6 +321,99 @@ Hansen test of overid. restrictions: chi(22) = 55.450 Prob > Chi2 = 0.000
 Arellano-Bond test for AR(1) in first differences: z = -1.90 Pr > z =0.058
 Arellano-Bond test for AR(2) in first differences: z = -0.30 Pr > z =0.768
 4.840353965759277
+Favoring speed over space. To switch, type or click on mata: mata set matafavor space, perm.
+0b.year dropped due to collinearity
+3.year dropped due to collinearity
+Warning: Two-step estimated covariance matrix of moments is singular.
+  Using a generalized inverse to calculate optimal weighting matrix for two-step estimation.
+  Difference-in-Sargan/Hansen statistics may be negative.
+
+Dynamic panel-data estimation, two-step system GMM
+------------------------------------------------------------------------------
+Group variable: id                              Number of obs      =     10000
+Time variable : year                            Number of groups   =      1000
+Number of instruments = 44                      Obs per group: min =        10
+Wald chi2(11) = 139896.40                                      avg =     10.00
+Prob > chi2   =     0.000                                      max =        10
+------------------------------------------------------------------------------
+             |              Corrected
+           y |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           y |
+         L1. |   .2605219    .016837    15.47   0.000      .227522    .2935219
+             |
+           x |
+         L1. |   .1088413   .0449932     2.42   0.016     .0206563    .1970264
+             |
+        year |
+          1  |  -5.267096   .0974158   -54.07   0.000    -5.458028   -5.076165
+          2  |  -.8440526   .0919484    -9.18   0.000    -1.024268   -.6638371
+          4  |  -2.933184   .0583198   -50.29   0.000    -3.047489   -2.818879
+          5  |  -2.574693   .0470674   -54.70   0.000    -2.666944   -2.482443
+          6  |  -1.903626   .0498782   -38.17   0.000    -2.001386   -1.805867
+          7  |  -1.869448   .0456975   -40.91   0.000    -1.959014   -1.779883
+          8  |   4.198894   .0484276    86.70   0.000     4.103977     4.29381
+          9  |   4.367697   .1145014    38.15   0.000     4.143278    4.592116
+         10  |  -.3261642   .1433976    -2.27   0.023    -.6072184   -.0451101
+             |
+       _cons |   13.11748   .3031565    43.27   0.000      12.5233    13.71166
+------------------------------------------------------------------------------
+Instruments for first differences equation
+  Standard
+    D.(L.x 0b.year 1.year 2.year 3.year 4.year 5.year 6.year 7.year 8.year
+    9.year 10.year)
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    L(2/4).y
+Instruments for levels equation
+  Standard
+    L.x 0b.year 1.year 2.year 3.year 4.year 5.year 6.year 7.year 8.year 9.year
+    10.year
+    _cons
+  GMM-type (missing=0, separate instruments for each period unless collapsed)
+    DL.y
+------------------------------------------------------------------------------
+Arellano-Bond test for AR(1) in first differences: z = -22.45  Pr > z =  0.000
+Arellano-Bond test for AR(2) in first differences: z =   0.60  Pr > z =  0.548
+------------------------------------------------------------------------------
+Sargan test of overid. restrictions: chi2(32)   = 282.89  Prob > chi2 =  0.000
+  (Not robust, but not weakened by many instruments.)
+Hansen test of overid. restrictions: chi2(32)   =  38.50  Prob > chi2 =  0.199
+  (Robust, but weakened by many instruments.)
+
+Difference-in-Hansen tests of exogeneity of instrument subsets:
+  GMM instruments for levels
+    Hansen test excluding group:     chi2(23)   =  28.50  Prob > chi2 =  0.198
+    Difference (null H = exogenous): chi2(9)    =  10.01  Prob > chi2 =  0.350
+  iv(L.x 0b.year 1.year 2.year 3.year 4.year 5.year 6.year 7.year 8.year 9.year 10.year)
+    Hansen test excluding group:     chi2(22)   =  28.70  Prob > chi2 =  0.154
+    Difference (null H = exogenous): chi2(10)   =   9.80  Prob > chi2 =  0.458
+
+
+. timer off 1
+
+. 
+. 
+. 
+. 
+. 
+. qui timer list
+
+. di in r "First time: " r(t1) 
+First time: 27.232
+
+
+
+. timer off 1
+
+. 
+. 
+. 
+. 
+. 
+. qui timer list
+
+. di in r "First time: " r(t1) 
+First time: 99.548
 
 Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 
