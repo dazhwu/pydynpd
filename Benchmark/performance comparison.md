@@ -53,12 +53,11 @@ blas_opt_info:
 <p>In the tests, we considered the following model:</p>
 ![n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t}+u_i+\epsilon_{it}](https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}&plus;u_i&plus;\epsilon_{it}) 
 
-We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. R/Python Scripts and regression results are included in test_1.ipynb and test_2.ipynb. Stata scripts and results are stored in ...
+We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Scripts and their results are stored in test_1.md and test_2.md respectively.
 
-First, in test 1 (difference GMM) all of five packages produced the identical estimates. Second, in test 2 (system GMM), pydynpd, panelvar, and xtabond2 have the same results. plm is close. R package pdynmc doesn't work. 
 
 ## Test 1: Difference GMM
-The five packages produce the same regression result. The table below compaires their speeds. Column 2 shows their running time in seconds per 100 loops, and column 3 calculates their relative speed (i.e, relative to the fastest package in the test). Please note that as xtabond2 was developed and compiled using Mata language, there are two different modes available in Stata. In the default mode, storage is favored over speed. But users can manually switch to the speed mode. Therefore, we report two speeds for xtabond2. More specifically, xtabond2 (default) balances with storage, while xtabond2 (speed) represents the fastest speed this package can achieve.
+There are four packages that produce the same regression result: plm, panelvar, pydynpd, and xtabond2. The result from pdynmc is slightly different. The table below compaires their speeds. Column 2 shows their running time in seconds per 100 loops, and column 3 calculates their relative speed (i.e, relative to the fastest package in the test). Please note that as xtabond2 was developed and compiled using Mata language, there are two different modes available in Stata. In the default mode, storage is favored over speed. But users can manually switch to the speed mode. Therefore, we report two speeds for xtabond2. More specifically, xtabond2 (default) balances with storage, while xtabond2 (speed) represents the fastest speed this package can achieve.
 
 
 | Package            | Running Time | Relative to the fastest |
