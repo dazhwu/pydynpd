@@ -1,7 +1,7 @@
 
 The objective of the package is similar to the following open-source packages: <br>
 Package | Language | version
---- | --- |
+--- | --- | ---
 plm | R |
 panelvar | R| 0.5.3
 pdynmc | R| 0.9.7
