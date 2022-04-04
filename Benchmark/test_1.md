@@ -108,8 +108,84 @@ Hansen test of overid. restrictions: chi2(32) = 47.86 Prob > chi2 = 0.035
 # pdynmc
 
 ```
+mc_1 <- pdynmc(dat=abdata,varname.i = "id", varname.t = "year",
+               use.mc.diff = TRUE, use.mc.lev = FALSE, use.mc.nonlin = FALSE,
+               include.y = TRUE, varname.y = "n", lagTerms.y = 2, maxLags.y=4,
+               inst.stata = TRUE, include.x = TRUE,               
+               varname.reg.pre = c("w"), lagTerms.reg.pre = c(0), maxLags.reg.pre = c(3),
+               fur.con = TRUE, fur.con.diff = TRUE, fur.con.lev = FALSE,
+               varname.reg.fur = c("k"),lagTerms.reg.fur = c(0),
+               w.mat = "iid.err", std.err = "corrected", estimation = "twostep",
+               opt.meth = "none")
+summary(mc_1)
+mtest.fct(mc_1, order = 2)
+```
+```
+Dynamic linear panel estimation (twostep)
+Estimation steps: 2
+
+Coefficients:
+     Estimate Std.Err.rob z-value.rob Pr(>|z.rob|)    
+L1.n  0.17078     0.10597       1.611        0.107    
+L2.n -0.01186     0.03862      -0.307        0.759    
+L0.w -0.96426     0.12689      -7.599       <2e-16 ***
+L0.k  0.46357     0.07237       6.406       <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+ 36 total instruments are employed to estimate 4 parameters
+ 35 linear (DIF) 
+ 1 further controls (DIF) 
+ no time dummies 
+ 
+J-Test (overid restrictions):  47.49 with 32 DF, pvalue: 0.0383
+F-Statistic (slope coeff):  408.98 with 4 DF, pvalue: <0.001
+F-Statistic (time dummies):  no time dummies included in estimation
+
+	Arellano and Bond (1991) serial correlation test of degree 2
+
+data:  2step GMM Estimation
+normal = -0.9218, p-value = 0.3566
+alternative hypothesis: serial correlation of order 2 in the error terms
+
+
+
+	Arellano and Bond (1991) serial correlation test of degree 2
+
+data:  2step GMM Estimation
+normal = -0.9218, p-value = 0.3566
+alternative hypothesis: serial correlation of order 2 in the error terms
+
+```
+# pydynpd
+```
+import pandas as pd
+from  pydynpd import regression
+df = pd.read_csv("data.csv")
+mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) | nolevel', df, ['id', 'year'])
+```
+```
+Dynamic panel-data estimation, two-step difference GMM
+ Group variable: id             Number of obs = 611     
+ Time variable: year            Min obs per group: 5    
+ Number of instruments = 36     Max obs per group: 7    
+ Number of groups = 140         Avg obs per group: 5.36 
++------+------------+---------------------+------------+-----------+-----+
+|  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
++------+------------+---------------------+------------+-----------+-----+
+| L1.n | 0.1700616  |      0.1046652      | 1.6248154  | 0.1042019 |     |
+| L2.n | -0.0113381 |      0.0377205      | -0.3005824 | 0.7637329 |     |
+|  w   | -0.9510582 |      0.1277298      | -7.4458585 | 0.0000000 | *** |
+|  k   | 0.4637223  |      0.0718328      | 6.4555747  | 0.0000000 | *** |
++------+------------+---------------------+------------+-----------+-----+
+Hansen test of overid. restrictions: chi(32) = 47.860 Prob > Chi2 = 0.035
+Arellano-Bond test for AR(1) in first differences: z = -1.19 Pr > z =0.235
+Arellano-Bond test for AR(2) in first differences: z = -0.81 Pr > z =0.417
 ```
 
+
+    command_str='y L1.y L1.x  | gmm(y, 2:4) iv(L1.x)| timedumm '
+    mydpd = regression.abond(command_str, df, ['id', 'year'])
 # xtabond2 (default)
 ```
 insheet using "data.csv"
