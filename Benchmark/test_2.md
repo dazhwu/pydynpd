@@ -136,31 +136,32 @@ Show stack trace
 ```
 import pandas as pd
 from  pydynpd import regression
-df = pd.read_csv("data.csv")
-mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) | nolevel', df, ['id', 'year'])
+df=pd.read_csv("data.csv")
+
+mydpd = regression.abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, ['id', 'year'])
 ```
 ```
-Dynamic panel-data estimation, two-step difference GMM
- Group variable: id             Number of obs = 611     
+Dynamic panel-data estimation, two-step system GMM
+ Group variable: id             Number of obs = 751     
  Time variable: year            Min obs per group: 5    
- Number of instruments = 36     Max obs per group: 7    
+ Number of instruments = 51     Max obs per group: 7    
  Number of groups = 140         Avg obs per group: 5.36 
 +------+------------+---------------------+------------+-----------+-----+
 |  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
 +------+------------+---------------------+------------+-----------+-----+
-| L1.n | 0.1700616  |      0.1046652      | 1.6248154  | 0.1042019 |     |
-| L2.n | -0.0113381 |      0.0377205      | -0.3005824 | 0.7637329 |     |
-|  w   | -0.9510582 |      0.1277298      | -7.4458585 | 0.0000000 | *** |
-|  k   | 0.4637223  |      0.0718328      | 6.4555747  | 0.0000000 | *** |
+| L1.n | 0.9453810  |      0.1429764      | 6.6121470  | 0.0000000 | *** |
+| L2.n | -0.0860069 |      0.1082318      | -0.7946553 | 0.4268140 |     |
+|  w   | -0.4477795 |      0.1521917      | -2.9422068 | 0.0032588 |  ** |
+|  k   | 0.1235808  |      0.0508836      | 2.4286941  | 0.0151533 |  *  |
+| _con | 1.5630849  |      0.4993484      | 3.1302492  | 0.0017466 |  ** |
 +------+------------+---------------------+------------+-----------+-----+
-Hansen test of overid. restrictions: chi(32) = 47.860 Prob > Chi2 = 0.035
-Arellano-Bond test for AR(1) in first differences: z = -1.19 Pr > z =0.235
-Arellano-Bond test for AR(2) in first differences: z = -0.81 Pr > z =0.417
+Hansen test of overid. restrictions: chi(46) = 96.442 Prob > Chi2 = 0.000
+Arellano-Bond test for AR(1) in first differences: z = -2.35 Pr > z =0.019
+Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
 ```
 
 
-    command_str='y L1.y L1.x  | gmm(y, 2:4) iv(L1.x)| timedumm '
-    mydpd = regression.abond(command_str, df, ['id', 'year'])
+
 # xtabond2 (default)
 ```
 insheet using "data.csv"
