@@ -16,7 +16,7 @@ Intel CPU 9700K (8 cores) <br>
 Memory: 64GB <br>
 
 ### Software
-Debian-based Linux (Deepin 20.04) <br>
+Debian-based Linux (Deepin 20.05) <br>
 R 4.1.3 <br>
 Python 3.10.3 <br>
 <p>To make our comparison fair, we manually compiled R, numpy, and scipy with Intel's Math Kernel Libarary (MKL), so that these R and Python packages do calculations using the same Linear Algebra library.</p>
@@ -24,9 +24,9 @@ Python 3.10.3 <br>
 Configuration of R:
 ```
 > sessionInfo()
-R version 4.1.2 (2021-11-01)
+R version 4.1.3 (2022-03-10)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Deepin 20.4
+Running under: Deepin 20.5
 
 Matrix products: default
 BLAS/LAPACK: /opt/intel/compilers_and_libraries_2020.4.304/linux/mkl/lib/intel64_lin/libmkl_gf_lp64.so
