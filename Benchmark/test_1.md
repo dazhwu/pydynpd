@@ -4,8 +4,8 @@ library(plm)
 abdata=read.csv("data.csv")
 pd <- pdata.frame(abdata, index = c("id", "year"), drop.index = TRUE)
 z1<-pgmm(n ~ 1+ lag(n, 1:2) + w + k |lag(n, 2:4) + lag(w, 1:3), data=pd, effect='individual',
-         model="twosteps" ,transformation='d' , fsm='FULL')
-summary(z1, robust=TRUE)
+         model="twosteps" ,transformation='d',robust = TRUE
+summary(z1)
 
 ```
 ```
@@ -14,7 +14,7 @@ Oneway (individual) effect Two-steps model Difference GMM
 Call:
 pgmm(formula = n ~ 1 + lag(n, 1:2) + w + k | lag(n, 2:4) + lag(w, 
     1:3), data = pd, effect = "individual", model = "twosteps", 
-    transformation = "d", fsm = "FULL")
+    transformation = "d", robust = TRUE)
 
 Unbalanced Panel: n = 140, T = 7-9, N = 1031
 
