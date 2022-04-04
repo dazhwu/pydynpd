@@ -51,6 +51,7 @@ blas_opt_info:
 The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble from R package panelvar. 
 
 In the tests, we considered the following model:
+https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}
 
 $$ n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t} $$
 
