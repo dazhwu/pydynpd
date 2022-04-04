@@ -69,7 +69,7 @@ Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they 
 | xtabond2 (default) | 18.369       | 4.38                    |
 
 ![Alt text](./Test_1.svg)
-<img src="./Test_1.svg">
+
 
 ## Test 2: System GMM
 
@@ -84,7 +84,6 @@ Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they 
 
 
 ![Alt text](./Test_2.svg)
-<img src="./Test_2.svg">
 
 Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 
