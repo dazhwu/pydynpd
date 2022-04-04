@@ -59,12 +59,28 @@ First, in test 1 (difference GMM) all of five packages produced the identical es
 ## Test 1: Difference GMM
 Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they produced the same results.
 
+| Package            | Running Time | Relative to the fastest |
+| ------------------ | ------------ | ----------------------- |
+| xtabond2 (speed)   | 4.19         | 1.00                    |
+| pydynpd            | 4.81         | 1.15                    |
+| panelvar           | 661.893      | 157.97                  |
+| plm                | 11.02        | 2.63                    |
+| pdynmc             | 167.4        | 39.95                   |
+| xtabond2 (default) | 18.369       | 4.38                    |
 
 ![Alt text](./Test 1 Running time (seconds_100 loops).svg)
 <img src="./Test 1 Running time (seconds_100 loops).svg">
 
 ## Test 2: System GMM
 
+| Package            | Running Time | Relative to the fastest |
+| ------------------ | ------------ | ----------------------- |
+| xtabond2 (speed)   | 5.893        | 1.00                    |
+| pydynpd            | 6.21         | 1.05                    |
+| plm                | 14.26        | 2.42                    |
+| xtabond2 (default) | 27.536       | 4.67                    |
+| panelvar           | 718.2        | 121.87                  |
+| pdynmc             | NA           | NA                      |
 
 
 Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
