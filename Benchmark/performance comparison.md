@@ -17,8 +17,8 @@ Memory: 64GB <br>
 
 ### Software
 Debian-based Linux (Deepin 20.04) <br>
-R 4.1.2 <br>
-Python 3.9 <br>
+R 4.1.3 <br>
+Python 3.10.3 <br>
 <p>To make our comparison fair, we configured both R and Python to link to Intel's Math Kernal Libarary (MKL).</p>
 
 Configuration of R:
