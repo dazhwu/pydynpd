@@ -54,11 +54,11 @@ blas_opt_info:
 
 ![Alt text](./images/benchmark_model_1_Eqn.svg) <br>
 
-<p>We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Scripts and their results of each test are stored in [test_1.md](./test_1.md) and [test_2.md](./test_2.md) respectively. </p>
+<p>We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Regression results of each test are stored in [test_1.md](./test_1.md) and [test_2.md](./test_2.md) respectively. Scripts can be found in the code subfolder</p>
 
 
 ## Test 1: Difference GMM
-There are four packages that produce the same regression result: plm, panelvar, pydynpd, and xtabond2. The result from pdynmc is slightly different. The table below compaires their speeds. Column 2 shows their running time in seconds per 100 loops, and column 3 calculates their relative speed (i.e, relative to the fastest package in the test). Please note that as xtabond2 was developed and compiled using Mata language, there are two different modes available in Stata. In the default mode, storage is favored over speed. But users can manually switch to the speed mode. Therefore, we report two speeds for xtabond2. More specifically, xtabond2 (default) balances with storage, while xtabond2 (speed) represents the fastest speed this package can achieve.
+The following four packages produced the same regression result: plm, panelvar, pydynpd, and xtabond2. The result from R package pdynmc is slightly different. The table below compaires their speeds. Column 2 shows their running time in seconds per 100 loops, and column 3 calculates their relative speed (i.e, relative to the fastest package in the test). Please note that as xtabond2 was developed and compiled using Mata language, there are two different modes available in Stata. In the default mode, storage is favored over speed. But users can manually switch to the speed mode. Therefore, we report two speeds for xtabond2. More specifically, xtabond2 (default) balances between speed and storage, while xtabond2 (speed) represents the fastest speed this package can achieve.
 
 
 | Package            | Running Time | Relative to the fastest |
@@ -72,12 +72,12 @@ There are four packages that produce the same regression result: plm, panelvar, 
 
 ![Alt text](./images/Test_1.svg)
 
-The chart above shows that our package (pydynpd) is not far behind of xtabond2 even though it is a interpreted package.
+The chart above shows that our package (pydynpd) is not far behind of xtabond2 even though it is an interpreted package.
 
 
 ## Test 2: System GMM
 
-In the second test, pydynpd produced the same regression results as those by xtabond2 and panelvar. plm has different results because it doesn't include constant term. On the other hand, we made several attempts but could not make R package pdynmc work; it kept on reporting the same error message (i.e., "Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y)").
+In the second test, pydynpd produced the same regression results as those by xtabond2 and panelvar. plm has different results because it doesn't include constant term. On the other hand, we made several attempts but could not let R package pdynmc work; it kept on reporting the same error message (i.e., "Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y)").
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
@@ -91,5 +91,4 @@ In the second test, pydynpd produced the same regression results as those by xta
 
 ![Alt text](./images/Test_2.svg)
 
-Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
 
