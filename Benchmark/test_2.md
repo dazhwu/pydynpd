@@ -128,40 +128,8 @@ summary(mc_1)
 mtest.fct(mc_1, order = 2)
 ```
 ```
-Dynamic linear panel estimation (twostep)
-Estimation steps: 2
-
-Coefficients:
-     Estimate Std.Err.rob z-value.rob Pr(>|z.rob|)    
-L1.n  0.17078     0.10597       1.611        0.107    
-L2.n -0.01186     0.03862      -0.307        0.759    
-L0.w -0.96426     0.12689      -7.599       <2e-16 ***
-L0.k  0.46357     0.07237       6.406       <2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
- 36 total instruments are employed to estimate 4 parameters
- 35 linear (DIF) 
- 1 further controls (DIF) 
- no time dummies 
- 
-J-Test (overid restrictions):  47.49 with 32 DF, pvalue: 0.0383
-F-Statistic (slope coeff):  408.98 with 4 DF, pvalue: <0.001
-F-Statistic (time dummies):  no time dummies included in estimation
-
-	Arellano and Bond (1991) serial correlation test of degree 2
-
-data:  2step GMM Estimation
-normal = -0.9218, p-value = 0.3566
-alternative hypothesis: serial correlation of order 2 in the error terms
-
-
-
-	Arellano and Bond (1991) serial correlation test of degree 2
-
-data:  2step GMM Estimation
-normal = -0.9218, p-value = 0.3566
-alternative hypothesis: serial correlation of order 2 in the error terms
+Error (test2.R#30): Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y))
+Show stack trace
 
 ```
 # pydynpd
