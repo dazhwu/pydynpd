@@ -19,7 +19,7 @@ Memory: 64GB <br>
 Debian-based Linux (Deepin 20.04) <br>
 R 4.1.3 <br>
 Python 3.10.3 <br>
-<p>To make our comparison fair, we manually compiled R, numpy, and scipy with Intel's Math Kernal Libarary (MKL), so that these R and Python packages do calculations using the same fastest Linear Algebra library.</p>
+<p>To make our comparison fair, we manually compiled R, numpy, and scipy with Intel's Math Kernal Libarary (MKL), so that these R and Python packages do calculations using the same Linear Algebra library.</p>
 
 Configuration of R:
 ```
