@@ -59,7 +59,6 @@ First, in test 1 (difference GMM) all of five packages produced the identical es
 ## Test 1: Difference GMM
 Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they produced the same results.
 
-https://docs.google.com/spreadsheets/d/e/2PACX-1vQSPvojALN7tMy2OuyU1uIZ20x2NvTBiQKNQYe2QT-Fq7KnBwgdfUi-iggnUj0kexfqHS7DZgG40Fpr/pubchart?oid=257763159&format=interactive
 
 ![Alt text](./Test 1 Running time (seconds_100 loops).svg)
 <img src="./Test 1 Running time (seconds_100 loops).svg">
