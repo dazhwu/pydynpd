@@ -22,7 +22,7 @@ In the equation above, x is a predetermined variable that is potentially correla
 ## Contributing
 There are several ways to contribute to pydynpd:
 
-Submit issue/bug reports here, or try to fix the problem yourself and then submit a pull request.
+Submit issue/bug reports [here] (https://github.com/dazhwu/pydynpd/issues), or try to fix the problem yourself and then submit a pull request.
 Request features or ask questions here.
 Browse the source code and see if anything looks out of place - let us know!
 ## Installation:
