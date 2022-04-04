@@ -1,10 +1,10 @@
 
 The objective of the package is similar to the following open-source packages: <br>
-Package | Language
---- | --- 
-plm | R
-panelvar | R
-pdynmc | R
+Package | Language | version
+--- | --- |
+plm | R |
+panelvar | R| 0.5.3
+pdynmc | R| 0.9.7
 
 To compare pydynpd with similar packages, we performed two performance tests. More specifically, in each test for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. Please note that the main reason we include xtabond2 is for regression result verification (\*). Directly comparing its speed with R or Python packages is a little unfair because the calculation part of xtabond2 was compiled while pydynpd and the three R packages are interpreted; xtabond2 should have a clear advantage on speed. 
 
@@ -77,7 +77,7 @@ The chart above shows that our package (pydynpd) is not far behind of xtabond2 e
 
 ## Test 2: System GMM
 
-In the second test, pydynpd produced the same regression results as those by xtabond2 and panelvar. plm has different results because it doesn't include constant term. On the other hand, we made several attempts but could not make R package pdynmc work; it always reported error message.
+In the second test, pydynpd produced the same regression results as those by xtabond2 and panelvar. plm has different results because it doesn't include constant term. On the other hand, we made several attempts but could not make R package pdynmc work; it kept on reporting the same error message (i.e., "Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y)").
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
