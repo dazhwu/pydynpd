@@ -108,6 +108,8 @@ Hansen test of overid. restrictions: chi2(32) = 47.86 Prob > chi2 = 0.035
 # pdynmc
 
 ```
+library(pdynmc)
+abdata=read.csv("data.csv")
 mc_1 <- pdynmc(dat=abdata,varname.i = "id", varname.t = "year",
                use.mc.diff = TRUE, use.mc.lev = FALSE, use.mc.nonlin = FALSE,
                include.y = TRUE, varname.y = "n", lagTerms.y = 2, maxLags.y=4,
