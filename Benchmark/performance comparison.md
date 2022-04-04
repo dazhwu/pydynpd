@@ -19,7 +19,7 @@ Memory: 64GB <br>
 Debian-based Linux (Deepin 20.04) <br>
 R 4.1.2 <br>
 Python 3.9 <br>
-To make our comparison fair, we configured both R and Python to link to Intel's Math Kernal Libarary (MKL).
+<p>To make our comparison fair, we configured both R and Python to link to Intel's Math Kernal Libarary (MKL).</p>
 
 Configuration of R:
 ```
@@ -48,19 +48,18 @@ blas_opt_info:
     include_dirs = ['/opt/intel/compilers_and_libraries/linux/mkl/include']
 ```
 
-The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble from R package panelvar. 
+<p>The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble from R package panelvar. </p>
 
-In the tests, we considered the following model:
-https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}
+<p>In the tests, we considered the following model:</p>
+![n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t}+u_i+\epsilon_{it}](https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}&plus;u_i&plus;\epsilon_{it}) 
 
-$$ n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t} $$
-
-We performed two tests. Test 1 is a difference GMM and test 2 a system GMM. R/Python Scripts and regression results are included in test_1.ipynb and test_2.ipynb. Stata scripts and results are stored in ...
+We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. R/Python Scripts and regression results are included in test_1.ipynb and test_2.ipynb. Stata scripts and results are stored in ...
 
 First, in test 1 (difference GMM) all of five packages produced the identical estimates. Second, in test 2 (system GMM), pydynpd, panelvar, and xtabond2 have the same results. plm is close. R package pdynmc doesn't work. 
 
 ## Test 1: Difference GMM
-Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they produced the same results.
+The five packages produce the same regression result. The table below compaires their speeds. Column 2 shows their running time in seconds per 100 loops, and column 3 calculates their relative speed (i.e, relative to the fastest package in the test). Please note that as xtabond2 was developed and compiled using Mata language, there are two different modes available in Stata. In the default mode, storage is favored over speed. But users can manually switch to the speed mode. Therefore, we report two speeds for xtabond2. More specifically, xtabond2 (default) balances with storage, while xtabond2 (speed) represents the fastest speed this package can achieve.
+
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
@@ -73,8 +72,12 @@ Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they 
 
 ![Alt text](./Test_1.svg)
 
+The chart above shows that our package (pydynpd) is not far behind of xtabond2 even though it is a interpreted package.
+
 
 ## Test 2: System GMM
+
+In the second test, pydynpd produced the same regression results as those by xtabond2 and panelvar. plm has different results because it doesn't include constant term. On the other hand, we made several attempts but could not make R package pdynmc work; it always reported error message.
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
