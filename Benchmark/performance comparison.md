@@ -61,6 +61,9 @@ Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they 
 
 https://docs.google.com/spreadsheets/d/e/2PACX-1vQSPvojALN7tMy2OuyU1uIZ20x2NvTBiQKNQYe2QT-Fq7KnBwgdfUi-iggnUj0kexfqHS7DZgG40Fpr/pubchart?oid=257763159&format=interactive
 
+![Alt text](./Test 1 Running time (seconds_100 loops).svg)
+<img src="./Test 1 Running time (seconds_100 loops).svg">
+
 ## Test 2: System GMM
 
 
