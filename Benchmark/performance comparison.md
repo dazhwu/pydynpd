@@ -2,7 +2,7 @@
 The objective of the package is similar to the following open-source packages: <br>
 Package | Language | version
 --- | --- | ---
-plm | R |
+plm | R | 2.6-1
 panelvar | R| 0.5.3
 pdynmc | R| 0.9.7
 
@@ -50,12 +50,10 @@ blas_opt_info:
 
 <p>The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble from R package panelvar. </p>
 
-<p>In the tests, we considered the following model:</p>
-
-![n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t}+u_i+\epsilon_{it}](https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}&plus;u_i&plus;\epsilon_{it}) 
-
-
-We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Scripts and their results are stored in test_1.md and test_2.md respectively.
+<p>In the tests, we considered the following model:<br>
+  ![n_{i,t}=\alpha_1 n_{i,t-1} + \alpha_2 n_{i,t-2} + \beta_1 w_{i,t} + \beta_2 k_{i,t}+u_i+\epsilon_{it}](https://latex.codecogs.com/svg.image?n_{i,t}=\alpha_1&space;n_{i,t-1}&space;&plus;&space;\alpha_2&space;n_{i,t-2}&space;&plus;&space;\beta_1&space;w_{i,t}&space;&plus;&space;\beta_2&space;k_{i,t}&plus;u_i&plus;\epsilon_{it})
+</p>
+We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Scripts and their results of each test are stored in [test_1.md](https://github.com/dazhwu/pydynpd/blob/main/Benchmark/test_1.md) and [test_2.md] respectively.
 
 
 ## Test 1: Difference GMM
