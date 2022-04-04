@@ -48,13 +48,13 @@ blas_opt_info:
     include_dirs = ['/opt/intel/compilers_and_libraries/linux/mkl/include']
 ```
 
-<p>The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble from R package panelvar. </p>
+<p>The tests are based on the data set employed in Arellano and Bond (1991) and is avaialble in the /Benchmark/code subfolder. </p>
 
 <p>In the tests, we considered the following model:</p>
 
 ![Alt text](./images/benchmark_model_1_Eqn.svg) <br>
 
-<p>We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Regression results of each test are stored in [test_1.md](./test_1.md) and [test_2.md](./test_2.md) respectively. Scripts can be found in the code subfolder</p>
+<p>We performed two tests on the model above. Test 1 is a difference GMM and test 2 a system GMM. Regression results of each test are stored in https://github.com/dazhwu/pydynpd/blob/main/Benchmark/test_1.md and https://github.com/dazhwu/pydynpd/blob/main/Benchmark/test_2.md respectively. Scripts can be found in the /Benchmark/code subfolder</p>
 
 
 ## Test 1: Difference GMM
