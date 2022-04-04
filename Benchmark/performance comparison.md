@@ -6,7 +6,9 @@ plm | R
 panelvar | R
 pdynmc | R
 
-To compare pydynpd with similar packages, we performed several performance tests. More specifically, for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. This is because xtabond2 is the most popular package in dynamic panel model.
+To compare pydynpd with similar packages, we performed two performance tests. More specifically, in each test for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. Please note that the main reason we include xtabond2 is for regression result verification (\*). Directly comparing its speed with R or Python packages is a little unfair because the calculation part of xtabond2 was compiled while pydynpd and the three R packages are interpreted; xtabond2 should have a clear advantage on speed. 
+
+*Note: xtabond2 is the most popular package on dynamic panel model as evidenced by the 9667 citations it has received according to google scholar as of April 3, 2022. It also won 
 
 ## Test configuration
 ### Hardware
