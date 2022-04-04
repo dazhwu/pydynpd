@@ -17,7 +17,7 @@ Memory: 64GB <br>
 Debian-based Linux (Deepin 20.04) <br>
 R 4.1.2 <br>
 Python 3.9 <br>
-To make tehe comparison fair, we configured both R and Python to link to Intel's Math Kernal Libarary (MKL).
+To make our comparison fair, we configured both R and Python to link to Intel's Math Kernal Libarary (MKL).
 
 Configuration of R:
 ```
@@ -58,6 +58,8 @@ First, in test 1 (difference GMM) all of five packages produced the identical es
 
 ## Test 1: Difference GMM
 Codes are stored in test1.R, test1.py, and test1.do. As shown in ... html, they produced the same results.
+
+https://docs.google.com/spreadsheets/d/e/2PACX-1vQSPvojALN7tMy2OuyU1uIZ20x2NvTBiQKNQYe2QT-Fq7KnBwgdfUi-iggnUj0kexfqHS7DZgG40Fpr/pubchart?oid=257763159&format=interactive
 
 ## Test 2: System GMM
 
