@@ -207,64 +207,8 @@ Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
 
 
 
-# xtabond2 (default)
-```
-insheet using "data.csv"
-xtset(id year)
-xtabond2 n L(1/2).n w k , gmm(n, lag(2 4)) gmm(w, lag(1 3)) iv(k ) nolevel twostep robust 
-```
 
-```
-Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
-Warning: Two-step estimated covariance matrix of moments is singular.
-  Using a generalized inverse to calculate optimal weighting matrix for two-step estimation.
-  Difference-in-Sargan/Hansen statistics may be negative.
-
-Dynamic panel-data estimation, two-step difference GMM
-------------------------------------------------------------------------------
-Group variable: id                              Number of obs      =       611
-Time variable : year                            Number of groups   =       140
-Number of instruments = 36                      Obs per group: min =         4
-Wald chi2(0)  =         .                                      avg =      4.36
-Prob > chi2   =         .                                      max =         6
-------------------------------------------------------------------------------
-             |              Corrected
-           n |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-           n |
-         L1. |   .1700616   .1046652     1.62   0.104    -.0350784    .3752016
-         L2. |  -.0113381   .0377205    -0.30   0.764    -.0852688    .0625926
-             |
-           w |  -.9510582   .1277298    -7.45   0.000    -1.201404   -.7007124
-           k |   .4637223   .0718328     6.46   0.000     .3229325    .6045121
-------------------------------------------------------------------------------
-Instruments for first differences equation
-  Standard
-    D.k
-  GMM-type (missing=0, separate instruments for each period unless collapsed)
-    L(1/3).w
-    L(2/4).n
-------------------------------------------------------------------------------
-Arellano-Bond test for AR(1) in first differences: z =  -1.19  Pr > z =  0.235
-Arellano-Bond test for AR(2) in first differences: z =  -0.81  Pr > z =  0.417
-------------------------------------------------------------------------------
-Sargan test of overid. restrictions: chi2(32)   =  91.61  Prob > chi2 =  0.000
-  (Not robust, but not weakened by many instruments.)
-Hansen test of overid. restrictions: chi2(32)   =  47.86  Prob > chi2 =  0.035
-  (Robust, but weakened by many instruments.)
-
-Difference-in-Hansen tests of exogeneity of instrument subsets:
-  gmm(n, lag(2 4))
-    Hansen test excluding group:     chi2(15)   =  23.75  Prob > chi2 =  0.069
-    Difference (null H = exogenous): chi2(17)   =  24.11  Prob > chi2 =  0.117
-  gmm(w, lag(1 3))
-    Hansen test excluding group:     chi2(14)   =  17.25  Prob > chi2 =  0.243
-    Difference (null H = exogenous): chi2(18)   =  30.61  Prob > chi2 =  0.032
-  iv(k)
-    Hansen test excluding group:     chi2(31)   =  38.33  Prob > chi2 =  0.171
-    Difference (null H = exogenous): chi2(1)    =   9.53  Prob > chi2 =  0.002
-```
-# xtabond2 (speed)
+# xtabond2
 
 ```
 mata: mata set matafavor speed, perm
