@@ -29,7 +29,7 @@ Browse the source code and see if anything looks out of place - let us know!
 ``` 
 pip install pydynpd
 ``` 
-
+This package requires: numpy, scipy, pandas, and PrettyTable
 ## usage:
 ``` 
 import pandas as pd

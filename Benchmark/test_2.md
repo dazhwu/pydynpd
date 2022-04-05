@@ -128,8 +128,53 @@ summary(mc_1)
 mtest.fct(mc_1, order = 2)
 ```
 ```
-Error (test2.R#30): Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y))
-Show stack trace
+Error in mapply(ti = ti.temp, t.end = tend.temp, lagTerms = lagTerms, : non-numeric argument to binary operator
+Traceback:
+
+1. pdynmc(dat = abdata, varname.i = "id", varname.t = "year", use.mc.diff = TRUE, 
+ .     use.mc.lev = TRUE, use.mc.nonlin = FALSE, include.y = TRUE, 
+ .     varname.y = "n", lagTerms.y = 2, maxLags.y = 4, inst.stata = TRUE, 
+ .     include.x = TRUE, varname.reg.pre = c("w"), lagTerms.reg.pre = c(0), 
+ .     maxLags.reg.pre = c(3), fur.con = TRUE, fur.con.diff = TRUE, 
+ .     fur.con.lev = TRUE, varname.reg.fur = c("k"), lagTerms.reg.fur = c(0), 
+ .     w.mat = "iid.err", std.err = "corrected", estimation = "twostep", 
+ .     opt.meth = "none")
+2. lapply(X = i_cases, FUN = Z_i.fct, Time = Time, varname.i = varname.i, 
+ .     use.mc.diff = use.mc.diff, use.mc.lev = use.mc.lev, use.mc.nonlin = use.mc.nonlin, 
+ .     use.mc.nonlinAS = use.mc.nonlinAS, include.y = include.y, 
+ .     varname.y = varname.y, inst.stata = inst.stata, include.dum = include.dum, 
+ .     dum.diff = dum.diff, dum.lev = dum.lev, colnames.dum = colnames.dum, 
+ .     fur.con = fur.con, fur.con.diff = fur.con.diff, fur.con.lev = fur.con.lev, 
+ .     varname.reg.estParam.fur = varname.reg.estParam.fur, include.x = include.x, 
+ .     end.reg = end.reg, varname.reg.end = varname.reg.end, pre.reg = pre.reg, 
+ .     varname.reg.pre = varname.reg.pre, ex.reg = ex.reg, varname.reg.ex = varname.reg.ex, 
+ .     maxLags.y = maxLags.y, lagTerms.y = lagTerms.y, max.lagTerms = max.lagTerms, 
+ .     maxLags.reg.end = maxLags.reg.end, maxLags.reg.pre = maxLags.reg.pre, 
+ .     maxLags.reg.ex = maxLags.reg.ex, inst.reg.ex.expand = inst.reg.ex.expand, 
+ .     dat = dat, dat.na = dat.na)
+3. FUN(X[[i]], ...)
+4. do.call(what = "cbind", args = sapply(FUN = LEV.pre.fct, i = i, 
+ .     varname.ex.pre.temp, T.mcLev = T.mcLev.temp, use.mc.diff = use.mc.diff, 
+ .     inst.stata = inst.stata, Time = Time, varname.i = varname.i, 
+ .     lagTerms = max.lagTerms, dat = dat, dat.na = dat.na))
+5. sapply(FUN = LEV.pre.fct, i = i, varname.ex.pre.temp, T.mcLev = T.mcLev.temp, 
+ .     use.mc.diff = use.mc.diff, inst.stata = inst.stata, Time = Time, 
+ .     varname.i = varname.i, lagTerms = max.lagTerms, dat = dat, 
+ .     dat.na = dat.na)
+6. lapply(X = X, FUN = FUN, ...)
+7. FUN(X[[i]], ...)
+8. Matrix::bdiag(do.call(what = diag, args = list(mapply(ti = ti.temp, 
+ .     t.end = tend.temp, lagTerms = lagTerms, FUN = datLEV.pre.fct, 
+ .     varname = varname, MoreArgs = list(i = i, use.mc.diff = use.mc.diff, 
+ .         inst.stata = inst.stata, dat = dat, dat.na = dat.na, 
+ .         varname.i = varname.i, Time = Time)) * as.vector(!is.na(diff(dat.na[dat.na[, 
+ .     varname.i] == i, varname][(lagTerms - 1):Time]))))))
+9. do.call(what = diag, args = list(mapply(ti = ti.temp, t.end = tend.temp, 
+ .     lagTerms = lagTerms, FUN = datLEV.pre.fct, varname = varname, 
+ .     MoreArgs = list(i = i, use.mc.diff = use.mc.diff, inst.stata = inst.stata, 
+ .         dat = dat, dat.na = dat.na, varname.i = varname.i, Time = Time)) * 
+ .     as.vector(!is.na(diff(dat.na[dat.na[, varname.i] == i, varname][(lagTerms - 
+ .         1):Time])))))
 
 ```
 # pydynpd
@@ -162,64 +207,8 @@ Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
 
 
 
-# xtabond2 (default)
-```
-insheet using "data.csv"
-xtset(id year)
-xtabond2 n L(1/2).n w k , gmm(n, lag(2 4)) gmm(w, lag(1 3)) iv(k ) nolevel twostep robust 
-```
 
-```
-Favoring space over speed. To switch, type or click on mata: mata set matafavor speed, perm.
-Warning: Two-step estimated covariance matrix of moments is singular.
-  Using a generalized inverse to calculate optimal weighting matrix for two-step estimation.
-  Difference-in-Sargan/Hansen statistics may be negative.
-
-Dynamic panel-data estimation, two-step difference GMM
-------------------------------------------------------------------------------
-Group variable: id                              Number of obs      =       611
-Time variable : year                            Number of groups   =       140
-Number of instruments = 36                      Obs per group: min =         4
-Wald chi2(0)  =         .                                      avg =      4.36
-Prob > chi2   =         .                                      max =         6
-------------------------------------------------------------------------------
-             |              Corrected
-           n |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
--------------+----------------------------------------------------------------
-           n |
-         L1. |   .1700616   .1046652     1.62   0.104    -.0350784    .3752016
-         L2. |  -.0113381   .0377205    -0.30   0.764    -.0852688    .0625926
-             |
-           w |  -.9510582   .1277298    -7.45   0.000    -1.201404   -.7007124
-           k |   .4637223   .0718328     6.46   0.000     .3229325    .6045121
-------------------------------------------------------------------------------
-Instruments for first differences equation
-  Standard
-    D.k
-  GMM-type (missing=0, separate instruments for each period unless collapsed)
-    L(1/3).w
-    L(2/4).n
-------------------------------------------------------------------------------
-Arellano-Bond test for AR(1) in first differences: z =  -1.19  Pr > z =  0.235
-Arellano-Bond test for AR(2) in first differences: z =  -0.81  Pr > z =  0.417
-------------------------------------------------------------------------------
-Sargan test of overid. restrictions: chi2(32)   =  91.61  Prob > chi2 =  0.000
-  (Not robust, but not weakened by many instruments.)
-Hansen test of overid. restrictions: chi2(32)   =  47.86  Prob > chi2 =  0.035
-  (Robust, but weakened by many instruments.)
-
-Difference-in-Hansen tests of exogeneity of instrument subsets:
-  gmm(n, lag(2 4))
-    Hansen test excluding group:     chi2(15)   =  23.75  Prob > chi2 =  0.069
-    Difference (null H = exogenous): chi2(17)   =  24.11  Prob > chi2 =  0.117
-  gmm(w, lag(1 3))
-    Hansen test excluding group:     chi2(14)   =  17.25  Prob > chi2 =  0.243
-    Difference (null H = exogenous): chi2(18)   =  30.61  Prob > chi2 =  0.032
-  iv(k)
-    Hansen test excluding group:     chi2(31)   =  38.33  Prob > chi2 =  0.171
-    Difference (null H = exogenous): chi2(1)    =   9.53  Prob > chi2 =  0.002
-```
-# xtabond2 (speed)
+# xtabond2
 
 ```
 mata: mata set matafavor speed, perm
