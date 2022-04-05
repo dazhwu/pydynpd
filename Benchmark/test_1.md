@@ -189,7 +189,7 @@ Arellano-Bond test for AR(2) in first differences: z = -0.81 Pr > z =0.417
     command_str='y L1.y L1.x  | gmm(y, 2:4) iv(L1.x)| timedumm '
     mydpd = regression.abond(command_str, df, ['id', 'year'])
 
-# xtabond2 (speed)
+# xtabond2 
 
 ```
 insheet using "data.csv"
