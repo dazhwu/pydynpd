@@ -63,12 +63,12 @@ The following four packages produced the same regression result: plm, panelvar, 
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
-| xtabond2 (speed)   | 4.19         | 1.00                    |
+| xtabond2           | 4.19         | 1.00                    |
 | pydynpd            | 4.81         | 1.15                    |
 | panelvar           | 661.893      | 157.97                  |
 | plm                | 11.02        | 2.63                    |
 | pdynmc             | 167.4        | 39.95                   |
-| xtabond2 (default) | 18.369       | 4.38                    |
+
 
 ![Alt text](./images/Test_1.svg)
 
@@ -81,10 +81,9 @@ In the second test, pydynpd produced the same regression results as those by xta
 
 | Package            | Running Time | Relative to the fastest |
 | ------------------ | ------------ | ----------------------- |
-| xtabond2 (speed)   | 5.893        | 1.00                    |
+| xtabond2           | 5.893        | 1.00                    |
 | pydynpd            | 6.21         | 1.05                    |
 | plm                | 14.26        | 2.42                    |
-| xtabond2 (default) | 27.536       | 4.67                    |
 | panelvar           | 718.2        | 121.87                  |
 | pdynmc             | NA           | NA                      |
 
