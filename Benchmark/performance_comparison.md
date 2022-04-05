@@ -70,6 +70,7 @@ The following four packages produced the same regression result: plm, panelvar, 
 | pdynmc             | 167.4        | 39.95                   |
 
 
+
 ![Alt text](./images/Test_1.svg)
 
 The chart above shows that our package (pydynpd) is not far behind of xtabond2 even though it is an interpreted package.
@@ -86,6 +87,7 @@ In the second test, pydynpd produced the same regression results as those by xta
 | plm                | 14.26        | 2.42                    |
 | panelvar           | 718.2        | 121.87                  |
 | pdynmc             | NA           | NA                      |
+
 
 
 ![Alt text](./images/Test_2.svg)
