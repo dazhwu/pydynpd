@@ -128,8 +128,53 @@ summary(mc_1)
 mtest.fct(mc_1, order = 2)
 ```
 ```
-Error (test2.R#30): Matrices must have same number of rows in cbind2(x, .Call(dense_to_Csparse, y))
-Show stack trace
+Error in mapply(ti = ti.temp, t.end = tend.temp, lagTerms = lagTerms, : non-numeric argument to binary operator
+Traceback:
+
+1. pdynmc(dat = abdata, varname.i = "id", varname.t = "year", use.mc.diff = TRUE, 
+ .     use.mc.lev = TRUE, use.mc.nonlin = FALSE, include.y = TRUE, 
+ .     varname.y = "n", lagTerms.y = 2, maxLags.y = 4, inst.stata = TRUE, 
+ .     include.x = TRUE, varname.reg.pre = c("w"), lagTerms.reg.pre = c(0), 
+ .     maxLags.reg.pre = c(3), fur.con = TRUE, fur.con.diff = TRUE, 
+ .     fur.con.lev = TRUE, varname.reg.fur = c("k"), lagTerms.reg.fur = c(0), 
+ .     w.mat = "iid.err", std.err = "corrected", estimation = "twostep", 
+ .     opt.meth = "none")
+2. lapply(X = i_cases, FUN = Z_i.fct, Time = Time, varname.i = varname.i, 
+ .     use.mc.diff = use.mc.diff, use.mc.lev = use.mc.lev, use.mc.nonlin = use.mc.nonlin, 
+ .     use.mc.nonlinAS = use.mc.nonlinAS, include.y = include.y, 
+ .     varname.y = varname.y, inst.stata = inst.stata, include.dum = include.dum, 
+ .     dum.diff = dum.diff, dum.lev = dum.lev, colnames.dum = colnames.dum, 
+ .     fur.con = fur.con, fur.con.diff = fur.con.diff, fur.con.lev = fur.con.lev, 
+ .     varname.reg.estParam.fur = varname.reg.estParam.fur, include.x = include.x, 
+ .     end.reg = end.reg, varname.reg.end = varname.reg.end, pre.reg = pre.reg, 
+ .     varname.reg.pre = varname.reg.pre, ex.reg = ex.reg, varname.reg.ex = varname.reg.ex, 
+ .     maxLags.y = maxLags.y, lagTerms.y = lagTerms.y, max.lagTerms = max.lagTerms, 
+ .     maxLags.reg.end = maxLags.reg.end, maxLags.reg.pre = maxLags.reg.pre, 
+ .     maxLags.reg.ex = maxLags.reg.ex, inst.reg.ex.expand = inst.reg.ex.expand, 
+ .     dat = dat, dat.na = dat.na)
+3. FUN(X[[i]], ...)
+4. do.call(what = "cbind", args = sapply(FUN = LEV.pre.fct, i = i, 
+ .     varname.ex.pre.temp, T.mcLev = T.mcLev.temp, use.mc.diff = use.mc.diff, 
+ .     inst.stata = inst.stata, Time = Time, varname.i = varname.i, 
+ .     lagTerms = max.lagTerms, dat = dat, dat.na = dat.na))
+5. sapply(FUN = LEV.pre.fct, i = i, varname.ex.pre.temp, T.mcLev = T.mcLev.temp, 
+ .     use.mc.diff = use.mc.diff, inst.stata = inst.stata, Time = Time, 
+ .     varname.i = varname.i, lagTerms = max.lagTerms, dat = dat, 
+ .     dat.na = dat.na)
+6. lapply(X = X, FUN = FUN, ...)
+7. FUN(X[[i]], ...)
+8. Matrix::bdiag(do.call(what = diag, args = list(mapply(ti = ti.temp, 
+ .     t.end = tend.temp, lagTerms = lagTerms, FUN = datLEV.pre.fct, 
+ .     varname = varname, MoreArgs = list(i = i, use.mc.diff = use.mc.diff, 
+ .         inst.stata = inst.stata, dat = dat, dat.na = dat.na, 
+ .         varname.i = varname.i, Time = Time)) * as.vector(!is.na(diff(dat.na[dat.na[, 
+ .     varname.i] == i, varname][(lagTerms - 1):Time]))))))
+9. do.call(what = diag, args = list(mapply(ti = ti.temp, t.end = tend.temp, 
+ .     lagTerms = lagTerms, FUN = datLEV.pre.fct, varname = varname, 
+ .     MoreArgs = list(i = i, use.mc.diff = use.mc.diff, inst.stata = inst.stata, 
+ .         dat = dat, dat.na = dat.na, varname.i = varname.i, Time = Time)) * 
+ .     as.vector(!is.na(diff(dat.na[dat.na[, varname.i] == i, varname][(lagTerms - 
+ .         1):Time])))))
 
 ```
 # pydynpd
