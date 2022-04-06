@@ -38,3 +38,10 @@ pydynpd.egg-info/PKG-INFO
 *.gz
 *.pyc
 *.pyc
+*.gz
+*.gz
+*.whl
+Benchmark/.Rhistory
+Benchmark/.RData
+pydynpd.egg-info/PKG-INFO
+*.pyc
