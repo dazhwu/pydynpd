@@ -80,7 +80,7 @@ Due to space limit, we focus here on general discussion of the package. A detail
 
 ![figure 1](./images/traditional.svg?raw=true)
 <img src="images/traditional.svg", width=800 />
-![figure 2](./images/new_struct.svg?raw=true)
+![figure 2](images/new_struct.svg)
 More specifically, consider a particular dynamic panel model:
 //check how to highlight part of a latex equation
 //how to describe loop in diagram
