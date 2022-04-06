@@ -78,8 +78,8 @@ difference GMM and system GMM. Just like other R and Stata packages, pydynpd ful
 
 Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of exactly what pydynpd does can be found in the /vignettes folder on the github repository site. The following diagram shows how pydynpd works. After receiving user's request, the program checks if this request is for a particular model, or for a range of models. Any other econometric package requires users to specify a single model and then runs regression on that particular model. Apart from this traditional process, package pydynpd lets users describe a range of models and then searches among these models for those that satisfy specification tests requirements. 
 
-![figure 1](images/traditional.svg?raw=true)
-![figure 2](images/new_struct.svg?raw=true)
+![figure 1](./images/traditional.svg?raw=true)
+![figure 2](./images/new_struct.svg?raw=true)
 More specifically, consider a particular dynamic panel model:
 //check how to highlight part of a latex equation
 //how to describe loop in diagram
