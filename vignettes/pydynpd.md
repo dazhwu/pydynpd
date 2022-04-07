@@ -35,10 +35,9 @@ as R, Python, and Julia,
 # Statement of field 
 So far, there are several related packages in Stata and R.
 Stata is a commercial software, while existing R packages have some
-issues. For example, in our benchmark test R package panelvar ([@sigmund2021panel]) is more than 100 times slower than xtabond2 ([@roodman2009xtabond2]). On the other hand, R package plm ([@croissant2008panel])
+issues. For example, in our benchmark test R package panelvar [@sigmund2021panel] is more than 100 times slower than Stata package xtabond2 [@roodman2009xtabond2]. On the other hand, R package plm [@croissant2008panel]
 is fast enough, but it
-has calculation issue for system GMM. A third R package, pdynmc, crashed several times in our tests. Due to these reasons, R
-packages above are far less popular than xtabond2, according to citations they
+has calculation issue for system GMM. A third R package, pdynmc, crashed or refused to work several times in our tests. Due to these reasons, R packages above are far less popular than xtabond2, according to citations they
 have received.
 
 Moreover, there is no python nor Julia package yet to estimate dynamic
