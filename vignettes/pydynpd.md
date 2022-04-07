@@ -98,7 +98,7 @@ $$\require{color} y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t
 
 Figure 2 shows how other packages work: a user needs to choose a specific model, then the system generates the corresponding instrument matrix and panel data with dependent/independent variables for the GMM process to produce regression results. An innovative feature of pydynpd is that it can also run in its "automatic" mode in which it doesn't require users to choose a particular model. Instead, users may let pydynpd search for the lags (e.g., $p$ and $q_{k}$) so that the corresponding models satisfy certain standards.
 <p align = "center">
-<img src = "images/traditional.svg">
+<img src = "Images/traditional.svg">
 </p>
 <p align = "center">
 Fig.2 - The traditional way
@@ -112,7 +112,7 @@ $$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$?$}\alpha_{j}y_{i,t-j}+\s
 
 
 <p align = "center">
-<img src = "images/new_struct.svg">
+<img src = "Images/new_struct.svg">
 </p>
 <p align = "center">
 Fig.3 - pydynpd's automatic mode
