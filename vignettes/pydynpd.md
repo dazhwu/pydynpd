@@ -75,7 +75,7 @@ results. Researchers have developed many methods to estimate dynamic
 panel model. Essentially there are two types of GMM estimates,
 difference GMM and system GMM. Just like other R and Stata packages, pydynpd fully implements these two methods.
 
-Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of exactly what pydynpd does can be found in the /vignettes folder on the github repository site. 
+Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of our package is available at https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb. 
 
 For illustration purpose, consider the following equation:
 $$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
