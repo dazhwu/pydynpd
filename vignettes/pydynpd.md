@@ -55,7 +55,7 @@ programming language, making it easy to translate to R or Julia.
 <img src = "./../Benchmark/images/Test_1.svg">
 </p>
 <p align = "center">
-Fig.1 - Performance Comparision (the shorter the better)
+Fig.1 - Performance Comparision 
 </p>
 
 # The pydynpd package 
