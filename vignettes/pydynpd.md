@@ -33,11 +33,11 @@ stimulate demand for the related packages in open source programs such
 as R, Python, and Julia,
 
 # Statement of field 
-So far, there are several dynamic panel model packages in Stata and R.
+So far, there are several related packages in Stata and R.
 Stata is a commercial software, while existing R packages have some
 issues. For example, in our benchmark test R package panelvar ([@sigmund2021panel]) is more than 100 times slower than xtabond2 ([@roodman2009xtabond2]). On the other hand, R package plm ([@croissant2008panel])
-takes more than twice as much time as xtabond2, and more importantly it
-has calculation issue for system GMM. Due to these reasons, R
+is fast enough, but it
+has calculation issue for system GMM. A third R package, pdynmc, crashed several times in our tests. Due to these reasons, R
 packages above are far less popular than xtabond2, according to citations they
 have received.
 
