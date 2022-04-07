@@ -51,6 +51,13 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
+<p align = "center">
+<img src = "./../Benchmark/images/Test_1.svg">
+</p>
+<p align = "center">
+Fig.1 - Performance Comparision 
+</p>
+
 # The pydynpd package 
 
 pydynpd is able to estimate the most complicated linear dynamic panel
@@ -58,7 +65,11 @@ models:
 
 $$y_{it}=\sum_{j=1}^{p}\alpha_{j}y_{i,t-j}+\sum_{k=1}^{m}\sum_{j=0}^{q_{k}}\beta_{jk}r_{i,t-j}^{(k)}+\boldsymbol{\delta}\boldsymbol{d_{i,t}}+\boldsymbol{\gamma}\boldsymbol{s_{i,t}}+u_{i}+\epsilon_{it}$$
 
-$$\require{color}   y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{k=1}^{m}\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{jk}r_{i,t-j}^{(k)}+\boldsymbol{\delta}\boldsymbol{d_{i,t}}+\boldsymbol{\gamma}\boldsymbol{s_{i,t}}+u_{i}+\epsilon_{it}$$
+$$
+\begin{equation}
+\require{color}   y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{k=1}^{m}\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{jk}r_{i,t-j}^{(k)}+\boldsymbol{\delta}\boldsymbol{d_{i,t}}+\boldsymbol{\gamma}\boldsymbol{s_{i,t}}+u_{i}+\epsilon_{it}   
+\end{equation}
+$$
 In the model above, $y_{i,t-j}$ ($j=1,2,\ldots,p$) denotes a group of
 $p$ lagged dependent variables. $r_{i,t-j}^{(k)}$ represents a group of
 $m$ endogenous variables other than lagged $y$. $\boldsymbol{d_{it}}$ is
@@ -67,7 +78,7 @@ past errors, $\boldsymbol{s_{it}}$ is a vector of exogenous variables,
 and $u_{i}$ represents fixed effect. For illustration purpose, let's
 consider a simpler model:
 
-$$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+
 
 
 As lagged dependent variables such as $y_{i,t-1}$ are included as regressors, the
@@ -76,14 +87,39 @@ results. Researchers have developed many methods to estimate dynamic
 panel model. Essentially there are two types of GMM estimates,
 difference GMM and system GMM. Just like other R and Stata packages, pydynpd fully implements these two methods.
 
-Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of exactly what pydynpd does can be found in the /vignettes folder on the github repository site. The following diagram shows how pydynpd works. After receiving user's request, the program checks if this request is for a particular model, or for a range of models. Any other econometric package requires users to specify a single model and then runs regression on that particular model. Apart from this traditional process, package pydynpd lets users describe a range of models and then searches among these models for those that satisfy specification tests requirements. 
+Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of exactly what pydynpd does can be found in the /vignettes folder on the github repository site. 
 
-![figure 1](Images/traditional.svg?raw=true)
+Consider the following equation:
+$$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-![figure 2](Images/new_struct.svg)
-More specifically, consider a particular dynamic panel model:
-//check how to highlight part of a latex equation
-//how to describe loop in diagram
+The equation above is related to a group of models with different combinations of $p$ and $q_{k}$ values. Unless existing economic theory indicates what model to choose, researchers need to guess the values of $p$ and $q_{k}$ as highlighted in equation above. For example, if $p=2$ and $q_{k}=1$, then a specific model is formed:
+
+$$\require{color} y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+
+Figure 2 shows how other packages work: a user needs to choose a specific model, then the system generates the corresponding instrument matrix and panel data with dependent/independent variables for the GMM process to produce regression results. An innovative feature of pydynpd is that it can also run in its "automatic" mode in which it doesn't require users to choose a particular model. Instead, users may let pydynpd search for the lags (e.g., $p$ and $q_{k}$) so that the corresponding models satisfy certain standards.
+<p align = "center">
+<img src = "images/traditional.svg">
+</p>
+<p align = "center">
+Fig.2 - The traditional way
+</p>
+
+
+Figure 3 shows how pydynpd's automatic mode works: a user indicates what values pydynpd needs to search for (e.g., the question marks in equation below), and then pydynpd tries all possible models, and returns models that pass dynamic models' specificiation tests (e.g., Hansen overidentification test and AR(2) test). Note that in Figure 3 the process named "traditional process" consistes of procedures included in the dotted box in Figure 2.
+
+$$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$?$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{?}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+
+
+
+<p align = "center">
+<img src = "images/new_struct.svg">
+</p>
+<p align = "center">
+Fig.3 - pydynpd's automatic mode
+</p>
+
+
+
 
 
 
