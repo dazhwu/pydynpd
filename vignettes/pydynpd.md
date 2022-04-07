@@ -46,7 +46,7 @@ panel model due to the complexity involved in implementation. Our
 package contributes to the open source community because (1) it
 implements all of the major features in the associated commercial packages in
 Stata, (2) its innovative feature (as mentioned above) will stimulate similar or even more revolutionary features in the empirical computing community, and (3) though Python is interpreted, our package is almost as
-fast as xtabond2 which was compiled (please check our performance tests in the /benchmark folder on our github repository). Moreover, unlike existing R
+fast as xtabond2 which was compiled as shown in figure below. This package will increase the usability of open source software in estimating dynamic panel models, because for a package to be attractive, it must be both accurate and fast. Moreover, unlike existing R
 packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
