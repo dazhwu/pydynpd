@@ -16,8 +16,7 @@ University of the District of Columbia
 
 We developed a python package (pydynpd) which implements all the
 features in dynamic panel model with GMM (general method of moments).
-These features include: (1) difference and system GMM, (2) one-step and
-two-step estimators, (3) robust standard errors including the one
+These features include: (1) difference and system GMM, (2) one-step, two-step, and iterative estimators, (3) robust standard errors including the one
 suggested by [@windmeijer2005finite], (4) Hansen over-identification test, (5)
 Arellano-Bond test for autocorrelation, (6) time dummies, (7) allows
 users to collapse instruments to reduce instrument proliferation issue,
