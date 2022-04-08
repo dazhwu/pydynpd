@@ -20,6 +20,7 @@ class data_table(object):
 class dynamic_panel_model(object):
     def __init__(self, pdata: panel_data, variables: dict, options: options_info, command_str: str, part_2: str,
                  part_3: str):
+        self.name=''
         self.pdata = pdata
         self.T = self.pdata.T
         self.N = self.pdata.N
@@ -231,10 +232,10 @@ class dynamic_panel_model(object):
         new_table = data_table(tbr, height)
         return (new_table)
 
-    def MMSC_Lu(self):
+    def calculate_MMSC_LU(self):
         self.MMSC_LU={}
         log_n=math.log(self.num_obs)
-        dif=self.z_information.num_instr - len(self.regression_table.index)
+        dif=self.z_information.num_instr - (len(self.variables['dep_indep']) - 1)
         self.MMSC_LU["BIC"] = self.hansen.test_value - (dif) * log_n
         self.MMSC_LU["HQIC"] = self.hansen.test_value - dif * math.log(log_n) * 2.1
         self.MMSC_LU["AIC"] = self.hansen.test_value - (dif) * 2

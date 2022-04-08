@@ -7,7 +7,7 @@ from pandas import DataFrame
 
 import pydynpd.specification_tests as tests
 from pydynpd.command import command
-from pydynpd.common_functions import Windmeijer, MMSC_Lu
+from pydynpd.common_functions import Windmeijer
 from pydynpd.dynamic_panel_model import dynamic_panel_model
 from pydynpd.info import step_result
 from pydynpd.model_organizer import model_oranizer
@@ -28,7 +28,15 @@ class abond:
         user_command = command(command_str, df.columns)
         pdata = panel_data(df, identifiers, user_command.variables, user_command.options)
         self.models = []
-        if user_command.options.beginner:
+        self._good_models=[]
+        self._bad_models=[]
+        if not user_command.options.beginner:
+            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str,
+                                        user_command.part_2, user_command.part_3)
+            self.regular_process(model)
+            self.form_results(model)
+
+        else:
             m_manager = model_oranizer(user_command, pdata)
             num_models = len(m_manager.models.list_variables)
             j = 0
@@ -38,19 +46,36 @@ class abond:
                 try:
                     model = dynamic_panel_model(pdata, variables, user_command.options, com_str, user_command.part_2,
                                                 user_command.part_3)
-                    print('model ' + str(j + 1))
-                    print(model.command_str)
-                    self.regular_process(model, True)
-                    j += 1
+                    self.regular_process(model)
+                    j+=1
+                    model.name='m' + str(j)
+                    if self.check_model(model):
+                        model.calculate_MMSC_LU()
+                        self._good_models.append(model)
+                    else:
+                        self._bad_models.append(model)
                 except Exception as e:
-
+                    #print(e)
                     continue
-        else:
-            model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str,
-                                        user_command.part_2, user_command.part_3)
-            self.regular_process(model)
 
-    def regular_process(self, model: dynamic_panel_model, beginner_mode=False):
+
+            for m in self._good_models:
+                self.form_results(m)
+            ms = model_summary()
+            if len(self._good_models)>=2:
+                ms.print_list(self._good_models, user_command.options.level)
+
+            if len(self._bad_models)>=1:
+                print('The following model(s) did not pass the specification tests:')
+                for m in self._bad_models:
+                    print(m.name)
+                    print(m.command_str)
+
+
+
+    #def print_result(self, model: dynamic_panel_model):
+
+    def regular_process(self, model: dynamic_panel_model):
 
         model.step_results = []
 
@@ -66,15 +91,14 @@ class abond:
             self.iterative_GMM(model, _XZ, _XZ_t, _Zy, _Zy_t)
             self.perform_test(model, model.options.steps)
 
-        to_print = True
 
-        if beginner_mode:
-            to_print = self.check_model(model)
-        if to_print:
-            model.form_regression_table()
-            ms = model_summary()
-            ms.print_summary(model)
-            self.form_results(model)
+        # to_print = True
+        #
+        # if beginner_mode:
+        #     to_print = self.check_model(model)
+        # if to_print:
+        #
+        #     self.form_results(model)
 
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
@@ -284,8 +308,15 @@ class abond:
         return (tbr)
 
     def form_results(self, model):
-        step = len(model.step_results)
-        the_list = model.step_results[step - 1]
+        #step = len(model.step_results)
+        #the_list = model.step_results[step - 1]
+        if model.name !='':
+            print(model.name)
+            print(model.command_str)
+
+        model.form_regression_table()
+        ms = model_summary()
+        ms.print_summary(model)
 
         self.models.append(model)  # results = {}
 
