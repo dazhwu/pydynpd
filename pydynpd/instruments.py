@@ -42,7 +42,7 @@ class instruments(object):
         start_col = diff_width  # z_table[0].shape[1]-width
 
         for i in range(info.N):
-            z = z_table[(i * height):(i * height + height)]
+            z = z_table[(i * height):(i * height + height),:]
             # z[start_row-1,start_col:(start_col+self.level_width)]=1
             z[height - 1, start_col:width] = 1
             array_Lgmm = Lgmm_dat[(i * Lgmm_iv_height):(i * Lgmm_iv_height + Lgmm_iv_height), :]
