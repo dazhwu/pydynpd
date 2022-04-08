@@ -7,7 +7,7 @@ from pandas import DataFrame
 
 import pydynpd.specification_tests as tests
 from pydynpd.command import command
-from pydynpd.common_functions import Windmeijer
+from pydynpd.common_functions import Windmeijer, MMSC_Lu
 from pydynpd.dynamic_panel_model import dynamic_panel_model
 from pydynpd.info import step_result
 from pydynpd.model_organizer import model_oranizer
@@ -75,6 +75,7 @@ class abond:
             ms = model_summary()
             ms.print_summary(model)
             self.form_results(model)
+
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
         current_step = 1
@@ -220,12 +221,15 @@ class abond:
         if step >= 2:
             the_step = model.step_results[step - 1]
             previous_step = model.step_results[step - 2]
+            step_one=model.step_results[0]
             M2 = the_step.M
             _M2_XZ_W2 = the_step._M_XZ_W
             _W2_inv = the_step.W_inv
             zs2 = the_step.zs
-            vcov_step_previous = previous_step.vcov
+            #vcov_step_previous = previous_step.vcov
             residual1 = previous_step.residual
+            #residual1 = step_one.residual
+            vcov_step_previous = step_one.vcov
             return Windmeijer(M2, _M2_XZ_W2, _W2_inv, zs2,
                               vcov_step_previous, Cx, z_list, residual1, model.N)
         elif step == 1:

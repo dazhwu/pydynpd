@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse import csc_matrix
+import math
 
 
 def sum_product(listOflist, n_rows):
@@ -61,7 +62,6 @@ def Windmeijer(M2, _M2_XZ_W2, W2_inv, zs2, vcov_step1, Cx, z_list, residual1, N)
     temp = temp + np.matmul(np.matmul(D, vcov_step1), D.transpose())
     #
     return (temp)
-
 
 def make_sparse_list(arr_list):
     nrow = len(arr_list)

@@ -1,8 +1,12 @@
 ---
-author:
-- Dazhong Wu, Jian Hua, and Feng Xu
-bibliography: "ref.bib"
-title: "pydynpd: A python package for dynamic panel model"
+title: 'pydynpd: A python package for dynamic panel model'
+author: "Dazhong Wu, Jian Hua, and Feng Xu"
+bibliography: ref.bib
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
 ---
 
 Department of Management, School of Business and Public Administration,

@@ -56,6 +56,7 @@ class model_summary(object):
             str_toprint = str_toprint + 'Arellano-Bond test for AR(' + str(
                 i + 1) + ') in first differences: z = ' + "{:.2f}".format(AR) + ' Pr > z =' + '{:.3f}'.format(
                 P_value) + '\n'
+
         return (str_toprint)
 
     def regression_table(self, model):

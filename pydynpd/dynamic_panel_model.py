@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import scipy
+import math
 
 from pydynpd.info import df_info, options_info
 from pydynpd.instruments import instruments
@@ -229,6 +230,14 @@ class dynamic_panel_model(object):
 
         new_table = data_table(tbr, height)
         return (new_table)
+
+    def MMSC_Lu(self):
+        self.MMSC_LU={}
+        log_n=math.log(self.num_obs)
+        dif=self.z_information.num_instr - len(self.regression_table.index)
+        self.MMSC_LU["BIC"] = self.hansen.test_value - (dif) * log_n
+        self.MMSC_LU["HQIC"] = self.hansen.test_value - dif * math.log(log_n) * 2.1
+        self.MMSC_LU["AIC"] = self.hansen.test_value - (dif) * 2
 
     def form_regression_table(self):
 
