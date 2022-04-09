@@ -1,16 +1,24 @@
 ---
 title: 'pydynpd: A python package for dynamic panel model'
-author: "Dazhong Wu, Jian Hua, and Feng Xu"
+tags:
+  - Python
+  - dynamic panel model
+authors:
+  - name: Dazhong Wu^[Corresponding author] 
+    affiliation: 1
+  - name: Jian Hua
+    affiliation: 1
+  - name: Feng Xu
+    affiliation: 1
+affiliations:
+ - name: Department of Business Management, School of Business and Public Administration, University of the District of Columbia, USA
+   index: 1
+date: April 9, 2022
 bibliography: ref.bib
-output:
-  html_document:
-    df_print: paged
-  pdf_document: default
-  word_document: default
+
 ---
 
-Department of Management, School of Business and Public Administration,
-University of the District of Columbia
+
 
 # Summary
 
