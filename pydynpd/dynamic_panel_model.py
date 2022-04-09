@@ -236,9 +236,9 @@ class dynamic_panel_model(object):
         self.MMSC_LU={}
         log_n=math.log(self.num_obs)
         dif=self.z_information.num_instr - (len(self.variables['dep_indep']) - 1)
-        self.MMSC_LU["BIC"] = self.hansen.test_value - (dif) * log_n
-        self.MMSC_LU["HQIC"] = self.hansen.test_value - dif * math.log(log_n) * 2.1
-        self.MMSC_LU["AIC"] = self.hansen.test_value - (dif) * 2
+        self.MMSC_LU["bic"] = self.hansen.test_value - (dif) * log_n
+        self.MMSC_LU["hqic"] = self.hansen.test_value - dif * math.log(log_n) * 2.1
+        self.MMSC_LU["aic"] = self.hansen.test_value - (dif) * 2
 
     def form_regression_table(self):
 

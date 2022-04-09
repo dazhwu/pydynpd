@@ -63,13 +63,11 @@ class abond:
                 self.form_results(m)
             ms = model_summary()
             if len(self._good_models)>=2:
-                ms.print_list(self._good_models, user_command.options.level)
+                ms.print_good_list(self._good_models, user_command.options.level, user_command.options.mmsc)
 
             if len(self._bad_models)>=1:
-                print('The following model(s) did not pass the specification tests:')
-                for m in self._bad_models:
-                    print(m.name)
-                    print(m.command_str)
+                print('\nThe following model(s) did not pass specification tests:')
+                ms.print_bad_list(self._bad_models)
 
 
 
@@ -311,8 +309,8 @@ class abond:
         #step = len(model.step_results)
         #the_list = model.step_results[step - 1]
         if model.name !='':
-            print(model.name)
-            print(model.command_str)
+            print(' ' + model.name)
+
 
         model.form_regression_table()
         ms = model_summary()

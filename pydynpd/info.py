@@ -51,6 +51,7 @@ class options_info:
     beginner: bool = False
     timedumm: bool = False
     collapse: bool = False
+    mmsc: str = 'bic'
 
 
 @dataclass

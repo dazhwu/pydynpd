@@ -223,11 +223,12 @@ class command(object):
                 exit()
 
     def parse_options(self, part_3):
-        list_options = part_3.split()
+        list_options =[s.lower()   for s in  part_3.split()]
 
         options = self.options
 
         # possible_options=[{'onestep', 'iterated'},'nolevel', 'timedumm', 'collapse']
+
         for option in list_options:
             if option == 'onestep':
                 options.steps = 1
@@ -235,6 +236,8 @@ class command(object):
                 options.steps = 1000
             elif option == 'nolevel':
                 options.level = False
+            elif option== 'hqic':
+                options.mmsc='hqic'
             elif option == 'timedumm':
                 options.timedumm = True
             elif option == 'collapse':

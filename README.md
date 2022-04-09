@@ -18,19 +18,16 @@ In the equation above, x is a predetermined variable that is potentially correla
 * Arellano-Bond test for autocorrelation
 * Time dummies
 * Collapse GMM instruments to limit instrument proliferation
+* Search for models based on users' request, rather than just run the model specified by users as other packages do
 
-## Contributing
-There are several ways to contribute to pydynpd:
 
-Submit issue/bug reports [here](https://github.com/dazhwu/pydynpd/issues/), or try to fix the problem yourself and then submit a pull request.
-Request features or ask questions here.
-Browse the source code and see if anything looks out of place - let us know!
 ## Installation:
 ``` 
 pip install pydynpd
 ``` 
 This package requires: numpy, scipy, pandas, and PrettyTable
-## usage:
+
+## Usage:
 ``` 
 import pandas as pd
 from  pydynpd import regression
@@ -39,24 +36,7 @@ df = pd.read_csv("data.csv")
 command_str='n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) | timedumm  nolevel'
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 ``` 
-### Function abond(command string, data frame, identifier)
-where command string consists of two or three parts separated by |. The first two parts are required. <br>
-* Part one is a list that starts with dependent variable, followed by independent variables. Lag operators can be used in this part. For example, L2.n means to lag variable n two periods. Shortcut L(1:2).n means lags 1 through 2 of variable n, and is equivalent to  L1.n L2.n.<br> 
-* <p>Part two desribes how instruments are created. The grammar in this part is similar to that in Stata package XTabond2. More specifically, GMM(varaible list, min_lag: max_lag) indicates that lags min_lag through max_lag of each variable included in list of variables are used to generate instruments. For example, GMM(w k, 1:3) means lags 1 through 3 of variables w and k are treated as instruments, which implies that w and k are predetermined variables. </p>
-  <p>If there is no restriction on max_lag, dot (.) can be used. For example, GMM(w, 1:.) means all lags from lag 1 of variable w are used as instruments.</P>
-  <p>endo and pred statements are for convinience. endo(variable list) is equivelent to GMM(variable list, 2:.) and pred(variable list) is the same as GMM(variable list, 1:.)</P>
-  <p>Question mark (?) can be used in GMM statements as max_lag. That is, GMM(variable list, 2:?) means you want to try all possible max_lag numbers. Each possible max_lag number is a model. Command then will estimate each possible model, and report models that pass both hensen overidentification test and Arellano-Bond test for autocorrelation.</P>
-  <p>On the other hand, IV(variable list) means each variable on variable list is treated as instrument. Lag operators can be used inside IV statements. For example, IV(L1.x) means lag 1 of variable x is treated as instrument. </p>
-* Part three is optional. It includes the following possible options: 
-  * onestep: perform one-step GMM estimation rather than the default two-step GMM estimation.
-  * iterated: perform iterative GMM estimation.
-  * nolevel: only perform difference GMM
-  * timedumm: automatically include time dummies in part 1, and IV statement in part 2.
-  * collapse: collapse instruments to reduce the proeblem of too many instruments
-
-
-
-## result:
+result:
 ``` 
 Dynamic panel-data estimation, two-step difference GMM
  Group variable: id             Number of obs = 611    
@@ -80,35 +60,31 @@ Hansen test of overid. restrictions: chi(32) = 32.666 Prob > Chi2 = 0.434
 Arellano-Bond test for AR(1) in first differences: z = -1.29 Pr > z =0.198
 Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ``` 
+## Tutorial
+A detailed tutorial is [here](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).
+
 ## Similar packages
-The objective of the package is similar to the following open-source packages (note: though Stata is a comercial software, xtabond2 is open sourced): <br>
-Package | Language
---- | --- 
-xtabond2 | Mata （Stata）
-plm | R
-panelvar | R
-pdynmc | R
+The objective of the package is similar to the following open-source packages: <br>
+Package | Language | version
+--- | --- | ---
+plm | R | 2.6-1
+panelvar | R| 0.5.3
+pdynmc | R| 0.9.7
 
-To compare pydynpd with similar packages, we performed a benchmark test. More specifically, for each package we run 100 times to estimate the same model with the same data. Their estimates and running times (i.e., total running time of 100 tests) are shown in table below. Scripts of this test are included in the "Benchmark" folder. 
-### Benchmarks
+To compare pydynpd with similar packages, we performed performance tests. More specifically, in each test for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. Figure below is from one of the tests. Note that directly comparing its speed with R or Python packages is a little unfair because the calculation part of xtabond2 was compiled while pydynpd and the three R packages are interpreted; xtabond2 should have a clear advantage on speed. 
 
-estimates   | pydynpd | xtabond2 | plm | panelvar 
---- | --- | --- | --- | --- 
-L1.n | 0.9453（0.1430）|0.9453（0.1430）| 0.9933 (0.1465)|0.9453（0.1430）
-L2.n | -0.0860 (0.1082) |-0.0860 (0.1082)| -0.1640 (0.1071) |-0.0860 (0.1082)
-w | -0.4478 (0.1522) | -0.4478 (0.1522)| 0.0594 (0.0284)|-0.4478 (0.1522)
-k | 0.1236 (0.0509) |0.1236 (0.0509)|0.1403 (0.0500)|0.1236 (0.0509)|
-const | 1.5631 (0.4993) |1.5631 (0.4993)| ... |1.5631 (0.4993)|
---- | --- | --- | --- | --- | --- 
-number of instruments derived|51|51|51|51
-Hensen Test|96.44|96.44|105.7|96.44
-AR(1) Test|-2.35|-2.35|-1.92|N/A
-AR(2) Test|-1.15|-1.15|-0.12|N/A
-running time (secs) | 6.34 | 6.10  | 13.82 |733.8 
+![Alt text](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg)
 
-As shown in table above, pydynpd produces consistent results compared with xtabond2 and panelvar. plm has different results because it doesn't include intercept in system GMM in its model.
+However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the three R packages which are interpreted scripts just like pydynpd.
 
-Regarding runnint time, in thoery xtabond2 should have an advantage because its calculation part was compiled. The result confirms this. However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the two R packages which are interpreted scripts just like pydynpd.
+A detailed description of the tests can be found [here](https://github.com/dazhwu/pydynpd/blob/main/Benchmark/performance_comparison.md)
+
+## Contributing
+There are several ways to contribute to pydynpd:
+
+Submit issue/bug reports [here](https://github.com/dazhwu/pydynpd/issues/), or try to fix the problem yourself and then submit a [pull request](https://github.com/dazhwu/pydynpd/pulls).
+
+Browse the source code and see if anything looks out of place - let us know!
 
 ## References
 <a id="1">[1]</a> 

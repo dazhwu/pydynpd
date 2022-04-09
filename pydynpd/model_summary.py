@@ -42,7 +42,7 @@ class model_summary(object):
 
         to_print = []
         # to_print.append(model.command_str)
-        to_print.append('Dynamic panel-data estimation, ' + str_steps + str_gmm)
+        to_print.append(' Dynamic panel-data estimation, ' + str_steps + str_gmm)
         to_print.append(self.basic_information(model))
         to_print.append(self.regression_table(model))
         to_print.append(self.test_results(model))
@@ -52,17 +52,18 @@ class model_summary(object):
     def basic_information(self, model):
 
         basic_table = PrettyTable()
+        middle_space='                   '
         basic_table.field_names = ["    ", "   ", "  "]
         basic_table.border = False
         basic_table.header = False
         basic_table.align = 'l'
         basic_table.add_row(
-            ['Group variable: ' + model.pdata._individual, ' ', 'Number of obs = ' + str(model.num_obs)])
-        basic_table.add_row(['Time variable: ' + model.pdata._time, ' ', 'Min obs per group: ' + str(model.min_obs)])
-        basic_table.add_row(['Number of instruments = ' + str(model.z_information.num_instr), ' ',
+            ['Group variable: ' + model.pdata._individual, middle_space, 'Number of obs = ' + str(model.num_obs)])
+        basic_table.add_row(['Time variable: ' + model.pdata._time, middle_space, 'Min obs per group: ' + str(model.min_obs)])
+        basic_table.add_row(['Number of instruments = ' + str(model.z_information.num_instr), middle_space,
                              'Max obs per group: ' + str(model.max_obs)])
         basic_table.add_row(
-            ['Number of groups = ' + str(model.N), ' ', 'Avg obs per group: ' + '{0:.2f}'.format(model.avg_obs)])
+            ['Number of groups = ' + str(model.N), middle_space, 'Avg obs per group: ' + '{0:.2f}'.format(model.avg_obs)])
 
         return (basic_table.get_string())
 
@@ -108,8 +109,8 @@ class model_summary(object):
 
         return r_table.get_string()
 
-    def print_list(self, the_list: list, level:bool):
-        the_list.sort(key=lambda x: x.MMSC_LU['BIC'])
+    def print_good_list(self, the_list: list, level:bool, mmsc: str):
+        the_list.sort(key=lambda x: x.MMSC_LU[mmsc])
         m_list=model_list(the_list)
 
         r_table = PrettyTable()
@@ -138,7 +139,7 @@ class model_summary(object):
 
             r_table.add_column(m.name, new_col)
 
-        print('models are sorted by BIC')
+        print('models are sorted by ' + mmsc)
         print(r_table)
 
         try:
@@ -149,5 +150,24 @@ class model_summary(object):
         except Exception as e:
             print(e)
 
+        print('\n')
+        print('MMSC_LU scores:')
+        mmsc_table=PrettyTable()
+        mmsc_table.field_names=['model','aic', 'bic', 'hqic','command str']
+        mmsc_table.align['command str'] = "l"
+
+        for m in the_list:
+            mmsc_table.add_row([m.name, '{:.3f}'.format(m.MMSC_LU['aic']),'{:.3f}'.format(m.MMSC_LU['bic']),'{:.3f}'.format(m.MMSC_LU['hqic']), m.command_str])
 
 
+        print(mmsc_table)
+
+    def print_bad_list(self, the_list: list):
+
+        bad_table = PrettyTable()
+        bad_table.field_names=['model', 'command str']
+        bad_table.align['command str'] = "l"
+        for m in the_list:
+            bad_table.add_row([m.name, m.command_str])
+
+        print(bad_table)
