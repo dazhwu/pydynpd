@@ -22,7 +22,7 @@ Arellano-Bond test for autocorrelation, (6) time dummies, (7) allows
 users to collapse instruments to reduce instrument proliferation issue,
 and (8) a simple grammar for model specification. As far as we know, pydynpd is the first python package that allows researchers to estimate dynamic panel model.
 
-What distinguishes pydynpd from any other dynamic panel model packages is its its innovative feature: the capability to search for models based on users' request, rather than just run the model specified by users as other packages do. To the best of our knowledge, there is no other econometric software/package that offers this feature, let alone dynamic panel model packages.
+What distinguishes pydynpd from any other dynamic panel model packages is its innovative feature: the capability to search for models based on users' request, rather than just run the model specified by users as other packages do. To the best of our knowledge, there is no other econometric software/package that offers this feature, let alone dynamic panel model packages.
 
 # Statement of need 
 Over the past decade, dynamic panel model has become increasingly
