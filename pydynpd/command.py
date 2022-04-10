@@ -273,8 +273,8 @@ class command(object):
                 exit()
             temp_var = gmm_var(var, min_lag, max_lag, 0)
             self.list_Dgmm.append(temp_var)
-            min_lag = max(min_lag - 1, 0)
-            temp_var = gmm_var(var, min_lag, min_lag, 0)
+            Lmin_lag = max(min_lag - 1, 0)
+            temp_var = gmm_var(var, Lmin_lag, min_lag, 0)
             self.list_Lgmm.append(temp_var)
 
     def tbr_list(self, temp_list):

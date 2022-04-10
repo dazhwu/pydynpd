@@ -119,7 +119,7 @@ class abond:
                     denom += temp2
             crit = np.sqrt(nom / denom)
 
-            if crit < 0.00001:
+            if crit < 0.000001:
                 converge = True
                 model.options.steps = current_step
 
@@ -248,10 +248,10 @@ class abond:
             _M2_XZ_W2 = the_step._M_XZ_W
             _W2_inv = the_step.W_inv
             zs2 = the_step.zs
-            #vcov_step_previous = previous_step.vcov
+            vcov_step_previous = previous_step.vcov
             residual1 = previous_step.residual
             #residual1 = step_one.residual
-            vcov_step_previous = step_one.vcov
+            #vcov_step_previous = step_one.vcov
             return Windmeijer(M2, _M2_XZ_W2, _W2_inv, zs2,
                               vcov_step_previous, Cx, z_list, residual1, model.N)
         elif step == 1:
