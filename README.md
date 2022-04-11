@@ -71,11 +71,11 @@ plm | R | 2.6-1
 panelvar | R| 0.5.3
 pdynmc | R| 0.9.7
 
-To compare pydynpd with similar packages, we performed performance tests. More specifically, in each test for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. Figure below is from one of the tests. Note that directly comparing its speed with R or Python packages is a little unfair because the calculation part of xtabond2 was compiled while pydynpd and the three R packages are interpreted; xtabond2 should have a clear advantage on speed. 
+To compare pydynpd with similar packages, we performed performance tests. More specifically, in each test for each package we run 100 times to estimate the same model with the same data. For verification, the tests also include Stata package xtabond2 though Stata is a commercial software. We use xtabond2 for regression result verification because it is the most popular package in estimating dynamic panel models. Figure below is from one of the tests. Note that directly comparing xtabond2's speed with R or Python packages is a little unfair because the calculation part of xtabond2 was compiled while pydynpd and the three R packages are interpreted; xtabond2 should have a clear advantage on speed. 
 
 ![Alt text](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg)
 
-However, developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the three R packages which are interpreted scripts just like pydynpd.
+Though developed in pure python, pydynpd is not far behind of xtabond2. Moreover, it is significanly faster than the three R packages which are interpreted scripts just like pydynpd.
 
 A detailed description of the tests can be found [here](https://github.com/dazhwu/pydynpd/blob/main/Benchmark/performance_comparison.md)
 
