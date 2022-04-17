@@ -22,7 +22,7 @@ VERSION = '0.1.7'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     'numpy', 'scipy', 'prettytable', 'pandas'
+    'numpy', 'scipy', 'prettytable', 'pandas'
 ]
 
 # What packages are optional?

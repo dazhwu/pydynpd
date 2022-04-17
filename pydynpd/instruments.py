@@ -33,10 +33,10 @@ class instruments(object):
 
         Lgmm_vars = variables['Lgmm']
         iv_vars = variables['iv']
-        Lgmm_dat= gmm_tables['Lgmm']
+        Lgmm_dat = gmm_tables['Lgmm']
         iv_dat = gmm_tables['iv']
 
-        Lgmm_iv_height = int(Lgmm_dat.shape[0]/info.N)
+        Lgmm_iv_height = int(Lgmm_dat.shape[0] / info.N)
 
         start_row = diff_height  # z_table[0].shape[0]-height
         start_col = diff_width  # z_table[0].shape[1]-width
@@ -117,7 +117,7 @@ class instruments(object):
             level_height = num_Lgmm_instr + 1
 
         num_Dgmm_instr, gmm_diff_info = self.prepare_Z_gmm_diff(
-            variables,  info, level, transformation, collapse)
+            variables, info, level, transformation, collapse)
         iv_diff_info = self.prepare_Z_iv_diff(variables, diff_width, info)
 
         diff_height = (num_Dgmm_instr + iv_diff_info.shape[0])
@@ -142,7 +142,7 @@ class instruments(object):
         Dgmm_dat = gmm_tables['Dgmm']
         Div_dat = gmm_tables['Div']
 
-        gmm_Div_height = int(Dgmm_dat.shape[0]/info.N)
+        gmm_Div_height = int(Dgmm_dat.shape[0] / info.N)
 
         diff_width = self.z_information.diff_width
         height = self.z_information.height
@@ -152,13 +152,13 @@ class instruments(object):
         z_table = np.zeros((height * info.N, width), dtype=np.float64)
 
         for i in range(info.N):
-            if level and transformation=='fod':
+            if level and transformation == 'fod':
                 z = z_table[i * height:(i + 1) * height, 1:diff_width]
 
             else:
                 z = z_table[i * height:(i + 1) * height, 0:diff_width]
 
-            z_width=z.shape[1]
+            z_width = z.shape[1]
             array_gmm = Dgmm_dat[i * gmm_Div_height:(i + 1) * gmm_Div_height, :]
             array_fd_iv = Div_dat[i * gmm_Div_height:(i + 1) * gmm_Div_height, :]
 
@@ -199,24 +199,24 @@ class instruments(object):
         var_id = 0
         for var_id in range(num_iv):
             var = iv_vars[var_id]
-            t_info[var_id,] = range(info.first_diff_index, info.last_index + 1)
+            t_info[var_id,] = range(info.first_diff_index, info.last_diff_index + 1)
             # num_iv_instr += width
 
         return (t_info)
 
-    def prepare_Z_gmm_diff(self, variables: dict,  info: df_info, level, transformation, collapse=False):
+    def prepare_Z_gmm_diff(self, variables: dict, info: df_info, level, transformation, collapse=False):
         start_row = 0
 
         gmm_vars = variables['Dgmm']
         num_gmm = len(gmm_vars)
 
         var_id = 0
-        if level and transformation=='fod':
-            first_index=info.first_diff_index+1
+        if level and transformation == 'fod':
+            first_index = info.first_diff_index + 1
         else:
             first_index = info.first_diff_index
         last_index = info.last_diff_index
-        width=last_index-first_index+1
+        width = last_index - first_index + 1
 
         t_info = np.empty((num_gmm * 3, width), dtype='int32')
 

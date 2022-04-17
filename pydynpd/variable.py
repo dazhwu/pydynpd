@@ -16,4 +16,3 @@ class adjustable_lag_indep:
         self.name = name
         self.min_lag = min_lag
         self.max_lag = max_lag
-

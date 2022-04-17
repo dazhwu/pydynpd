@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-#from pandas import DataFrame
+
+# from pandas import DataFrame
 import numpy as np
 
 
@@ -13,10 +14,8 @@ class df_info:
     first_level_index: int
     last_level_index: int
     max_lag: int
-    #last_fod_index: int
-    #first_fod_index: int
-
-
+    # last_fod_index: int
+    # first_fod_index: int
 
 
 @dataclass
@@ -88,7 +87,6 @@ class step_result:
     beta: list
     vcov: np.ndarray
     std_err: list
-    
 
     def __init__(self, W):
         self.W = W

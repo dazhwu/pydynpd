@@ -2,8 +2,8 @@ import math
 
 import numpy as np
 from pandas import DataFrame
-from pydynpd.common_functions import lag, get_first_diff_table
 
+from pydynpd.common_functions import get_first_diff_table
 from pydynpd.info import options_info
 
 
@@ -33,9 +33,8 @@ class panel_data():
         self.data = self.make_balanced(df[self.cols + self.col_timedumm].to_numpy(), self.N, self.T)
         num_cols = self.data.shape[1]
 
-        self.fd_data = get_first_diff_table(self.data[:,range(0, num_cols)], self.N)
-        #self.fod_data=self.fod_trans(self.data, self.N, [1, num_cols])
-
+        self.fd_data = get_first_diff_table(self.data[:, range(0, num_cols)], self.N)
+        # self.fod_data=self.fod_trans(self.data, self.N, [1, num_cols])
 
     def xtset(self, df: DataFrame, _individual, _time):
         df.sort_values(by=[_individual, _time])
@@ -84,8 +83,6 @@ class panel_data():
             col_timedumm.append(name)
 
         return col_timedumm
-
-    
 
     def generate_D_matrix(self, height, T):
         # matrix used in Forward Orthogonal Deviation

@@ -28,8 +28,8 @@ class abond:
         user_command = command(command_str, df.columns)
         pdata = panel_data(df, identifiers, user_command.variables, user_command.options)
         self.models = []
-        self._good_models=[]
-        self._bad_models=[]
+        self._good_models = []
+        self._bad_models = []
         if not user_command.options.beginner:
             model = dynamic_panel_model(pdata, user_command.variables, user_command.options, command_str,
                                         user_command.part_2, user_command.part_3)
@@ -47,29 +47,26 @@ class abond:
                     model = dynamic_panel_model(pdata, variables, user_command.options, com_str, user_command.part_2,
                                                 user_command.part_3)
                     self.regular_process(model)
-                    j+=1
-                    model.name='m' + str(j)
+                    j += 1
+                    model.name = 'm' + str(j)
                     if self.check_model(model):
                         model.calculate_MMSC_LU()
                         self._good_models.append(model)
                     else:
                         self._bad_models.append(model)
                 except Exception as e:
-                    #print(e)
+                    # print(e)
                     continue
-
 
             for m in self._good_models:
                 self.form_results(m)
             ms = model_summary()
-            if len(self._good_models)>=2:
+            if len(self._good_models) >= 2:
                 ms.print_good_list(self._good_models, user_command.options.level, user_command.options.mmsc)
 
-            if len(self._bad_models)>=1:
+            if len(self._bad_models) >= 1:
                 print('\nThe following model(s) did not pass specification tests:')
                 ms.print_bad_list(self._bad_models)
-
-
 
     def regular_process(self, model: dynamic_panel_model):
 
@@ -86,9 +83,6 @@ class abond:
         else:
             self.iterative_GMM(model, _XZ, _XZ_t, _Zy, _Zy_t)
             self.perform_test(model, model.options.steps)
-
-
-
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
         current_step = 1
@@ -123,7 +117,6 @@ class abond:
 
         Cy_list = model.final_xy_tables['Cy']
 
-
         if step == 1:
             H1 = self.get_H1(model, model.options.transformation)
             W = self.calculate_W(H1, model)
@@ -150,15 +143,18 @@ class abond:
 
         z_height = int(z_list.shape[0] / N)
         r_height = int(residual.shape[0] / N)
+        self._zs_list = np.empty((N * z_height, 1), dtype=np.float64)
         for i in range(N):
             z = z_list[(i * z_height):(i * z_height + z_height), :]
             u = residual[(i * r_height):(i * r_height + r_height), :]
             # u_t=_residual_t[:, (i*r_height):(i*r_height+r_height)]
+            temp_zs = z @ u
+            self._zs_list[(i * z_height):(i * z_height + z_height), :] = temp_zs
             if i == 0:
-                zs = z @ u
-                ZuuZ = zs @ zs.transpose()
+                zs = temp_zs
+                ZuuZ = temp_zs @ temp_zs.transpose()
             else:
-                temp_zs = z @ u
+
                 zs += temp_zs
                 ZuuZ += temp_zs @ temp_zs.transpose()
 
@@ -188,18 +184,25 @@ class abond:
         Cy_list = model.final_xy_tables['Cy']
 
         z_height = int(z_list.shape[0] / model.N)
-        x_height = int(Cx_list.shape[0]/model.N)
+        x_height = int(Cx_list.shape[0] / model.N)
+        x_width = Cx_list.shape[1]
+        # self._zx_list=np.empty((z_list.shape[0] , x_width), np.float64)
 
         for i in range(model.N):
             z = z_list[(z_height * i):(z_height * i + z_height), :]
             z_t = _z_t_list[:, (z_height * i):(z_height * i + z_height)]
             x = Cx_list[(x_height * i):(x_height * i + x_height), :]
             y = Cy_list[(x_height * i):(x_height * i + x_height), :]
+
+            zx = z @ x
+
+            # self._zx_list[(z_height * i):(z_height * i + z_height), :]=zx
+
             if i == 0:
-                temp_xz = (z @ x).transpose()
+                temp_xz = zx.transpose()
                 temp_zy = (z @ y).transpose()
             else:
-                temp_xz += (z @ x).transpose()
+                temp_xz += zx.transpose()
                 temp_zy += (z @ y).transpose()
         return (temp_xz, temp_zy)
 
@@ -234,15 +237,15 @@ class abond:
         if step >= 2:
             the_step = model.step_results[step - 1]
             previous_step = model.step_results[step - 2]
-            step_one=model.step_results[0]
+            step_one = model.step_results[0]
             M2 = the_step.M
             _M2_XZ_W2 = the_step._M_XZ_W
             _W2_inv = the_step.W_inv
             zs2 = the_step.zs
             vcov_step_previous = previous_step.vcov
             residual1 = previous_step.residual
-            #residual1 = step_one.residual
-            #vcov_step_previous = step_one.vcov
+            # residual1 = step_one.residual
+            # vcov_step_previous = step_one.vcov
             return Windmeijer(M2, _M2_XZ_W2, _W2_inv, zs2,
                               vcov_step_previous, Cx, z_list, residual1, model.N)
         elif step == 1:
@@ -272,7 +275,7 @@ class abond:
                                                Cx.shape[1])
 
         try:
-            model.AR_list = tests.AR_test(model, step, 2)
+            model.AR_list = tests.AR_test(model, self._zs_list, step, 2)
 
         except Exception as e:
             raise Exception(e)
@@ -282,7 +285,7 @@ class abond:
         z_inf = model.z_information
         width = z_list.shape[1]
 
-        if transformation=='fd':
+        if transformation == 'fd':
 
             tbr = np.zeros((width, width), dtype='float64')
             i, j = np.indices(tbr.shape)
@@ -296,33 +299,31 @@ class abond:
             tbr[np.logical_and(i == 1 + j + z_inf.diff_width, j < z_inf.diff_width)] = 1
             tbr[np.logical_and(j == i + z_inf.diff_width, i < z_inf.diff_width)] = -1
             tbr[np.logical_and(j == 1 + i + z_inf.diff_width, i < z_inf.diff_width)] = 1
-        else:  #fod
+        else:  # fod
             if model.options.level:
-                D=np.zeros((width, model.T), np.float64)
+                D = np.zeros((width, model.T), np.float64)
 
-                up_height=model.z_information.diff_width
-                D_up=model.pdata.generate_D_matrix(up_height, model.T)
-                D[0:up_height,:]=D_up
+                up_height = model.z_information.diff_width
+                D_up = model.pdata.generate_D_matrix(up_height, model.T)
+                D[0:up_height, :] = D_up
 
-
-                lower_start_row=up_height
-                lower_start_col=model.T-(width-up_height)
-                lower=D[lower_start_row: width, lower_start_col: model.T]
-                i, j=np.indices(lower.shape)
-                lower[i==j]=1
+                lower_start_row = up_height
+                lower_start_col = model.T - (width - up_height)
+                lower = D[lower_start_row: width, lower_start_col: model.T]
+                i, j = np.indices(lower.shape)
+                lower[i == j] = 1
 
             else:
-                D=model.pdata.generate_D_matrix( width, model.T)
-            tbr=D @ D.transpose()
+                D = model.pdata.generate_D_matrix(width, model.T)
+            tbr = D @ D.transpose()
 
         return (tbr)
 
     def form_results(self, model):
-        #step = len(model.step_results)
-        #the_list = model.step_results[step - 1]
-        if model.name !='':
+        # step = len(model.step_results)
+        # the_list = model.step_results[step - 1]
+        if model.name != '':
             print(' ' + model.name)
-
 
         model.form_regression_table()
         ms = model_summary()
