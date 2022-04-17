@@ -238,6 +238,8 @@ class command(object):
                 options.level = False
             elif option== 'hqic':
                 options.mmsc='hqic'
+            elif option== 'fod':
+                options.transformation='fod'
             elif option == 'timedumm':
                 options.timedumm = True
             elif option == 'collapse':

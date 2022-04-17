@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+#from pandas import DataFrame
 import numpy as np
 
 
@@ -9,9 +9,14 @@ class df_info:
     T: int
     ids: list
     first_diff_index: int
-    last_index: int
+    last_diff_index: int
     first_level_index: int
+    last_level_index: int
     max_lag: int
+    #last_fod_index: int
+    #first_fod_index: int
+
+
 
 
 @dataclass
@@ -52,6 +57,7 @@ class options_info:
     timedumm: bool = False
     collapse: bool = False
     mmsc: str = 'bic'
+    transformation: str = 'fd'
 
 
 @dataclass
@@ -82,6 +88,7 @@ class step_result:
     beta: list
     vcov: np.ndarray
     std_err: list
+    
 
     def __init__(self, W):
         self.W = W

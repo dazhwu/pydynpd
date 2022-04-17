@@ -71,8 +71,6 @@ class abond:
 
 
 
-    #def print_result(self, model: dynamic_panel_model):
-
     def regular_process(self, model: dynamic_panel_model):
 
         model.step_results = []
@@ -90,13 +88,6 @@ class abond:
             self.perform_test(model, model.options.steps)
 
 
-        # to_print = True
-        #
-        # if beginner_mode:
-        #     to_print = self.check_model(model)
-        # if to_print:
-        #
-        #     self.form_results(model)
 
 
     def iterative_GMM(self, model, _XZ, _XZ_t, _Zy, _Zy_t):
@@ -128,11 +119,13 @@ class abond:
         num_obs = model.num_obs
         z_list = model.z_list
         _z_t_list = model._z_t_list
-        Cx_list = model.final_xy_tables['Cx'].dat
-        Cy_list = model.final_xy_tables['Cy'].dat
+        Cx_list = model.final_xy_tables['Cx']
+
+        Cy_list = model.final_xy_tables['Cy']
+
 
         if step == 1:
-            H1 = self.get_H1(model)
+            H1 = self.get_H1(model, model.options.transformation)
             W = self.calculate_W(H1, model)
             current_step = step_result(W)
             W_inv = current_step.W_inv
@@ -191,13 +184,11 @@ class abond:
 
         z_list = model.z_list
         _z_t_list = model._z_t_list
-        Cx = model.final_xy_tables['Cx']
-        Cy = model.final_xy_tables['Cy']
-        Cx_list = Cx.dat
-        Cy_list = Cy.dat
+        Cx_list = model.final_xy_tables['Cx']
+        Cy_list = model.final_xy_tables['Cy']
 
         z_height = int(z_list.shape[0] / model.N)
-        x_height = Cx.unit_height
+        x_height = int(Cx_list.shape[0]/model.N)
 
         for i in range(model.N):
             z = z_list[(z_height * i):(z_height * i + z_height), :]
@@ -272,36 +263,57 @@ class abond:
             zs = step2.zs
 
             model.hansen = tests.hansen_overid(_W2_inv, model.N, zs, num_instru, \
-                                               Cx.width)
+                                               Cx.shape[1])
         else:
             current_step = model.step_results[step - 1]
             _W2_inv = current_step.W_inv
             zs = current_step.zs
             model.hansen = tests.hansen_overid(_W2_inv, model.N, zs, num_instru, \
-                                               Cx.width)
+                                               Cx.shape[1])
 
         try:
             model.AR_list = tests.AR_test(model, step, 2)
+
         except Exception as e:
             raise Exception(e)
 
-    def get_H1(self, model: dynamic_panel_model):
+    def get_H1(self, model: dynamic_panel_model, transformation):
         z_list = model.z_list
         z_inf = model.z_information
         width = z_list.shape[1]
 
-        tbr = np.zeros((width, width), dtype='float64')
-        i, j = np.indices(tbr.shape)
-        tbr[np.logical_and(i == j, i < z_inf.diff_width)] = 2
-        tbr[np.logical_and(i == j - 1, j < z_inf.diff_width)] = -1
-        tbr[np.logical_and(j == i - 1, i < z_inf.diff_width)] = -1
+        if transformation=='fd':
 
-        tbr[np.logical_and(i == j, i >= z_inf.diff_width)] = 1
+            tbr = np.zeros((width, width), dtype='float64')
+            i, j = np.indices(tbr.shape)
+            tbr[np.logical_and(i == j, i < z_inf.diff_width)] = 2
+            tbr[np.logical_and(i == j - 1, j < z_inf.diff_width)] = -1
+            tbr[np.logical_and(j == i - 1, i < z_inf.diff_width)] = -1
 
-        tbr[np.logical_and(i == j + z_inf.diff_width, j < z_inf.diff_width)] = -1
-        tbr[np.logical_and(i == 1 + j + z_inf.diff_width, j < z_inf.diff_width)] = 1
-        tbr[np.logical_and(j == i + z_inf.diff_width, i < z_inf.diff_width)] = -1
-        tbr[np.logical_and(j == 1 + i + z_inf.diff_width, i < z_inf.diff_width)] = 1
+            tbr[np.logical_and(i == j, i >= z_inf.diff_width)] = 1
+
+            tbr[np.logical_and(i == j + z_inf.diff_width, j < z_inf.diff_width)] = -1
+            tbr[np.logical_and(i == 1 + j + z_inf.diff_width, j < z_inf.diff_width)] = 1
+            tbr[np.logical_and(j == i + z_inf.diff_width, i < z_inf.diff_width)] = -1
+            tbr[np.logical_and(j == 1 + i + z_inf.diff_width, i < z_inf.diff_width)] = 1
+        else:  #fod
+            if model.options.level:
+                D=np.zeros((width, model.T), np.float64)
+
+                up_height=model.z_information.diff_width
+                D_up=model.pdata.generate_D_matrix(up_height, model.T)
+                D[0:up_height,:]=D_up
+
+
+                lower_start_row=up_height
+                lower_start_col=model.T-(width-up_height)
+                lower=D[lower_start_row: width, lower_start_col: model.T]
+                i, j=np.indices(lower.shape)
+                lower[i==j]=1
+
+            else:
+                D=model.pdata.generate_D_matrix( width, model.T)
+            tbr=D @ D.transpose()
 
         return (tbr)
 

@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 from pandas import DataFrame
+from pydynpd.common_functions import lag, get_first_diff_table
 
 from pydynpd.info import options_info
 
@@ -31,10 +32,13 @@ class panel_data():
 
         self.data = self.make_balanced(df[self.cols + self.col_timedumm].to_numpy(), self.N, self.T)
         num_cols = self.data.shape[1]
-        self.fd_data = self.fd_transform(self.data, self.N, [1, num_cols])
+
+        self.fd_data = get_first_diff_table(self.data[:,range(0, num_cols)], self.N)
+        #self.fod_data=self.fod_trans(self.data, self.N, [1, num_cols])
+
 
     def xtset(self, df: DataFrame, _individual, _time):
-
+        df.sort_values(by=[_individual, _time])
         df['_individual'] = df[_individual].astype('category').cat.codes
         df['_individual'] = df['_individual'].astype('int64')
         N = df['_individual'].unique().size
@@ -81,38 +85,13 @@ class panel_data():
 
         return col_timedumm
 
-    def fd_transform(self, ori_arr: np.ndarray, N, LU):
+    
 
-        lb = LU[0]
-        ub = LU[1]
-        num_rows = ori_arr.shape[0]
-
-        height = int(num_rows / N)
-        num_cols = ori_arr.shape[1]
-
-        lag_arr = np.zeros((num_rows, num_cols), dtype='float64')
-        tbr_arr = np.zeros((num_rows, num_cols), dtype='float64')
-
-        for i in range(N):
-            tbr_arr_i = tbr_arr[(i * height):(i * height + height), :]
-            lag_arr_i = lag_arr[(i * height):(i * height + height), :]
-
-            ori_i = ori_arr[(i * height):(i * height + height), :]
-
-            lag_arr_i[range(0, 1), :] = np.NaN
-            lag_arr_i[range(1, height), :] = ori_i[range(0, (height - 1)), :]
-            tbr_arr_i[:, range(lb, ub)] = ori_i[:, range(lb, ub)] - lag_arr_i[:, range(lb, ub)]
-
-        # if cut:
-        #     tbr_arr = tbr_arr[1:num_rows, :]
-        tbr_arr[:, 0] = ori_arr[:, 0]
-        return tbr_arr
-
-    def generate_D_matrix(self, T, max_lag):
+    def generate_D_matrix(self, height, T):
         # matrix used in Forward Orthogonal Deviation
-        D = np.zeros((T - 1 - max_lag, T), dtype='float64')
+        D = np.zeros((height, T), dtype='float64')
 
-        for i in range(T - 1 - max_lag):
+        for i in range(height):
             for j in range(i, T):
                 if i == j:
                     D[i, j] = math.sqrt((T - i - 1) / (T - i))
