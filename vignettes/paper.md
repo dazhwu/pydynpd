@@ -89,11 +89,11 @@ difference GMM and system GMM. Just like other R and Stata packages, pydynpd ful
 Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of our package is available at https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb. 
 
 For illustration purpose, consider the following equation:
-$$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$p$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{$q_{k}$}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+$$y_{it}=\sum_{j=1}^{\colorbox{yellow}p}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{\colorbox{yellow}q_{k}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 The equation above is related to a group/family of models with different combinations of $p$ and $q_{k}$ values. Unless existing economic theory indicates exactly what model to choose, researchers need to guess and try the values of $p$ and $q_{k}$ as highlighted in equation above. For example, if $p=2$ and $q_{k}=1$, then a specific model is formed:
 
-$$\require{color} y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+$$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 <p align = "center">
 <img src = "Images/traditional.svg">
@@ -107,7 +107,7 @@ Figure 2 shows how other packages work: a user needs to choose a specific model,
 
 Figure 3 shows how pydynpd's automatic mode works: a user indicates what values pydynpd needs to search for (e.g., the question marks in equation below), and then pydynpd tries all possible models, and returns "good" models that pass dynamic models' specification tests (e.g., Hansen overidentification test and AR(2) test). Note that processes included in the dotted box in Figure 2 is represented as a black-box process named "traditional process" in Figure 3.
 
-$$\require{color} y_{it}=\sum_{j=1}^\colorbox{yellow}{$?$}\alpha_{j}y_{i,t-j}+\sum_{j=1}^\colorbox{yellow}{?}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
+$$y_{it}=\sum_{j=1}^{\colorbox{Yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{Yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
 
