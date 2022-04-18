@@ -94,8 +94,6 @@ The equation above is related to a group/family of models with different combina
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-You can use table for this. It works fine.
-
 | ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/traditional.svg) | 
 |:--:| 
 | *Figure 2* |
