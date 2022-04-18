@@ -61,12 +61,8 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
-<p align = "center">
-<img src = "https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg">
-</p>
-<p align = "center">
-Fig.1 - Performance Comparision 
-</p>
+![Alt text](![alt text](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg) "Fig.1 - Performance Comparision ")
+
 
 # The pydynpd package 
 
