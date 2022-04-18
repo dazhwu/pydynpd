@@ -61,8 +61,10 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
-![alt text](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg)
 
+| ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg) | 
+|:--:| 
+| *Figure 1* |
 
 # The pydynpd package 
 
@@ -91,23 +93,24 @@ The equation above is related to a group/family of models with different combina
 
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-![alt text](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/traditional.svg "title")
 
-Figure above shows how other packages work: a user needs to choose a specific model, then based on that particular model the system generates the corresponding instrument matrix and panel data with dependent/independent variables so that the GMM process can produce regression results. An innovative feature of pydynpd is that it can also run in its "automatic" mode in which it doesn't require users to choose a particular model. Instead, users may let pydynpd search for the lags (e.g., $p$ and $q_{k}$) so that the corresponding models satisfy certain standards.
+You can use table for this. It works fine.
+
+| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/traditional.svg) | 
+|:--:| 
+| *Figure 2* |
+
+
+
+Figure 2 shows how other packages work: a user needs to choose a specific model, then based on that particular model the system generates the corresponding instrument matrix and panel data with dependent/independent variables so that the GMM process can produce regression results. An innovative feature of pydynpd is that it can also run in its "automatic" mode in which it doesn't require users to choose a particular model. Instead, users may let pydynpd search for the lags (e.g., $p$ and $q_{k}$) so that the corresponding models satisfy certain standards.
 
 Figure 3 shows how pydynpd's automatic mode works: a user indicates what values pydynpd needs to search for (e.g., the question marks in equation below), and then pydynpd tries all possible models, and returns "good" models that pass dynamic models' specification tests (e.g., Hansen overidentification test and AR(2) test). Note that processes included in the dotted box in Figure 2 is represented as a black-box process named "traditional process" in Figure 3.
 
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-
-
-<p align = "center">
-<img src = "Images/new_struct.svg">
-</p>
-<p align = "center">
-Fig.3 - pydynpd's automatic mode
-</p>
-
+| ![Figure 3](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/new_struct.svg) | 
+|:--:| 
+| *Figure 3* |
 
 
 
