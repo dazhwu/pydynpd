@@ -69,6 +69,10 @@ class command(object):
         if len(parts) <= 1:
             print('There should be at least two parts in command string')
             exit()
+        
+        if len(parts) > 3:
+            print('too many parts')
+            exit()
 
         if len(parts) == 3:
             self.part_3 = parts[2]
