@@ -106,7 +106,7 @@ Figure 3 shows how pydynpd's automatic mode works: a user indicates what values 
 
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-|<image src = "https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/new_struct.svg" width="350px" height="350px"></image> | 
+|<image src = "https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/new_struct.svg" width="550px" height="550px"></image> | 
 |:--:| 
 | *Figure 3* |
 
