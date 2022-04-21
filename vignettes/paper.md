@@ -94,7 +94,7 @@ The equation above is related to a group/family of models with different combina
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/traditional.png) | 
+| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/images/traditional.png) | 
 |:--:| 
 | *Figure 2* |
 
@@ -107,7 +107,7 @@ Figure 3 shows how pydynpd's automatic mode works: a user indicates what values 
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/new_struct.png) | 
+| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/images/new_struct.png) | 
 |:--:| 
 | *Figure 3* |
 
