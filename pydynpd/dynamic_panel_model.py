@@ -30,10 +30,11 @@ class dynamic_panel_model(object):
         self.step_results = []
 
         if options.timedumm:
-            if options.transformation == 'fd':
-                self.update_time_dummies(self.df_information.first_diff_index, self.df_information.last_diff_index)
-            else:
-                self.update_time_dummies(self.df_information.first_fod_index, self.df_information.last_fod_index)
+            self.update_time_dummies(self.df_information.first_diff_index, self.df_information.last_diff_index)
+            # if options.transformation == 'fd':
+            #     self.update_time_dummies(self.df_information.first_diff_index, self.df_information.last_diff_index)
+            # else:
+            #     self.update_time_dummies(self.df_information.first_fod_index, self.df_information.last_fod_index)
         self.prepare_data()
 
     def update_time_dummies(self, first_diff_index, last_index):
