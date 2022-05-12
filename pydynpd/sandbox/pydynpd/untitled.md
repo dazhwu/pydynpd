@@ -1,5 +1,0 @@
-Package pyndynpd is able to estimate dynamic panel models that take a form as follows:
-
-$$y_{it}=\sum_{j=1}^{p}\alpha_{j}y_{i,t-j}+\sum_{k=1}^{m}\sum_{j=0}^{q_{k}}\beta_{jk}r_{i,t-j}^{(k)}+\boldsymbol{\delta}\boldsymbol{d_{i,t}}+\boldsymbol{\gamma}\boldsymbol{s_{i,t}}+u_{i}+\epsilon_{it}\label{eq:typical_model}$$ In the model above, $y_{i,t-j}$ ($j=1,2,\ldots,p$) denotes a group of $p$ lagged dependent variables. $r_{i,t-j}^{(k)}$ represents a group of $m$ endogeneous variables other than lagged $y$. $\boldsymbol{d_{it}}$ is a vector of predetermined variables which may potentially correlate with past errors, $\boldsymbol{s_{it}}$ is a vector of exogenous variables, and $u_{i}$ represents fixed effect. For illustration purpose, let's consider a basic form of dynamic panel model:
-
-$$y_{it}=\alpha_{1}y_{i,t-1}+\delta d_{i,t}+u_{i}+\epsilon_{it}\label{eq:simple_model}$$
