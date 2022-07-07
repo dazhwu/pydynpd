@@ -80,6 +80,46 @@ Though developed in pure python, pydynpd is not far behind of xtabond2. Moreover
 
 A detailed description of the tests can be found [here](https://github.com/dazhwu/pydynpd/blob/main/Benchmark/performance_comparison.md)
 
+## FAQs
+1. How to extract coefficients from regression?
+For example, if you run:
+```
+df = pd.read_csv("data.csv")
+mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k)  ', df, ['id', 'year'])
+```
+
+The output regression table will be 
+```
++------+------------+---------------------+------------+-----------+-----+
+|  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
++------+------------+---------------------+------------+-----------+-----+
+| L1.n | 0.9453810  |      0.1429764      | 6.6121470  | 0.0000000 | *** |
+| L2.n | -0.0860069 |      0.1082318      | -0.7946553 | 0.4268140 |     |
+|  w   | -0.4477795 |      0.1521917      | -2.9422068 | 0.0032588 |  ** |
+|  k   | 0.1235808  |      0.0508836      | 2.4286941  | 0.0151533 |  *  |
+| _con | 1.5630849  |      0.4993484      | 3.1302492  | 0.0017466 |  ** |
++------+------------+---------------------+------------+-----------+-----+
+```
+If you want to programably extract a value, for example, the first z value (6.6121470) then you can add the following:
+```
+>>>mydpd.models[0].regression_table.iloc[0]['z_value']
+6.6121469997085915
+```
+Basically, the object mydpd returned above contains models because pydynpd allows us to run and compare multiple models at the same time. By default, it only contains one model which is models[0]. A model has a regression table which is a pandas dataframe:
+```
+ >>>mydpd.models[0].regression_table
+
+  variable  coefficient   std_err   z_value       p_value  sig
+0     L1.n     0.945381  0.142976  6.612147  3.787856e-11  ***
+1     L2.n    -0.086007  0.108232 -0.794655  4.268140e-01     
+2        w    -0.447780  0.152192 -2.942207  3.258822e-03   **
+3        k     0.123581  0.050884  2.428694  1.515331e-02    *
+4     _con     1.563085  0.499348  3.130249  1.746581e-03   **
+
+```
+So you can extract any value from this dataframe.
+
+
 ## Contributing
 There are several ways to contribute to pydynpd:
 
