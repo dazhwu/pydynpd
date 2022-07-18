@@ -93,10 +93,14 @@ class dynamic_panel_model(object):
 
         Dgmm_table = self.gen_table(self.pdata.data, variables['Dgmm'])
         iv_table = self.gen_table(self.pdata.data, variables['iv'])
-        Delta_iv_table = self.gen_table(self.pdata.fd_data, variables['iv'])
+        if (self.options.transformation=='fod') & (level==False):
+            Delta_iv_table=self.gen_table(self.pdata.fod_data, variables['iv'])
+        else:
+            Delta_iv_table = self.gen_table(self.pdata.fd_data, variables['iv'])
 
         gmm_dict['Dgmm'] = Dgmm_table
         gmm_dict['iv'] = iv_table
+
         gmm_dict['Div'] = Delta_iv_table
 
         if level:  # sys-GMM
