@@ -84,15 +84,27 @@ class panel_data():
 
         return col_timedumm
 
-    def generate_D_matrix(self, height, T):
+    def generate_D_matrix(self, height, T, level):
         # matrix used in Forward Orthogonal Deviation
+        temp=np.zeros((T,T), dtype='float64')
         D = np.zeros((height, T), dtype='float64')
 
-        for i in range(height):
+        for i in range(T):
             for j in range(i, T):
                 if i == j:
-                    D[i, j] = math.sqrt((T - i - 1) / (T - i))
+                    temp[i, j] = math.sqrt((T - i - 1) / (T - i))
                 else:
-                    D[i, j] = (-1) * math.sqrt(1 / ((T - i) * (T - i - 1)))
+                    temp[i, j] = (-1) * math.sqrt(1 / ((T - i) * (T - i - 1)))
 
+        if level:
+            last=T-2
+
+
+        else:
+            last=T-3
+        start = last + 1 - height
+        print(np.around(temp,3))
+        print(start)
+        D=temp[start:(last+1),:]
+        print(np.around(D,3))
         return (D)

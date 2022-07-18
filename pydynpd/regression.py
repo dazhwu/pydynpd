@@ -304,7 +304,7 @@ class abond:
                 D = np.zeros((width, model.T), np.float64)
 
                 up_height = model.z_information.diff_width
-                D_up = model.pdata.generate_D_matrix(up_height, model.T)
+                D_up = model.pdata.generate_D_matrix(up_height, model.T, True)
                 D[0:up_height, :] = D_up
 
                 lower_start_row = up_height
@@ -314,7 +314,7 @@ class abond:
                 lower[i == j] = 1
 
             else:
-                D = model.pdata.generate_D_matrix(width, model.T)
+                D = model.pdata.generate_D_matrix(width, model.T,False)
             tbr = D @ D.transpose()
 
         return (tbr)
