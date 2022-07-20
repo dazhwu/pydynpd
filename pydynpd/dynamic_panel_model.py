@@ -20,7 +20,7 @@ class dynamic_panel_model(object):
         self.N = self.pdata.N
         self.variables = variables.copy()
         self.options = options
-        method = 'fd'
+
         self.command_str = command_str + '|' + part_2
         if part_3 != '':
             self.command_str += '|' + part_3
@@ -31,10 +31,7 @@ class dynamic_panel_model(object):
 
         if options.timedumm:
             self.update_time_dummies(self.df_information.first_diff_index, self.df_information.last_diff_index)
-            # if options.transformation == 'fd':
-            #     self.update_time_dummies(self.df_information.first_diff_index, self.df_information.last_diff_index)
-            # else:
-            #     self.update_time_dummies(self.df_information.first_fod_index, self.df_information.last_fod_index)
+
         self.prepare_data()
 
     def update_time_dummies(self, first_diff_index, last_index):
