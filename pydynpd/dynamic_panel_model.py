@@ -349,7 +349,7 @@ class dynamic_panel_model(object):
             row_if_nan = np.logical_or(np.isnan(x).any(axis=1), np.isnan(y).any(axis=1))
 
             if self.options.level:
-                temp = np.count_nonzero(row_if_nan[range(self.z_information.diff_width, self.z_information.width)])
+                temp = np.count_nonzero(row_if_nan[range(0,self.z_information.diff_width)])
             else:
                 temp = np.count_nonzero(row_if_nan)
             num_NA += temp
@@ -370,11 +370,7 @@ class dynamic_panel_model(object):
                     #     Diff_x[j+i*self.z_information.diff_width,:]=0
                     #     Diff_y[j + i * self.z_information.diff_width, :] = 0
 
-        if self.options.level:
-            width = self.z_information.level_width
-        else:
-            width = self.z_information.diff_width
-
+        width = self.z_information.diff_width
         nobs = width * N - num_NA
         max_obs = width - min
         min_obs = width - max
