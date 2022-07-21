@@ -157,7 +157,7 @@ Hansen test of overid. restrictions: chi(46) = 96.442 Prob > Chi2 = 0.000
 Arellano-Bond test for AR(1) in first differences: z = -2.35 Pr > z =0.019
 Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
 ```
-Also, from R you can access the properties of the result above the same way you work on Python. From example, after running code above if run the following R script:
+As you can see, you don't need to change the command string in R. The only parameter you have to change is the identifiers; ['id', 'year'] in Python is changed to c('id', 'year') in R. Also, from R you can access the properties of the result above the same way you work on Python. From example, after running code above if run the following R script:
 ```
 reg_table=result$models[[1]]$regression_table
 print(reg_table)
