@@ -81,7 +81,7 @@ Though developed in pure python, pydynpd is not far behind of xtabond2. Moreover
 A detailed description of the tests can be found [here](https://github.com/dazhwu/pydynpd/blob/main/Benchmark/performance_comparison.md)
 
 ## FAQs
-1. How to extract coefficients from regression?
+### How to extract coefficients from regression?
 For example, if you run:
 ```
 df = pd.read_csv("data.csv")
@@ -119,6 +119,44 @@ Basically, the object mydpd returned above contains models because pydynpd allow
 ```
 So you can extract any value from this dataframe.
 
+### How to use pydynpd with R?
+First, you need to install Python on your computer.
+Second, in R environment install package reticulate:
+```
+install.packages("reticulate")
+```
+Third, you configure Rstudio so that it can communicate with Python installed in step 1. You can find instruction at
+https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
+
+Finally, you can use the following template to call pydynpd from R:
+```
+library(reticulate)
+dynpd <- import("pydynpd.regression", convert = TRUE)
+fd <- import("pandas", convert=TRUE)
+df <- fd$read_csv("data.csv")
+
+result <- dynpd$abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, c('id', 'year'))
+```
+Code above generates the following result:
+```
+ Dynamic panel-data estimation, two-step system GMM
+ Group variable: id                               Number of obs = 611     
+ Time variable: year                              Min obs per group: 4    
+ Number of instruments = 51                       Max obs per group: 6    
+ Number of groups = 140                           Avg obs per group: 4.36 
++------+------------+---------------------+------------+-----------+-----+
+|  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
++------+------------+---------------------+------------+-----------+-----+
+| L1.n | 0.9453810  |      0.1429764      | 6.6121470  | 0.0000000 | *** |
+| L2.n | -0.0860069 |      0.1082318      | -0.7946553 | 0.4268140 |     |
+|  w   | -0.4477795 |      0.1521917      | -2.9422068 | 0.0032588 |  ** |
+|  k   | 0.1235808  |      0.0508836      | 2.4286941  | 0.0151533 |  *  |
+| _con | 1.5630849  |      0.4993484      | 3.1302492  | 0.0017466 |  ** |
++------+------------+---------------------+------------+-----------+-----+
+Hansen test of overid. restrictions: chi(46) = 96.442 Prob > Chi2 = 0.000
+Arellano-Bond test for AR(1) in first differences: z = -2.35 Pr > z =0.019
+Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
+```
 
 ## Contributing
 There are several ways to contribute to pydynpd:
