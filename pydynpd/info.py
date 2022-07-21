@@ -72,22 +72,21 @@ class beginner_models:
 
 @dataclass
 class step_result:
-    H: np.ndarray
-    residual: np.ndarray
-    residual_t: np.ndarray
-    SS: float
-    XZ: np.ndarray
-    Zy: np.ndarray
-    XZ_W: np.ndarray
-    W_inv: np.ndarray
-    M_XZ_W: np.ndarray
-    ZuuZ: np.ndarray
-    W: np.ndarray
     M: np.ndarray
-    beta: list
-    vcov: np.ndarray
-    std_err: list
+    SS: np.ndarray
+    W: np.ndarray
+    W_inv: np.ndarray
+    W_next: np.ndarray
+    ZuuZ: np.ndarray
+    beta: np.ndarray
+    residual: np.ndarray
+    _residual_t: np.ndarray
 
+    vcov: np.ndarray
+    zs: np.ndarray
+    std_err: np.ndarray
+    _M_XZ_W: np.ndarray
+    _XZ_W: np.ndarray
     def __init__(self, W):
         self.W = W
         self.W_inv = np.linalg.pinv(W)
