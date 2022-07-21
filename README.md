@@ -157,6 +157,21 @@ Hansen test of overid. restrictions: chi(46) = 96.442 Prob > Chi2 = 0.000
 Arellano-Bond test for AR(1) in first differences: z = -2.35 Pr > z =0.019
 Arellano-Bond test for AR(2) in first differences: z = -1.15 Pr > z =0.251
 ```
+Also, from R you can access the properties of the result above the same way you work on Python. From example, after running code above if run the following R script:
+```
+reg_table=result$models[[1]]$regression_table
+print(reg_table)
+```
+The output is:
+```
+  variable coefficient    std_err    z_value      p_value sig
+1     L1.n  0.94538100 0.14297640  6.6121470 3.787856e-11 ***
+2     L2.n -0.08600694 0.10823176 -0.7946553 4.268140e-01    
+3        w -0.44777955 0.15219173 -2.9422068 3.258822e-03  **
+4        k  0.12358078 0.05088363  2.4286941 1.515331e-02   *
+5     _con  1.56308487 0.49934839  3.1302492 1.746581e-03  **
+```
+In the example above, reg_table is an R data frame.
 
 ## Contributing
 There are several ways to contribute to pydynpd:
