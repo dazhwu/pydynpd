@@ -132,19 +132,30 @@ Third, you configure Rstudio so that it can communicate with Python installed in
 https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
 
 Finally, you can use the following template to call pydynpd from R:
+<table>
+ <tr>
+  <td>
+   <pre lang="R">
 
-| R code | Correponding code in python|
-| :---:   |  :-: |
-| ```               |301  |
-|library(reticulate) |                  |
-|```
-
-dynpd <- import("pydynpd.regression", convert = TRUE)
+ library(reticulate) 
+  dynpd <- import("pydynpd.regression", convert = TRUE)
 fd <- import("pandas", convert=TRUE)
 df <- fd$read_csv("data.csv")
 
 result <- dynpd$abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, c('id', 'year'))
-```
+</pre>
+</td>
+  <td>
+   <pre lang="Python">
+import pandas as pd
+from  pydynpd import regression
+df = pd.read_csv("data.csv")
+mydpd = regression.abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, ['id', 'year'])
+</pre>
+  </td>
+</tr>
+</table>
+
 Code above generates the following result:
 ```
  Dynamic panel-data estimation, two-step system GMM
