@@ -134,9 +134,8 @@ https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
 Finally, you can use the following template to call pydynpd from R:
 <table>
  <tr>
-  <td>
-   <pre lang="R">
-
+  <td>   R  </td>
+  <td>   <pre lang="R">
  library(reticulate) 
   dynpd <- import("pydynpd.regression", convert = TRUE)
 fd <- import("pandas", convert=TRUE)
@@ -144,7 +143,9 @@ df <- fd$read_csv("data.csv")
 
 result <- dynpd$abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, c('id', 'year'))
 </pre>
-</td>
+</td>  </tr>
+ <tr> 
+  <td>    Python   </td>
   <td>
    <pre lang="Python">
 import pandas as pd
