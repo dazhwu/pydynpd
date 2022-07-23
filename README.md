@@ -131,7 +131,7 @@ install.packages("reticulate")
 Third, you configure Rstudio so that it can communicate with Python installed in step 1. You can find instruction at
 https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
 
-Finally, you can use the following template to call pydynpd from R:
+Finally, you can use the following template to call pydynpd from R. For comparision, the corresponding Python code is also incuded.
 <table>
  <tr>
   <td>   R  </td>
@@ -146,8 +146,7 @@ result <- dynpd$abond('n L(1:2).n w k | gmm(n, 2:4) gmm(w, 1:3) iv(k)', df, c('i
 </td>  </tr>
  <tr> 
   <td>    Python   </td>
-  <td>
-   <pre lang="Python">
+  <td>    <pre lang="Python">
 import pandas as pd
 from  pydynpd import regression
 df = pd.read_csv("data.csv")
