@@ -120,7 +120,10 @@ Basically, the object mydpd returned above contains models because pydynpd allow
 So you can extract any value from this dataframe.
 
 ### How to use pydynpd with R?
-First, you need to install Python on your computer.
+First, you need to install Python on your computer; then install pydynpd.
+```
+pip install pydynpd
+```
 Second, in R environment install package reticulate:
 ```
 install.packages("reticulate")
@@ -130,6 +133,10 @@ https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
 
 Finally, you can use the following template to call pydynpd from R:
 ```
+| R code | Correponding code in python|
+| :---:   |  :-: |
+|  | 301  |
+
 library(reticulate)
 dynpd <- import("pydynpd.regression", convert = TRUE)
 fd <- import("pandas", convert=TRUE)
