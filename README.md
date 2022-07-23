@@ -132,12 +132,13 @@ Third, you configure Rstudio so that it can communicate with Python installed in
 https://www.rstudio.com/blog/rstudio-v1-4-preview-python-support/
 
 Finally, you can use the following template to call pydynpd from R:
-```
+
 | R code | Correponding code in python|
 | :---:   |  :-: |
-|  | 301  |
+| ```               |301  |
+|library(reticulate) |                  |
+|```
 
-library(reticulate)
 dynpd <- import("pydynpd.regression", convert = TRUE)
 fd <- import("pandas", convert=TRUE)
 df <- fd$read_csv("data.csv")
