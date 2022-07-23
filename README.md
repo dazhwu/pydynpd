@@ -136,8 +136,8 @@ Finally, you can use the following template to call pydynpd from R. For comparis
  <tr>
   <td>   R  </td>
   <td>   <pre lang="R">
- library(reticulate) 
-  dynpd <- import("pydynpd.regression", convert = TRUE)
+library(reticulate) 
+dynpd <- import("pydynpd.regression", convert = TRUE)
 fd <- import("pandas", convert=TRUE)
 df <- fd$read_csv("data.csv")
 
