@@ -210,6 +210,7 @@ Each step_result object has the following properties:
 | std_err  | Numpy ndarray | Standard errors of coefficients           |
 | residual | Numpy ndarray | one-column matrix that contains residuals |
 
+Please note that weighting matrix is discussed in this [document](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb). 
 Example:
 
 If we run code below,
