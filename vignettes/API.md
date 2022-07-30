@@ -135,11 +135,11 @@ This attribute is a dictionary. What are included in the dictionary depends on t
 
 It is an object that has the following attributes:
 
-| Property   | Data Type | Meaning                    |
-|------------|:----------|:---------------------------|
-| test_value | float     | Hensen test value          |
-| P_value    | float     | P value of the Hensen test |
-| df         | int       | degree of freedom          |
+| Property   | Data Type | Meaning                    | Example (suppose m is a dynamic model object)   |
+|------------|:----------|:---------------------------|:--------------|
+| test_value | float     | Hensen test value          |m.hensen.test_value |
+| p_value    | float     | P value of the Hensen test |m.hensen.p_value |
+| df         | int       | degree of freedom          |m.hensen.df |
 
 ### regression_table property
 
