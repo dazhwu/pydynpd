@@ -5,7 +5,7 @@ This document describes how to manipulate the outputs of the abond function. For
 Estimates dynamic panel model using difference GMM or system GMM.
 
 +-----------------------------------------------------------------------------------------------------+
-| ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/images/list_models.svg) |
+| ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/list_models.svg) |
 +:===================================================================================================:+
 | *Figure 1*                                                                                          |
 +-----------------------------------------------------------------------------------------------------+
