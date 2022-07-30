@@ -1,4 +1,4 @@
-This document describes how to manipulate the outputs of the abond function. For instruction on what inputs are needed to run the abond function, please refer to [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).
+This document describes how to manipulate the outputs of the abond function. For instruction on what inputs are needed to run the abond function, and how to form these inputs, please refer to [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).
 
 ## List of models returned
 
@@ -102,21 +102,12 @@ Note that in the general output, both AR and P values are rounded. For example, 
 
 ### MMSC_LU
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+### final_xy_tables
 
-## Running Code
+### hensen
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+### regression_table
 
-```{python}
-1 + 1
-```
+### step_results
 
-You can add options to executable code like this
-
-```{python}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
+### z_list
