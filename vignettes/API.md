@@ -37,24 +37,29 @@ In the example above, mydpd is an "abond" object, and its "models" property repr
 
 The list below shows the properties of a dynamic panel model object:
 
-| Property         | Data Type                   | Meaning                                               |
-|------------------|:----------------------------|:------------------------------------------------------|
-| AR_list          | list                        | list of Arellano-Bond test objects                    |
-| MMSC_LU          | dictionary                  | contains bic, aic, and hqic values                    |
-| N                | int                         | number of individuals                                 |
-| T                | int                         | number of time periods                                |
-| command_str      | str                         | command string of the model                           |
-| final_xy_tables  | dictionary                  | contains data of dependent and independent variables. |
-| hansen           | hansen test object          | hansen over identification test                       |
-| avg_obs          | int                         | average number of observations per individual         |
-| max_obs          | int                         | maximum number of observations per individual         |
-| min_obs          | int                         | minimum number of observations per individual         |
-| num_obs          | int                         | total number of observations                          |
-| regression_table | pandas data frame           | contains all statistics in the regression table       |
-| step_results     | list of step result objects | discussed                                             |
-| z_list           | Numpy ndarray               | instrument matrix                                     |
+| Property         | Data Type                   | Meaning                                                                                                                                                                                 |
+|------------------|:----------------|:----------------------------------|
+| AR_list          | list                        | list of Arellano-Bond test objects                                                                                                                                                      |
+| MMSC_LU          | dictionary                  | contains bic (Bayesian information criterion), aic (Akaike information criterion), and hqic (Hannan-Quinn information criterion) values suggested by Andrews, D. and Lu, B. (2001) (\*) |
+| N                | int                         | number of individuals                                                                                                                                                                   |
+| T                | int                         | number of time periods                                                                                                                                                                  |
+| command_str      | str                         | command string of the model                                                                                                                                                             |
+| final_xy_tables  | dictionary                  | contains data of dependent and independent variables.                                                                                                                                   |
+| hansen           | hansen test object          | hansen over identification test                                                                                                                                                         |
+| avg_obs          | int                         | average number of observations per individual                                                                                                                                           |
+| max_obs          | int                         | maximum number of observations per individual                                                                                                                                           |
+| min_obs          | int                         | minimum number of observations per individual                                                                                                                                           |
+| num_obs          | int                         | total number of observations                                                                                                                                                            |
+| regression_table | pandas data frame           | contains all statistics in the regression table                                                                                                                                         |
+| step_results     | list of step result objects | discussed                                                                                                                                                                               |
+| z_list           | Numpy ndarray               | instrument matrix                                                                                                                                                                       |
+
+(\*) Andrews, D. and Lu, B. (2001). Consistent Model and Moment Selection Procedures for
+GMM Estimation with application to dynamic panel data models. Journal of Econometrics, 101(1):123--164.
 
 ### AR list property
+
+MMSC-BIC (Bayesian information criterion) or the MMSC-HQIC (Hannan-Quinn information criterion). The MMSC-AIC (Akaike information criterion)
 
 This list contains two AR test (Arellano-Bond test) objects. For example, if m is a dynamic panel model object, then m.AR_list[0] refers to the AR test object for the first-order autocovariance of the residuals, and m.AR_list[1] for the second-order autocovariance.
 
@@ -63,7 +68,7 @@ This list contains two AR test (Arellano-Bond test) objects. For example, if m i
 An AR test object has three properties:
 
 | Property | Data Type | Meaning                                                               |
-|----------|:----------|:----------------------------------------------------------------------|
+|------------------|:-----------------|:-----------------------------------|
 | AR       | float     | AR test value                                                         |
 | P_value  | float     | P value of the AR test                                                |
 | lag      | int       | 1 for the first order test (AR(1)) and 2 for the second-order (AR(2)) |
@@ -104,6 +109,26 @@ P value:  0.5557108268348134
 Note that in the general output, both AR and P values are rounded. For example in the output above, a value of -0.5892242871775409 is rounded to -0.59.
 
 ### MMSC_LU property
+
+This property is presented when the abond function returns two or more models, so that there is a need to compare them using their bic, hqic, and aic values.
+
+Example:
+
+    command_str='n L(1:?).n w k | gmm(n, 2:3) pred(w k)'
+    mydpd = regression.abond(command_str, df, ['id', 'year'])
+
+    for i in range(0, len(mydpd.models)):
+        print("model", end=" ")
+        print(i+1, end=": bic= ")
+        print(mydpd.models[i].MMSC_LU['bic'], end = "; hqic=")
+        print(mydpd.models[i].MMSC_LU['hqic'], end="; aic=")
+        print(mydpd.models[i].MMSC_LU['aic'])
+
+The output is too long and therefore we only show below the section generated by the for-loop part:
+
+    model 1: bic= -566.7507189938725; hqic=-290.96772885274686; aic=-86.12453121040255
+    model 2: bic= -497.2812102841098; hqic=-256.13657126336705; aic=-73.43190220363662
+    model 3: bic= -215.56036505263125; hqic=-120.02975924153786; aic=-39.93759993811322
 
 ### final_xy_tables property
 
