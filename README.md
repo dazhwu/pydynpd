@@ -63,8 +63,8 @@ Arellano-Bond test for AR(2) in first differences: z = -0.31 Pr > z =0.760
 ``` 
 ## Tutorial
 A detailed tutorial is given in the following two documents:<br>
-[input of the abond command](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).<br>
-[output of the abond command](https://github.com/dazhwu/pydynpd/blob/main/vignettes/API.md).
+[inputs of the abond command](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).<br>
+[outputs of the abond command](https://github.com/dazhwu/pydynpd/blob/main/vignettes/API.md).
 
 ## Similar packages
 The objective of the package is similar to the following open-source packages: <br>
