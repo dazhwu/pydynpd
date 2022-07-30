@@ -14,7 +14,7 @@ df = pd.read_csv("test_data.csv")
 #mydpd = regression.abond(command_str, df, ['id', 'year'])
 df = pd.read_csv("data.csv")
 #mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
-command_str='n L(1:?).n w k | gmm(n, 2:3) pred(w k)'
+command_str='n L(1:?).n w k | gmm(n, 2:3) pred(w k)| fod'
 mydpd = regression.abond(command_str, df, ['id', 'year'])
 
 for i in range(0, len(mydpd.models)):
