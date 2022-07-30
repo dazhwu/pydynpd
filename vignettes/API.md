@@ -1,10 +1,15 @@
-This document describes how to manipulate the outputs of the abond function. For instruction on what inputs are needed to run the abond function, please refer to
+This document describes how to manipulate the outputs of the abond function. For instruction on what inputs are needed to run the abond function, please refer to [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb).
 
-## outputs of the abond function
+## Outputs of the abond function
 
-Estimates dynamic panel model using difference GMM or system GMM.
+After regression, the abond function returns a list of models:
 
 ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/list_models.svg)
+
+Multiple models could be returned because users may include "?" in command string. For example, in Example 8 in [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb), the following comand string generates 5 models:
+
+    command_str='n L(1:?).n w k  | gmm(n, 2:3) pred(w k)'
+    mydpd = regression.abond(command_str, df, ['id', 'year'])
 
 ### Usage:
 
