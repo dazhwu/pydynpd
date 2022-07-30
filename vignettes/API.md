@@ -249,6 +249,6 @@ the output will be:
     Standard errors of coefficients: 
     [0.11799952 0.03970882 0.11972203 0.09525778]
 
-### z_list
+### z_list property
 
 This is a two-dimentional numpy array which represents the GMM instrument matrix. For example, if m is a dynamic panel model object, then m.z_list is the instrument matrix used in the GMM process.
