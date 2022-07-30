@@ -135,7 +135,7 @@ This attribute is a dictionary. What are included in the dictionary depends on t
 
 It is an object that has the following attributes:
 
-| Property   | Data Type | Meaning                    | Example (suppose m is a dynamic model object)   |
+| Property   | Data Type | Meaning                    | Example (suppose m is a dynamic panel model object)   |
 |------------|:----------|:---------------------------|:--------------|
 | test_value | float     | Hensen test value          |m.hensen.test_value |
 | p_value    | float     | P value of the Hensen test |m.hensen.p_value |
