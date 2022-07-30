@@ -58,8 +58,6 @@ The list below shows the properties of a dynamic panel model object:
 
 ### AR list property
 
-MMSC-BIC (Bayesian information criterion) or the MMSC-HQIC (Hannan-Quinn information criterion). The MMSC-AIC (Akaike information criterion)
-
 This list contains two AR test (Arellano-Bond test) objects. For example, if m is a dynamic panel model object, then m.AR_list[0] refers to the AR test object for the first-order autocovariance of the residuals, and m.AR_list[1] for the second-order autocovariance.
 
 #### AR test object
@@ -73,7 +71,7 @@ An AR test object has three properties:
 | lag      | int       | 1 for the first order test (AR(1)) and 2 for the second-order (AR(2)) |
 
 For example, if you run the following code:
-
+```{=Python}
     mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
 
     m=mydpd.models[0]
@@ -81,7 +79,7 @@ For example, if you run the following code:
     print(m.AR_list[1].AR )
     print("P value: ", end=" ")
     print(m.AR_list[1].P_value)
-
+```
 the output will be
 
 ```{=html}
