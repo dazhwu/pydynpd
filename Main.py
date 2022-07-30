@@ -16,11 +16,11 @@ df = pd.read_csv("data.csv")
 mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
 
 m=mydpd.models[0]
-print("Coefficients:")
-print(m.step_results[1].beta)
-print("Standard errors of coefficients: ")
-print(m.step_results[1].std_err)
-
+print(m.regression_table)
+print("the coefficient of the first coefficient:")
+print(m.regression_table.iloc[0]['coefficient'])
+print("the p value of the first coefficient:")
+print(m.regression_table.iloc[0]['p_value'])
 
 
 

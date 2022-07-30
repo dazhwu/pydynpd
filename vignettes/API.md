@@ -38,7 +38,7 @@ In the example above, mydpd is an "abond" object, and its "models" property repr
 The list below shows the properties of a dynamic panel model object:
 
 | Property         | Data Type                   | Meaning                                               |
-|------------------|:------------------|:----------------------------------|
+|------------------|:----------------------------|:------------------------------------------------------|
 | AR_list          | list                        | list of Arellano-Bond test objects                    |
 | MMSC_LU          | dictionary                  | contains bic, aic, and hqic values                    |
 | N                | int                         | number of individuals                                 |
@@ -63,7 +63,7 @@ This list contains two AR test (Arellano-Bond test) objects. For example, if m i
 An AR test object has three properties:
 
 | Property | Data Type | Meaning                                                               |
-|------------------|:-----------------|:-----------------------------------|
+|----------|:----------|:----------------------------------------------------------------------|
 | AR       | float     | AR test value                                                         |
 | P_value  | float     | P value of the AR test                                                |
 | lag      | int       | 1 for the first order test (AR(1)) and 2 for the second-order (AR(2)) |
@@ -110,6 +110,57 @@ Note that in the general output, both AR and P values are rounded. For example i
 ### hensen property
 
 ### regression_table property
+
+This property is a pandas dataframe with the following columns:
+
+| column      | Meaning                                        |
+|-------------|:-----------------------------------------------|
+| variable    | name of the corresponding independent variable |
+| coefficient | estimated coefficient                          |
+| std_err     | corrected standard error                       |
+| z_value     | z value                                        |
+| p_value     | P value                                        |
+| sig         | significance mark                              |
+
+In the following example, we first run regression, and then use regression_table property to retrieve values in the regression table:
+
+    mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
+
+    m=mydpd.models[0]
+    print(m.regression_table)
+    print("the coefficient of the first coefficient:")
+    print(m.regression_table.iloc[0]['coefficient'])
+    print("the p value of the first coefficient:")
+    print(m.regression_table.iloc[0]['p_value'])
+
+output:
+
+     Dynamic panel-data estimation, two-step difference GMM
+     Group variable: id                               Number of obs = 611     
+     Time variable: year                              Min obs per group: 4    
+     Number of instruments = 36                       Max obs per group: 6    
+     Number of groups = 140                           Avg obs per group: 4.36 
+    +------+------------+---------------------+------------+-----------+-----+
+    |  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
+    +------+------------+---------------------+------------+-----------+-----+
+    | L1.n | 0.0905525  |      0.1179995      | 0.7673969  | 0.4428456 |     |
+    | L2.n | -0.0400400 |      0.0397088      | -1.0083405 | 0.3132910 |     |
+    |  w   | -0.8379635 |      0.1197220      | -6.9992428 | 0.0000000 | *** |
+    |  k   | 0.6088287  |      0.0952578      | 6.3913796  | 0.0000000 | *** |
+    +------+------------+---------------------+------------+-----------+-----+
+    Hansen test of overid. restrictions: chi(32) = 37.921 Prob > Chi2 = 0.217
+    Arellano-Bond test for AR(1) in first differences: z = -1.01 Pr > z =0.314
+    Arellano-Bond test for AR(2) in first differences: z = -0.59 Pr > z =0.556
+
+      variable  coefficient   std_err   z_value       p_value  sig
+    0     L1.n     0.090552  0.118000  0.767397  4.428456e-01     
+    1     L2.n    -0.040040  0.039709 -1.008341  3.132910e-01     
+    2        w    -0.837964  0.119722 -6.999243  2.573495e-12  ***
+    3        k     0.608829  0.095258  6.391380  1.643957e-10  ***
+    the coefficient of the first coefficient:
+    0.09055246263997319
+    the p value of the first coefficient:
+    0.442845568683905
 
 ### step_results property
 
