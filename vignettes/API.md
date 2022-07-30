@@ -51,7 +51,7 @@ The list below shows the properties of a dynamic panel model object:
 | min_obs          | int                         | minimum number of observations per individual                                                                                                                                           |
 | num_obs          | int                         | total number of observations                                                                                                                                                            |
 | regression_table | pandas data frame           | contains all statistics in the regression table                                                                                                                                         |
-| step_results     | list of step result objects | discussed                                                                                                                                                                               |
+| step_results     | list of step result objects |each object is related to a particular GMM step                                                                                                                                                                               |
 | z_list           | Numpy ndarray               | instrument matrix                                                                                                                                                                       |
 
 (\*) Andrews, D. and Lu, B. (2001). Consistent Model and Moment Selection Procedures for GMM Estimation with application to dynamic panel data models. Journal of Econometrics, 101(1):123--164.
