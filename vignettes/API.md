@@ -145,7 +145,7 @@ It is an object that has the following attributes:
 
 This property is a pandas dataframe with the following columns:
 
-| column      | Meaning                                        |
+| Column      | Meaning                                        |
 |-------------|:-----------------------------------------------|
 | variable    | name of the corresponding independent variable |
 | coefficient | estimated coefficient                          |
@@ -218,7 +218,7 @@ If we run code below,
 
     m=mydpd.models[0]
     print("Coefficients:")
-    print(m.step_results[1].beta)  # for ste 2
+    print(m.step_results[1].beta)  # for step 2
     print("Standard errors of coefficients: ")
     print(m.step_results[1].std_err)
 
