@@ -16,10 +16,10 @@ df = pd.read_csv("data.csv")
 mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
 
 m=mydpd.models[0]
-print("AR(2) test:", end=" ")
-print(m.AR_list[1].AR )
-print("P value: ", end=" ")
-print(m.AR_list[1].P_value)
+print("Coefficients:")
+print(m.step_results[1].beta)
+print("Standard errors of coefficients: ")
+print(m.step_results[1].std_err)
 
 
 

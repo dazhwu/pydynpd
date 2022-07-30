@@ -6,7 +6,10 @@ After regression, the abond function returns an "abond" object whose major prope
 
 ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/Images/list_models.svg)
 
-Multiple models could be returned because users may include "?" in command string. For example, in Example 8 in [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb), the following comand string generates 5 models: ··· command_str='n L(1:?).n w k \| gmm(n, 2:3) pred(w k)' mydpd = regression.abond(command_str, df, ['id', 'year']) ···
+Multiple models could be returned because users may include "?" in command string. For example, in Example 8 in [Tutorial](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Tutorial.ipynb), the following comand string generates 5 models:
+
+    command_str='n L(1:?).n w k | gmm(n, 2:3) pred(w k)' 
+    mydpd = regression.abond(command_str, df, ['id', 'year']) 
 
 What model(s) to be included in the list returned is based on the following rule:
 
@@ -24,7 +27,7 @@ What model(s) to be included in the list returned is based on the following rule
 
     We can access each model on the list by its index which starts from 0. For example, the following code runs regression and then accesses the first model in the list returned:
 
-        command_str='n L(1:?).n w k \| gmm(n, 2:3) pred(w k)'
+        command_str='n L(1:?).n w k | gmm(n, 2:3) pred(w k)'
         mydpd = regression.abond(command_str, df, ['id', 'year'])
         m=mydpd.models[0]
 
@@ -60,7 +63,7 @@ This list contains two AR test (Arellano-Bond test) objects. For example, if m i
 An AR test object has three properties:
 
 | Property | Data Type | Meaning                                                               |
-|---------------|:--------------|:------------------------------------------|
+|------------------|:-----------------|:-----------------------------------|
 | AR       | float     | AR test value                                                         |
 | P_value  | float     | P value of the AR test                                                |
 | lag      | int       | 1 for the first order test (AR(1)) and 2 for the second-order (AR(2)) |
@@ -98,16 +101,71 @@ Arellano-Bond test for AR(2) in first differences: z = -0.59 Pr > z =0.556
 AR(2) test: -0.5892242871775409
 P value:  0.5557108268348134
 ```
-Note that in the general output, both AR and P values are rounded. For example, a value of -0.5892242871775409 is rounded to -0.59.
+Note that in the general output, both AR and P values are rounded. For example in the output above, a value of -0.5892242871775409 is rounded to -0.59.
 
-### MMSC_LU
+### MMSC_LU property
 
-### final_xy_tables
+### final_xy_tables property
 
-### hensen
+### hensen property
 
-### regression_table
+### regression_table property
 
-### step_results
+### step_results property
+
+This is a list of step result objects. For example, for a two-step GMM model, this list contains two objects: step_results[0] for results generated in step 1 and step_results[1] for those in step 2.
+
+#### step_result object
+
+Each step_result object has the following properties:
+
+| Property | Data Type     | Meaning                                   |
+|----------|:--------------|:------------------------------------------|
+| W        | Numpy ndarray | Weighting matrix                          |
+| beta     | Numpy ndarray | Estimated coefficients                    |
+| vcov     | Numpy ndarray | Covariance matrix of coefficients         |
+| std_err  | Numpy ndarray | Standard errors of coefficients           |
+| residual | Numpy ndarray | one-column matrix that contains residuals |
+
+Example:
+
+If we run code below,
+
+    mydpd = regression.abond('n L(1:2).n w k  | gmm(n, 2:4) gmm(w, 1:3)  iv(k) |nolevel fod ', df, ['id', 'year'])
+
+    m=mydpd.models[0]
+    print("Coefficients:")
+    print(m.step_results[1].beta)  # for ste 2
+    print("Standard errors of coefficients: ")
+    print(m.step_results[1].std_err)
+
+the output will be:
+
+     Dynamic panel-data estimation, two-step difference GMM
+     Group variable: id                               Number of obs = 611     
+     Time variable: year                              Min obs per group: 4    
+     Number of instruments = 36                       Max obs per group: 6    
+     Number of groups = 140                           Avg obs per group: 4.36 
+    +------+------------+---------------------+------------+-----------+-----+
+    |  n   |   coef.    | Corrected Std. Err. |     z      |   P>|z|   |     |
+    +------+------------+---------------------+------------+-----------+-----+
+    | L1.n | 0.0905525  |      0.1179995      | 0.7673969  | 0.4428456 |     |
+    | L2.n | -0.0400400 |      0.0397088      | -1.0083405 | 0.3132910 |     |
+    |  w   | -0.8379635 |      0.1197220      | -6.9992428 | 0.0000000 | *** |
+    |  k   | 0.6088287  |      0.0952578      | 6.3913796  | 0.0000000 | *** |
+    +------+------------+---------------------+------------+-----------+-----+
+    Hansen test of overid. restrictions: chi(32) = 37.921 Prob > Chi2 = 0.217
+    Arellano-Bond test for AR(1) in first differences: z = -1.01 Pr > z =0.314
+    Arellano-Bond test for AR(2) in first differences: z = -0.59 Pr > z =0.556
+
+    Coefficients:
+    [[ 0.09055246]
+     [-0.04004001]
+     [-0.83796355]
+     [ 0.60882865]]
+    Standard errors of coefficients: 
+    [0.11799952 0.03970882 0.11972203 0.09525778]
 
 ### z_list
+
+This is a two-dimentional numpy array which represents the GMM instrument matrix. For example, if m is a dynamic panel model object, then m.z_list is the instrument matrix used in the GMM process.
