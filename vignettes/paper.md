@@ -51,7 +51,7 @@ is fast enough, but it
 has calculation issue for system GMM. A third R package, pdynmc, crashed or refused to work several times in our tests. Due to these reasons, R packages above are far less popular than xtabond2, according to citations they
 have received.
 
-Moreover, there is no python nor Julia package yet to estimate dynamic
+Moreover, there is no python or Julia package yet to estimate dynamic
 panel model due to the complexity involved in implementation. Our
 package contributes to the open source community because (1) it
 implements all of the major features in the associated commercial packages in
@@ -62,9 +62,9 @@ reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
 
-| ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg) | 
+| ![Figure 1](https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg)| 
 |:--:| 
-| *Figure 1* |
+| *Figure 1: running time (relative to the fastest)* |
 
 # The pydynpd package 
 
@@ -81,7 +81,7 @@ past errors, $\boldsymbol{s_{it}}$ is a vector of exogenous variables,
 and $u_{i}$ represents fixed effect. As lagged dependent variables such as $y_{i,t-1}$ are included as regressors, the
 popular techniques in static panel models no longer produce consistent
 results. Researchers have developed many methods to estimate dynamic
-panel model. Essentially there are two types of GMM estimates,
+panel models. Essentially there are two types of GMM estimates,
 difference GMM and system GMM. Just like other R and Stata packages, pydynpd fully implements these two methods.
 
 Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of our package is available at https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb. 
