@@ -61,7 +61,7 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
-![Figure 1: running time (relative to the fastest).\label{fig:example}](Test_1.svg){width=200%}
+![Figure 1: running time (relative to the fastest).\label{fig:example}](Test_1.svg){width=800%}
 
 
 
