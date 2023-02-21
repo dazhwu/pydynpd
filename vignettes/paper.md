@@ -62,8 +62,7 @@ reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
 <p align="center">
-  <img alt="img-name" src="https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg
-" width="1000">
+  <img alt="img-name" src="https://raw.githubusercontent.com/dazhwu/pydynpd/main/Benchmark/images/Test_1.svg" width="1000">
   <br>
     <em>Figure 1: running time (relative to the fastest)</em>
 </p>
