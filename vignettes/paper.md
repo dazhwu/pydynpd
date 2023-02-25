@@ -93,7 +93,7 @@ The equation above is related to a group/family of models with different combina
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-![How alternative packages work. \label{fig:traditional}](./Images/traditional.svg){width=100%}
+![How alternative packages work. \label{fig:traditional}](./Images/traditional.png){width=80%}
 
 
 
