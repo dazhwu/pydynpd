@@ -61,7 +61,7 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
-![Figure 1: running time (relative to the fastest).\label{fig:example}](Test_1.svg){width=80%}
+![Running time (relative to the fastest).\label{fig:runtime}](Test_1.svg){width=100%}
 
 
 
@@ -93,9 +93,7 @@ The equation above is related to a group/family of models with different combina
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-| ![Figure 2](https://raw.githubusercontent.com/dazhwu/pydynpd/main/vignettes/images/traditional.png) | 
-|:--:| 
-| *Figure 2* |
+![How alternative packages work. \label{fig:traditional}](./Images/traditional.svg){width=100%}
 
 
 
