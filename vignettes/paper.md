@@ -61,7 +61,7 @@ packages which rely heavily on R-specific components (that is a main
 reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
-![Running time (relative to the fastest).\label{fig:runtime}](Test_1.svg){width=100%}
+![Running time (relative to the fastest).\label{fig:runtime}](Test_1.png){width=100%}
 
 
 
@@ -95,7 +95,7 @@ $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{
 
 ![How alternative packages work. \label{fig:traditional}](traditional.png){width=100%}
 
-
+![The automatic mode in pydnynpd. \label{fig:auto_mode}](new_struct.png){width=100%}
 
 Figure 2 shows how other packages work: a user needs to choose a specific model, then based on that particular model the system generates the corresponding instrument matrix and panel data with dependent/independent variables so that the GMM process can produce regression results. An innovative feature of pydynpd is that it can also run in its "automatic" mode in which it doesn't require users to choose a particular model. Instead, users may let pydynpd search for the lags (e.g., $p$ and $q_{k}$) so that the corresponding models satisfy certain standards.
 
@@ -103,7 +103,7 @@ Figure 3 shows how pydynpd's automatic mode works: a user indicates what values 
 
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-![The automatic mode in pydnynpd. \label{fig:auto_mode}](new_struct.png){width=100%}
+
 
 
 
