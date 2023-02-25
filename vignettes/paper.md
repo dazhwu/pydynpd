@@ -93,7 +93,7 @@ The equation above is related to a group/family of models with different combina
 $$ y_{it}=\alpha_{1}y_{i,t-1}+\alpha_{2}y_{i,t-2}+\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 
-![How alternative packages work. \label{fig:traditional}](./Images/traditional.png){width=100%}
+![How alternative packages work. \label{fig:traditional}](traditional.png){width=100%}
 
 
 
@@ -103,7 +103,7 @@ Figure 3 shows how pydynpd's automatic mode works: a user indicates what values 
 
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
-![The automatic mode in pydnynpd. \label{fig:auto_mode}](./Images/new_struct.png){width=100%}
+![The automatic mode in pydnynpd. \label{fig:auto_mode}](new_struct.png){width=100%}
 
 
 
