@@ -1,5 +1,5 @@
 ---
-title: 'pydynpd: A python package for dynamic panel model'
+title: 'pydynpd: A Python package for dynamic panel model'
 tags:
   - Python
   - dynamic panel model
@@ -15,27 +15,24 @@ affiliations:
    index: 1
 date: April 9, 2022
 bibliography: ref.bib
-
 ---
-
-
 
 # Summary
 
-We developed a python package (pydynpd) which implements all the
+We present pydynpd, a Python package which implements all the
 features in dynamic panel model with GMM (general method of moments).
 These features include: (1) difference and system GMM, (2) one-step, two-step, and iterative estimators, (3) robust standard errors including the one
 suggested by [@windmeijer2005finite], (4) Hansen over-identification test, (5)
 Arellano-Bond test for autocorrelation, (6) time dummies, (7) allows
 users to collapse instruments to reduce instrument proliferation issue,
-and (8) a simple grammar for model specification. As far as we know, pydynpd is the first python package that allows researchers to estimate dynamic panel model.
+and (8) a simple grammar for model specification. As far as we know, pydynpd is the first Python package that allows researchers to estimate dynamic panel model.
 
 What distinguishes pydynpd from any other dynamic panel model packages is its innovative feature: the capability to search for models based on users' request, rather than just run the model specified by users as other packages do. To the best of our knowledge, there is no other econometric software/package that offers this feature, let alone dynamic panel model packages.
 
 # Statement of need 
 Over the past decade, dynamic panel model has become increasingly
 popular in empirical studies. For example, researchers use dynamic panel
-model to study the environmental impacts of climate change [@econometrics8030030] and covid-19 [@anser2020does;@oehmke2021dynamic].
+model to study the environmental impacts of climate change [@econometrics8030030] and COVID-19 [@anser2020does;@oehmke2021dynamic].
 This is because many aspects of our social and natural systems are
 inherently dynamic, and the GMM methods proposed by Arellano & Bond [-@arellano1991some] and Blundell & Bond [-@blundell1998initial] allow us to model the dynamics that
 traditional static panel models are not able to capture.
@@ -51,7 +48,7 @@ is fast enough, but it
 has calculation issue for system GMM. A third R package, pdynmc, crashed or refused to work several times in our tests. Due to these reasons, R packages above are far less popular than xtabond2, according to citations they
 have received.
 
-Moreover, there is no python or Julia package yet to estimate dynamic
+Moreover, there is no Python or Julia package yet to estimate dynamic
 panel model due to the complexity involved in implementation. Our
 package contributes to the open source community because (1) it
 implements all of the major features in the associated commercial packages in
@@ -62,8 +59,6 @@ reason they are not fast), our code uses components common to any
 programming language, making it easy to translate to R or Julia.
 
 ![Running time (relative to the fastest).\label{fig:runtime}](Test_1.png){width=100%}
-
-
 
 # The pydynpd package 
 
@@ -83,7 +78,7 @@ results. Researchers have developed many methods to estimate dynamic
 panel models. Essentially there are two types of GMM estimates,
 difference GMM and system GMM. Just like other R and Stata packages, pydynpd fully implements these two methods.
 
-Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of our package is available at https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb. 
+Due to space limit, we focus here on general discussion of the package. A detailed statistical/technique description of our package is available on [GitHub](https://github.com/dazhwu/pydynpd/blob/main/vignettes/Guide.ipynb). 
 
 For illustration purpose, consider the following equation:
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow}p}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{\colorbox{yellow}q_k}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
@@ -102,17 +97,6 @@ Figure 2 shows how other packages work: a user needs to choose a specific model,
 $$y_{it}=\sum_{j=1}^{\colorbox{yellow} ?}\alpha_{j}y_{i,t-j}+\sum_{j=1}^{{\colorbox{yellow} ?}}\beta_{j}r_{i,t-j}+{\delta}d_{i,t}+\gamma_{i,t}+u_{i}+\epsilon_{it}$$
 
 Figure 3 shows how pydynpd's automatic mode works: a user indicates what values pydynpd needs to search for (e.g., the question marks in equation above), and then pydynpd tries all possible models, and returns "good" models that pass dynamic models' specification tests (e.g., Hansen overidentification test and AR(2) test). Note that processes included in the dotted box in Figure 2 is represented as a black-box process named "traditional process" in Figure 3.
-
-
-
-
-
-
-
-
-
-
-
 
 # References
 
