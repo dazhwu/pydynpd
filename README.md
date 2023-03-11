@@ -12,7 +12,8 @@ In the equation above, x is a predetermined variable that is potentially correla
 
 This software has been published in Journal of Open Source Software: 
 ```
-Wu et al., (2023). pydynpd: A Python package for dynamic panel model. Journal of Open Source Software, 8(83), 4416, https://doi.org/10.21105/joss.04416
+Wu et al., (2023). pydynpd: A Python package for dynamic panel model. 
+Journal of Open Source Software, 8(83), 4416, https://doi.org/10.21105/joss.04416
 ```
 ## Features supported:
 * Differene and System GMM
