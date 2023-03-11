@@ -10,6 +10,9 @@ Below is a typical dynamic panel data model:
  
 In the equation above, x is a predetermined variable that is potentially correlated with past errors, s is a strictly exogenous variable, and u is fixed effect.
 
+This software has been published in Journal of Open Source Software:
+Wu et al., (2023). pydynpd: A Python package for dynamic panel model. Journal of Open Source Software, 8(83), 4416, https://doi.org/10.21105/joss.04416
+
 ## Features supported:
 * Differene and System GMM
 * One-step, two-step, and iterative estimates
