@@ -233,6 +233,10 @@ class command(object):
 
         # possible_options=[{'onestep', 'iterated'},'nolevel', 'timedumm', 'collapse']
 
+        if "onestep" in list_options and "iterated" in list_options:
+            print("One-step and iterative estimations are mutually exclusive")
+            exit()
+
         for option in list_options:
             if option == 'onestep':
                 options.steps = 1
@@ -251,10 +255,6 @@ class command(object):
             else:
                 print(option + ' is not an option allowed')
                 exit()
-
-        if options.steps == 1 and options.steps == 1000:
-            print("One-step and iterative estimations are mutually exclusive")
-            exit()
 
         return (options)
 
