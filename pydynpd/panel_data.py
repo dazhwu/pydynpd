@@ -1,7 +1,7 @@
 import math
 
 import numpy as np
-from pandas import DataFrame
+from pandas import DataFrame, get_dummies, concat
 
 from pydynpd.common_functions import get_first_diff_table, get_fod_table
 from pydynpd.info import options_info
@@ -24,7 +24,7 @@ class panel_data():
         self.N, self.T, self.ids = self.xtset(df, self._individual, self._time)
 
         if options.timedumm:
-            self.col_timedumm = self.add_time_dummy(df, variables, self._time)
+            df, self.col_timedumm = self.add_time_dummy(df, variables, self._time)
         else:
             self.col_timedumm = []
 
@@ -71,19 +71,12 @@ class panel_data():
 
     def add_time_dummy(self, df: DataFrame, variables: dict, _time: str):
 
-        unique_time = sorted(df[_time].unique())
-        col_timedumm = []
+        timedumms = get_dummies(df[_time], prefix = _time, dtype = int)
+        col_timedumm = timedumms.columns.tolist()
 
-        prefix = _time + '_'
-        for num in unique_time:
-            name = prefix + str(num)
-            df[name] = np.where(df[_time] == num, 1, 0)
-            # new_var = regular_variable(name, 0)
-            # variables['dep_indep'].append(new_var)
-            # variables['iv'].append(new_var)
-            col_timedumm.append(name)
+        df = concat([df, timedumms], axis = 1)
 
-        return col_timedumm
+        return df, col_timedumm
 
     def generate_D_matrix(self, height, T, level):
         # matrix used in Forward Orthogonal Deviation
