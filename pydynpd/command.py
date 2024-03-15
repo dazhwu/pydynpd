@@ -69,7 +69,7 @@ class command(object):
         if len(parts) <= 1:
             print('There should be at least two parts in command string')
             exit()
-        
+
         if len(parts) > 3:
             print('too many parts')
             exit()
@@ -302,15 +302,15 @@ class command(object):
         dep = self._temp_part1_list.names[0]
         dep_lags = self._temp_part1_list.lags[0]
 
-        if dep_lags[0] != 0:
+        if len(dep_lags) > 0 and dep_lags[0] != 0:
             print('dependent variable should not be lagged on the left hand side of the model')
             exit()
 
-        if len(dep_lags) == 0:
+        if len(dep_lags) == 1:
             print('lagged dependent variable should be included')
             exit()
 
-        if len(dep_lags) > 0 and dep_lags[1] != 1:
+        if dep_lags[1] != 1:
             print('lag 1 of the dependent variable is not included')
             exit()
 
@@ -350,11 +350,11 @@ class command(object):
                 self._temp_iv_list.insert(var_name, var_lags)
 
     # def check_adjustable(self):
-    # 
+    #
     #     if len(self.adjustable['indep'])>0:
     #         dep = self._temp_part1_list.names[0]
     #         self._temp_part1_list.lags[0]=[1]
-    # 
+    #
     #     for var in self.adjustable['indep']:
     #         if var.name != dep:
     #             print('in the current version, only the lags of the lagged dependent variable can be adjusted')
