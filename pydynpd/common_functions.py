@@ -4,7 +4,7 @@ import numpy as np
 from scipy.sparse import csc_matrix
 
 
-def lag(mat, lagged, N, lag_number, fill=np.NaN):
+def lag(mat, lagged, N, lag_number, fill=np.nan):
     height = int(mat.shape[0] / N)
     for i in range(N):
         start_row = i * height
@@ -42,15 +42,15 @@ def get_fod_table(ori_arr: np.ndarray, N: int):
     this_avg = np.empty((1, num_cols), dtype='float64')
     temp = np.empty((height, num_cols), dtype='float64')
 
-    tbr[:] = np.NaN
+    tbr[:] = np.nan
 
-    this_sum[:] = np.NaN
+    this_sum[:] = np.nan
 
     for i in range(N):
         ori_i = ori_arr[i * height:(i * height + height), :]
         tbr_i = tbr[i * height:(i * height + height), :]
-        temp.fill(np.NaN)
-        next_sum.fill(np.NaN)
+        temp.fill(np.nan)
+        next_sum.fill(np.nan)
         next_count = 0
         for j in range(height - 2, -1, -1):
 
@@ -68,7 +68,7 @@ def get_fod_table(ori_arr: np.ndarray, N: int):
             next_sum = this_sum
             next_count = this_count
 
-        tbr_i[0, :] = np.NaN
+        tbr_i[0, :] = np.nan
         tbr_i[range(1, height), :] = temp[range(0, height - 1), :]
 
     return tbr

@@ -1,8 +1,6 @@
-# import vaex as va
+
 import pandas as pd
 from  pydynpd import regression
-
-
 
 import time
 

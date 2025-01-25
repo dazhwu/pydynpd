@@ -194,7 +194,7 @@ class dynamic_panel_model(object):
             temp_y[Dcut_height:height_total, 0] = y_i[cut[0]:(cut[1] + 1), 0]
 
             if transformation == 'fod':
-                temp_y[0:1, 0] = np.NaN
+                temp_y[0:1, 0] = np.nan
 
             Dx_i = Dx[(i * Dx_height):(i * Dx_height + Dx_height), :]
             x_i = x[(i * x_height):(i * x_height + x_height), :]
@@ -264,7 +264,7 @@ class dynamic_panel_model(object):
                     tbr_i[:, col] = ori_i[start_row:(end_row + 1), which_col[j]]
 
                 else:
-                    tbr_i[0:var.lag, col] = np.NaN
+                    tbr_i[0:var.lag, col] = np.nan
                     tbr_i[var.lag:(end_row + 1), col] = ori_i[0:(end_row + 1 - var.lag), which_col[j]]
 
                 col += 1

@@ -57,7 +57,7 @@ class panel_data():
     def make_balanced(self, ori, n_individual, n_time):
         arr_full = np.empty((n_individual * n_time, ori.shape[1]), dtype='float64')
 
-        arr_full[:] = np.NaN
+        arr_full[:] = np.nan
         # arr_full[:, 0] = np.repeat(range(0, N), T)
         arr_full[:, 0] = range(0, n_individual * n_time)
         # arr_full[:, 1] = arr_full[:, 2] % T
