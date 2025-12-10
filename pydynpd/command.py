@@ -1,9 +1,12 @@
 import re
 import sys
 from sys import exit
+import numpy as np
 
 from pydynpd.info import options_info
 from pydynpd.variable import gmm_var, regular_variable
+
+MAX_LAG = np.iinfo(np.int16).max 
 
 
 class temp_list:
@@ -178,7 +181,7 @@ class command(object):
 
             min_lag = int(match_groups_multiple.group(2))
             if match_groups_multiple.group(3) == '.':
-                max_lag = sys.maxsize
+                max_lag =  MAX_LAG
             else:
                 max_lag = int(match_groups_multiple.group(3))
 
@@ -196,7 +199,7 @@ class command(object):
 
             vars = match_groups_multiple.group(1).split()
             min_lag = 2
-            max_lag = sys.maxsize
+            max_lag = MAX_LAG
 
             self.process_GMM(vars, min_lag, max_lag, part)
 
@@ -209,7 +212,7 @@ class command(object):
 
             vars = match_groups_multiple.group(1).split()
             min_lag = 1
-            max_lag = sys.maxsize
+            max_lag = MAX_LAG
 
             self.process_GMM(vars, min_lag, max_lag, part)
 
