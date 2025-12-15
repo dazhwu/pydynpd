@@ -16,7 +16,7 @@ Wu et al., (2023). pydynpd: A Python package for dynamic panel model.
 Journal of Open Source Software, 8(83), 4416, https://doi.org/10.21105/joss.04416
 ```
 ## Features supported:
-* Differene and System GMM
+* Difference and System GMM
 * One-step, two-step, and iterative estimates
 * First-difference and forward orthogonal deviation transformations
 * Robust standard errors. For two-step GMM, the calculation suggested by Windmeijer (2005) is used.
